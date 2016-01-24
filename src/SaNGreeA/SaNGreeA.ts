@@ -1,8 +1,10 @@
-module SaNGreeA {
+interface ISaNGreeA {
 
-	interface SaNGreeA {
+}
 
-	}
-
+class SaNGreeA {
 	
 }
+
+	
+export { ISaNGreeA, SaNGreeA };

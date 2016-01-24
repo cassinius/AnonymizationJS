@@ -1,0 +1,36 @@
+{
+  "name": "anonymius",
+  "version": "0.0.1",
+  "description": "Collection of Anonymization Algorithms in Typescript - Graph version based on Graphinius JS",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cassinius/AnonymizationJS.git"
+  },
+  "keywords": [
+    "anonymization",
+    "social",
+    "network",
+    "de-identification",
+    "graph",
+    "based",
+    "anonymization",
+    "interactive",
+    "machine",
+    "learning",
+    "based",
+    "anonymization"
+  ],
+  "author": "Bernd Malle",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/cassinius/AnonymizationJS/issues"
+  },
+  "homepage": "https://github.com/cassinius/AnonymizationJS#readme"
+}

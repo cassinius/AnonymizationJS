@@ -29,3 +29,6 @@ function nodeClusterDistance( node:GraphNode, cluster:SNCluster) : Number {
 	
 	return distance;
 }
+
+
+export { nodeNodeDistance, nodeClusterDistance };
