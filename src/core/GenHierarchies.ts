@@ -131,4 +131,34 @@ class StringGenHierarchy implements IStringGenHierarchy {
 }
 
 
-export { IStringGenHierarchy, StringGenHierarchy };
+interface IContGenHierarchy {
+	_name: string;
+	_min: number;
+	_max: number;
+	
+	genCostOfRange(from: number, to: number) : number;
+}
+
+
+class ContGenHierarchy implements IContGenHierarchy {
+	
+	constructor( public _name: string, public _min: number, public _max: number ) {
+		if ( _min > _max ) {
+			throw new Error('Range invalid. Min greater than Max.');
+		}
+		if ( _min === _max ) {
+			throw new Error('Range invalid. Min equals Max.');
+		}
+	}
+	
+	genCostOfRange(from: number, to: number) : number {
+		if ( from > to ) {
+			throw new Error('Cannot generalize to negative range.');
+		}
+		return ((to - from) / (this._max - this._min));
+	}
+	
+}
+
+
+export { IStringGenHierarchy, StringGenHierarchy, IContGenHierarchy, ContGenHierarchy };

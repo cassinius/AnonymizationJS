@@ -6,13 +6,14 @@ import * as $GH from '../../src/core/GenHierarchies';
 var expect = chai.expect,
 		assert = chai.assert,
 		strgh : $GH.IStringGenHierarchy,
+		contgh : $GH.IContGenHierarchy,
 		zerolevellt1 = './test/input/test_data/InvalidGH0.json',
 		zerolevelgt1 = './test/input/test_data/InvalidGH2.json',
 		workclass_file = './test/input/test_data/WorkClassGH.json',
 		native_country_file = './test/input/test_data/NativeCountryGH.json';
 
 
-describe('Generalization Hierarchies Tests: ', () => {
+describe('String Generalization Hierarchies Tests: ', () => {
 	
 	describe('Basic instantiation tests', () => {
 		
@@ -41,6 +42,10 @@ describe('Generalization Hierarchies Tests: ', () => {
 			expect(strgh.getLevelEntry("menotexistsjabbajabba")).to.be.undefined;
 		});
 		
+	});
+	
+	
+	describe('String GH structural tests', () => {		
 		
 		it('should return the gen level of an entry', () => {
 			strgh = new $GH.StringGenHierarchy(workclass_file);
@@ -124,6 +129,64 @@ describe('Generalization Hierarchies Tests: ', () => {
 		
 		});
 				
+	});
+	
+
+
+	describe('Continuous Generalization Hierarchies Tests: ', () => {
+	
+		/**
+		 * Is there more than basic stuff to test?
+		 */
+		describe('Basic tests', () => {
+			
+			it('should throw an error im min is greater than max', () => {
+				assert.throw(function () {
+				new $GH.ContGenHierarchy("invalid", 11, -99)
+			}, 'Range invalid. Min greater than Max.');
+			});
+			
+			
+			it('should throw an error im min is equal to max', () => {
+				assert.throw(function () {
+				new $GH.ContGenHierarchy("invalid", 11, 11)
+			}, 'Range invalid. Min equals Max.');
+			});
+			
+			
+			it('should correctly instantiate an object with name, min and max', () => {
+				contgh = new $GH.ContGenHierarchy("test", 11, 99);
+				expect(contgh._name).to.equal("test");
+				expect(contgh._min).to.equal(11);
+				expect(contgh._max).to.equal(99);
+			});
+			
+			
+			it('should throw an error if asked to generalize to negative span', () => {
+				contgh = new $GH.ContGenHierarchy("test", 11, 99);
+				expect(contgh.genCostOfRange.bind(contgh, 29, 25)).to.throw('Cannot generalize to negative range.');
+			});
+			
+			
+			it('should correctly compute some generalization cost, all positive', () => {
+				contgh = new $GH.ContGenHierarchy("test", 11, 99);
+				expect(contgh.genCostOfRange(25, 29)).to.equal(1/22);
+			});
+			
+			
+			it('should correctly compute some generalization cost, all negative', () => {
+				contgh = new $GH.ContGenHierarchy("test", -99, -11);
+				expect(contgh.genCostOfRange(-8, 0)).to.equal(1/11);
+			});
+						
+			
+			it('should correctly compute some generalization cost, range mixed', () => {
+				contgh = new $GH.ContGenHierarchy("test", -11, 99);
+				expect(contgh.genCostOfRange(-2, 8)).to.equal(1/11);
+			});
+			
+		});
+		
 	});
 	
 });
