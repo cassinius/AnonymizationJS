@@ -1,0 +1,23 @@
+{
+	"name": "invalid0",
+	"levels": [
+		{
+			"id": 0,
+			"cost": 1,
+			"entries":
+			{
+				"all": {
+					"name": "*",
+					"gen": "all"
+				},
+				"all_dup": {
+					"name": "*",
+					"gen": "all"
+				}
+			}
+		}
+	]
+}
+
+
+				

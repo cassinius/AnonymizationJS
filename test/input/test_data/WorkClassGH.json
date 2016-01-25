@@ -1,0 +1,85 @@
+{
+	"name": "workclass",
+	"levels": [
+		{
+			"id": 0,
+			"cost": 1,
+			"entries":
+			{
+				"all": {
+					"name": "*",
+					"gen": "all"
+				}
+			}
+		},
+		{
+			"id": 1,
+			"cost": 0.5,
+			"entries":
+			{
+				"self": 
+				{
+					"name": "Self", 
+					"gen": "all"
+				},
+				"gov": 
+				{
+					"name": "Gov", 
+					"gen": "all"
+				},
+				"other": 
+				{
+					"name": "Other", 
+					"gen": "all"
+				}
+			}
+		},
+		{
+			"id": 2,
+			"cost": 0,
+			"entries":
+			{
+				"Private":
+				{
+					"name": "Private", 
+					"gen": "self"
+				},
+				"Self-emp-not-inc": 
+				{
+					"name": "Self-emp-not-inc", 
+					"gen": "self"
+				},
+				"Self-emp-inc": 
+				{
+					"name": "Self-emp-inc", 
+					"gen": "self"
+				},
+				"Federal-gov": 
+				{
+					"name": "Federal-gov", 
+					"gen": "gov"
+				},
+				"Local-gov": 
+				{
+					"name": "Local-gov", 
+					"gen": "gov"
+				},
+				"State-gov": 
+				{
+					"name": "State-gov", 
+					"gen": "gov"
+				},
+				"Without-pay": 
+				{
+					"name": "Without-pay", 
+					"gen": "other"
+				},
+				"Never-worked": 
+				{
+					"name": "Never-worked", 
+					"gen": "other"
+				}
+			}
+		}
+	]
+}
