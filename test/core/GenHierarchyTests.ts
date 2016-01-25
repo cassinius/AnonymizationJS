@@ -9,46 +9,30 @@ var expect = chai.expect,
 		zerolevellt1 = './test/input/test_data/InvalidGH0.json',
 		zerolevelgt1 = './test/input/test_data/InvalidGH2.json',
 		workclass_file = './test/input/test_data/WorkClassGH.json',
-		levels;
+		native_country_file = './test/input/test_data/NativeCountryGH.json';
 
 
 describe('Generalization Hierarchies Tests: ', () => {
 	
 	describe('Basic instantiation tests', () => {
 		
-		it('should throw an error if level 0 does not have exactly 1 entry', () => {
+		it('should throw an error if level 0 has less than 1 entry', () => {
 			assert.throw(function () {
 				new $GH.StringGenHierarchy(zerolevellt1)
-			}, 'JSON invalid. Level 0 does not contain exactly 1 entry.');
+			}, 'JSON invalid. Level 0 must contain exactly 1 entry.');
 		});
 		
 		
-		it('should throw an error if level 0 does not have exactly 1 entry', () => {
+		it('should throw an error if level 0 has more than 1 entry', () => {
 			assert.throw(function () {
 				new $GH.StringGenHierarchy(zerolevelgt1)
-			}, 'JSON invalid. Level 0 does not contain exactly 1 entry.');
+			}, 'JSON invalid. Level 0 must contain exactly 1 entry.');
 		});
 		
 		
 		it('should correctly instantiate the workclass example', () => {
 			strgh = new $GH.StringGenHierarchy(workclass_file);
-			levels = strgh.getLevels();
-			var length = levels.length;
-			
-			expect(length).to.equal(3);
-			// console.dir(levels[0]);
-			// console.dir(levels[1]);
-			// console.dir(levels[2]);
-			
-			// Let's go through the levels and check the costs...
-			for ( var i = 0; i < length; i++ ) {
-				expect(levels[i].cost).to.equal(1-i/(length-1));
-			}
-			
-			// Let's go through the levels and check the entries' length...
-			expect(Object.keys(levels[0].entries).length).to.equal(1);
-			expect(Object.keys(levels[1].entries).length).to.equal(3);
-			expect(Object.keys(levels[2].entries).length).to.equal(8);
+			expect(strgh.nrLevels()).to.equal(2);
 		});
 		
 		
@@ -78,7 +62,6 @@ describe('Generalization Hierarchies Tests: ', () => {
 		it('should generalize the root entry to itself', () => {
 			strgh = new $GH.StringGenHierarchy(workclass_file);
 			expect(strgh.getGeneralizationOf('all')).to.equal("all");
-			// expect(strgh.getGeneralizationOf.bind(strgh, 'all')).to.throw('root cannot be generalized.');
 		});
 		
 		
@@ -101,6 +84,44 @@ describe('Generalization Hierarchies Tests: ', () => {
 			expect(strgh.getGeneralizationOf('State-gov')).to.equal('gov');
 			expect(strgh.getGeneralizationOf('Without-pay')).to.equal('other');
 			expect(strgh.getGeneralizationOf('Never-worked')).to.equal('other');
+		});
+		
+		
+		/**
+		 * Do the following for both the workclass and
+		 * the native country files
+		 */
+		[workclass_file, native_country_file].forEach( (input_file) => {
+			
+			it('makes sure all gen entries (except the root) point to a valid entry', () => {
+				strgh = new $GH.StringGenHierarchy(input_file);
+				var entries = strgh.getEntries();
+				for ( var entry_idx in entries ) {
+					if ( entry_idx === 'all' ) {
+						continue;
+					}
+					var entry = entries[entry_idx];
+					expect(strgh.getGeneralizationOf(entry_idx)).not.to.be.undefined;
+				}
+			});
+			
+			
+			it('makes sure all gen entries (except the root) are one level up', () => {
+				strgh = new $GH.StringGenHierarchy(input_file);
+				var entries = strgh.getEntries();
+				for ( var entry_idx in entries ) {
+					// console.log("Entry to gen: " + entry_idx);
+					if ( entry_idx === 'all' ) {
+						continue;
+					}
+					var entry = entries[entry_idx],
+							level = entry.level,
+							gen_entry = strgh.getGeneralizationOf(entry_idx);
+					// console.log("Gen'd entry: " + entries[gen_entry]);
+					expect(entries[gen_entry].level).to.equal(level-1);
+				}
+			});
+		
 		});
 				
 	});

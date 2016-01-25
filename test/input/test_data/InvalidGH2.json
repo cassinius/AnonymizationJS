@@ -1,23 +1,18 @@
 {
-	"name": "invalid0",
-	"levels": [
+	"name": "invalidgt1",
+	"entries":
+	{
+		"all": 
 		{
-			"id": 0,
-			"cost": 1,
-			"entries":
-			{
-				"all": {
-					"name": "*",
-					"gen": "all"
-				},
-				"all_dup": {
-					"name": "*",
-					"gen": "all"
-				}
-			}
+			"name": "*",
+			"gen": "all",
+			"level": 0
+		},
+		"all_dup": 
+		{
+			"name": "*",
+			"gen": "all",
+			"level": 0
 		}
-	]
+	}
 }
-
-
-				

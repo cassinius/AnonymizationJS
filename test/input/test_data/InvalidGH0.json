@@ -1,12 +1,6 @@
 {
-	"name": "invalid0",
-	"levels": [
-		{
-			"id": 0,
-			"cost": 1,
-			"entries":
-			{
-			}
-		}
-	]
+	"name": "invalidlt1",
+	"entries":
+	{
+	}
 }

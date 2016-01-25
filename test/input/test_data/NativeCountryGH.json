@@ -1,0 +1,336 @@
+{
+	"name": "workclass",
+	"entries":
+	{
+		"all": 
+		{
+			"name": "*",
+			"gen": "all",
+			"level": 0
+		},
+		"America": 
+		{
+			"name": "America",
+			"gen": "all",
+			"level": 1
+		},
+		"Europe": 
+		{
+			"name": "Europe",
+			"gen": "all",
+			"level": 1
+		},
+		"Asia": 
+		{
+			"name": "Asia",
+			"gen": "all",
+			"level": 1
+		},
+		"Afrika": 
+		{
+			"name": "Afrika",
+			"gen": "all",
+			"level": 1
+		},
+		"North_America": 
+		{
+			"name": "North_America",
+			"gen": "America",
+			"level": 2
+		},
+		"South_America": 
+		{
+			"name": "South_America",
+			"gen": "America",
+			"level": 2
+		},
+		"Central_America": 
+		{
+			"name": "Central_America",
+			"gen": "America",
+			"level": 2
+		},
+		"East_Europe": 
+		{
+			"name": "East_Europe",
+			"gen": "Europe",
+			"level": 2
+		},
+		"West_Europe": 
+		{
+			"name": "West_Europe",
+			"gen": "Europe",
+			"level": 2
+		},
+		"West_Asia": 
+		{
+			"name": "West_Asia",
+			"gen": "Asia",
+			"level": 2
+		},
+		"East_Asia": 
+		{
+			"name": "East_Asia",
+			"gen": "Asia",
+			"level": 2
+		},
+		"North_Afrika": 
+		{
+			"name": "North_Afrika",
+			"gen": "Afrika",
+			"level": 2
+		},
+		"South_Africa": 
+		{
+			"name": "South_Africa",
+			"gen": "Afrika",
+			"level": 2
+		},
+		"United-States": 
+		{
+			"name": "United-States",
+			"gen": "North_America",
+			"level": 3
+		},
+		"Canada": 
+		{
+			"name": "Canada",
+			"gen": "North_America",
+			"level": 3
+		},
+		"Outlying-US(Guam-USVI-etc)": 
+		{
+			"name": "Outlying-US(Guam-USVI-etc)",
+			"gen": "North_America",
+			"level": 3
+		},		
+		"Puerto-Rico": 
+		{
+			"name": "Puerto-Rico",
+			"gen": "Central_America",
+			"level": 3
+		},		
+		"Honduras": 
+		{
+			"name": "Honduras",
+			"gen": "Central_America",
+			"level": 3
+		},		
+		"Jamaica": 
+		{
+			"name": "Jamaica",
+			"gen": "Central_America",
+			"level": 3
+		},		
+		"Mexico": 
+		{
+			"name": "Mexico",
+			"gen": "Central_America",
+			"level": 3
+		},		
+		"Dominican-Republic": 
+		{
+			"name": "Dominican-Republic",
+			"gen": "Central_America",
+			"level": 3
+		},		
+		"Haiti": 
+		{
+			"name": "Haiti",
+			"gen": "Central_America",
+			"level": 3
+		},		
+		"Guatemala": 
+		{
+			"name": "Guatemala",
+			"gen": "Central_America",
+			"level": 3
+		},		
+		"Nicaragua": 
+		{
+			"name": "Nicaragua",
+			"gen": "Central_America",
+			"level": 3
+		},		
+		"El-Salvador": 
+		{
+			"name": "El-Salvador",
+			"gen": "Central_America",
+			"level": 3
+		},	
+		"Cuba": 
+		{
+			"name": "Cuba",
+			"gen": "Central_America",
+			"level": 3
+		},				
+		"Ecuador": 
+		{
+			"name": "Ecuador",
+			"gen": "South_America",
+			"level": 3
+		},				
+		"Columbia": 
+		{
+			"name": "Columbia",
+			"gen": "South_America",
+			"level": 3
+		},				
+		"Trinadad&Tobago": 
+		{
+			"name": "Trinadad&Tobago",
+			"gen": "South_America",
+			"level": 3
+		},				
+		"Peru": 
+		{
+			"name": "Peru",
+			"gen": "South_America",
+			"level": 3
+		},				
+		"England": 
+		{
+			"name": "England",
+			"gen": "West_Europe",
+			"level": 3
+		},				
+		"Holand-Netherlands": 
+		{
+			"name": "Holand-Netherlands",
+			"gen": "West_Europe",
+			"level": 3
+		},				
+		"Germany": 
+		{
+			"name": "Germany",
+			"gen": "West_Europe",
+			"level": 3
+		},				
+		"Italy": 
+		{
+			"name": "Italy",
+			"gen": "West_Europe",
+			"level": 3
+		},				
+		"Portugal": 
+		{
+			"name": "Portugal",
+			"gen": "West_Europe",
+			"level": 3
+		},				
+		"Ireland": 
+		{
+			"name": "Ireland",
+			"gen": "West_Europe",
+			"level": 3
+		},				
+		"France": 
+		{
+			"name": "France",
+			"gen": "West_Europe",
+			"level": 3
+		},
+		"Scotland": 
+		{
+			"name": "Scotland",
+			"gen": "West_Europe",
+			"level": 3
+		},				
+		"Greece": 
+		{
+			"name": "Greece",
+			"gen": "East_Europe",
+			"level": 3
+		},				
+		"Hungary": 
+		{
+			"name": "France",
+			"gen": "East_Europe",
+			"level": 3
+		},				
+		"Poland": 
+		{
+			"name": "Poland",
+			"gen": "East_Europe",
+			"level": 3
+		},				
+		"Yugoslavia": 
+		{
+			"name": "Yugoslavia",
+			"gen": "East_Europe",
+			"level": 3
+		},				
+		"India": 
+		{
+			"name": "India",
+			"gen": "West_Asia",
+			"level": 3
+		},				
+		"Iran": 
+		{
+			"name": "Iran",
+			"gen": "West_Asia",
+			"level": 3
+		},				
+		"Japan": 
+		{
+			"name": "Japan",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"Cambodia": 
+		{
+			"name": "Cambodia",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"China": 
+		{
+			"name": "China",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"Philippines": 
+		{
+			"name": "Philippines",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"Vietnam": 
+		{
+			"name": "Vietnam",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"Laos": 
+		{
+			"name": "Laos",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"Taiwan": 
+		{
+			"name": "Taiwan",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"Thailand": 
+		{
+			"name": "Thailand",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"Hong": 
+		{
+			"name": "Hong Kong",
+			"gen": "East_Asia",
+			"level": 3
+		},				
+		"South": 
+		{
+			"name": "South-Africa",
+			"gen": "South_Africa",
+			"level": 3
+		}
+	}
+}

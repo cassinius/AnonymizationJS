@@ -41,7 +41,7 @@ import fs	= require('fs');
 
 interface StringGenJSON {
 	name: string;
-	levels: Array<IStringGenHierarchyLevel>;
+	entries: {[key: string] : IStringGHEntry};
 }
 
 
@@ -49,29 +49,25 @@ interface IStringGenHierarchy {
 	_name: string;
 	
 	readFromJson(json: StringGenJSON) : void;
-	getLevels() : Array<IStringGenHierarchyLevel>;
+	
+	nrLevels() : number;
+	getEntries(): {[key: string] : IStringGHEntry};
 	getLevelEntry(key: string) : number;
 	getGeneralizationOf(key: string) : string;
 }
 
 
-interface IStringGenHierarchyLevel {
-	id: number;
-	// With arrays, we actually do not need cost..?
-	cost: number;
-	entries: {[key: string] : IStringGHLevelEntry};
-}
-
-
-interface IStringGHLevelEntry {
+interface IStringGHEntry {
 	name: string;
 	gen: string;
+	level: number;
 }
 
 
 class StringGenHierarchy implements IStringGenHierarchy {
-	private _levels : Array<IStringGenHierarchyLevel> = [];
-	public _name;
+	private _entries: {[key: string] : IStringGHEntry} = {};
+	private _nr_levels : number = 0;
+	public _name : string;
 	
 	// Read from JSON file per default
 	constructor(public filePath: string) {
@@ -85,43 +81,43 @@ class StringGenHierarchy implements IStringGenHierarchy {
 	 * ... except for the 0 level
 	 */
 	readFromJson(json: StringGenJSON) : void {
-		if ( !json.levels
-			|| !json.levels[0]
-			|| !json.levels[0].entries
-			|| Object.keys(json.levels[0].entries).length !== 1) {
-				throw new Error("JSON invalid. Level 0 does not contain exactly 1 entry.");
-			}		
+		var level_1s = 0;
 		
-		for ( var level_idx in json.levels ) {
-			var json_level : IStringGenHierarchyLevel = json.levels[level_idx];
-			var level : IStringGenHierarchyLevel = ({
-				"id": json_level.id,
-				"cost": json_level.cost,
-				"entries": {}
-			});
-			for ( var entry_key in json_level.entries ) {
-				var json_entry : IStringGHLevelEntry = json_level.entries[entry_key];
-				level.entries[entry_key] = json_entry;
+		for ( var entry_idx in json.entries ) {
+			var json_entry : IStringGHEntry = json.entries[entry_idx];
+			var level = +json_entry.level;
+			if ( level === 0 ) {
+				level_1s++;
 			}
-			this._levels.push(level);
+			if ( level > this._nr_levels ) {
+				this._nr_levels = level;
+			}
+			var entry : IStringGHEntry = ({
+				"name": json_entry.name,
+				"gen": json_entry.gen,
+				"level": json_entry.level
+			});
+			this._entries[entry_idx] = entry;
 		}
-		// this._levels = json.levels;
+		
+		if ( level_1s !== 1) {
+			throw new Error("JSON invalid. Level 0 must contain exactly 1 entry.");
+		}
 	}
 	
-	getLevels() : Array<IStringGenHierarchyLevel> {
-		return this._levels;
+	
+	nrLevels() : number {
+		return this._nr_levels;
+	}
+	
+	
+	getEntries(): {[key: string] : IStringGHEntry} {
+		return this._entries;
 	}
 	
 	
 	getLevelEntry(key: string) : number {
-		var i = this._levels.length;
-		while ( i-- ) {
-			var entry = this._levels[i].entries[key];
-			if ( entry ) {
-				return i;
-			}
-		}
-		return undefined;
+		return this._entries[key] ? this._entries[key].level : undefined;
 	}
 
 	
@@ -129,17 +125,7 @@ class StringGenHierarchy implements IStringGenHierarchy {
 	 * Should we include level information in the return value?
 	 */
 	getGeneralizationOf(key: string) : string {
-		// if (this._levels[0].entries[key]) {
-		// 	throw new Error("root cannot be generalized.");
-		// }
-		var i = this._levels.length;
-		while ( i-- ) {
-			var entry = this._levels[i].entries[key];
-			if ( entry ) {
-				return entry.gen;
-			}
-		}
-		return undefined;
+		return this._entries[key] ? this._entries[key].gen : undefined;
 	}
 	
 }
