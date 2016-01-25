@@ -119,7 +119,7 @@ class SaNGreeA implements ISaNGreeA {
 	 */
 	private readCSV(file: string, graph) {
 		var str_input = fs.readFileSync(file).toString().split('\n');
-		var str_cols = str_input[0].replace(/\s+/g, '').split(',');
+		var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
 		var hierarchies = Object.keys(this._hierarchies);
 		
 		console.log(hierarchies);
@@ -135,9 +135,9 @@ class SaNGreeA implements ISaNGreeA {
 		console.log(feat_idx_select);
 		
 		// draw sample of size draw_sample from dataset file
-		var drawn_input = _.sampleSize(str_input, this._options.nr_draws);
+		var drawn_input = this.drawSample(str_input, this._options.nr_draws);
 		
-		for ( var i = 1; i < this._options.nr_draws; i++ ) { // str_input.length
+		for ( var i = 0; i < drawn_input.length; i++ ) {
 			// check for empty lines at the end
 			if ( !str_input[i] ) {
 				break;
@@ -150,7 +150,8 @@ class SaNGreeA implements ISaNGreeA {
 			// add features (columns in the dataset) 
 			for (var idx in feat_idx_select) {
 				node.setFeature(feat_idx_select[idx], line[idx]);
-			}			
+			}
+			console.log(node.getFeatures());
 			// console.log(parseInt(line[0]));
 		}
 		
@@ -159,6 +160,23 @@ class SaNGreeA implements ISaNGreeA {
 		this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
 		
 		console.log(this._graph.getStats());
+	}
+	
+	
+	
+	private drawSample(array: any[], size: number) : any[] {
+		var result = [];
+		var seen = {};
+		while ( size ) {
+			var rand_idx = (Math.random()*array.length)|0;
+			if ( seen[rand_idx] ) {
+				continue;
+			}
+			result.push(array[rand_idx]);
+			size--;
+		}		
+		
+		return result;
 	}
 	
 }
