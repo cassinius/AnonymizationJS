@@ -13,9 +13,9 @@ var $Search = Graphinius.$Search;
 // console.log($Search);
 
 interface ISaNGreeAOptions {
-	nr_draws: number,
-	edge_min:	number,
-	edge_max: number
+	nr_draws: number;
+	edge_min:	number;
+	edge_max: number;
 }
 
 enum HierarchyType {
@@ -25,6 +25,7 @@ enum HierarchyType {
 
 interface ISaNGreeA {
 	_name: string;
+	_graph;
 	
 	getOptions() : ISaNGreeAOptions;
 	getHierarchy(name: string) : $GH.IContGenHierarchy | $GH.IStringGenHierarchy;
@@ -41,7 +42,7 @@ class SaNGreeA implements ISaNGreeA {
 	 * TODO resolve ts files from graphinius in proper way
 	 * - NO TYPE RESOLUTION YET -
 	 */
-	private _graph;
+	public _graph;
 	
 	private _options : ISaNGreeAOptions;
 	private _hierarchies : {[name: string] : $GH.IContGenHierarchy | $GH.IStringGenHierarchy} = {};
@@ -135,14 +136,14 @@ class SaNGreeA implements ISaNGreeA {
 		console.log(feat_idx_select);
 		
 		// draw sample of size draw_sample from dataset file
-		var drawn_input = this.drawSample(str_input, this._options.nr_draws);
+		var drawn_input = this.drawSample(str_input, feat_idx_select, this._options.nr_draws);
 		
 		for ( var i = 0; i < drawn_input.length; i++ ) {
 			// check for empty lines at the end
 			if ( !str_input[i] ) {
 				break;
 			}
-			var line = str_input[i].replace(/\s+/g, '').split(',');
+			var line = drawn_input[i];
 			
 			// add a node to the graph
 			var node = this._graph.addNode(i);
@@ -151,8 +152,9 @@ class SaNGreeA implements ISaNGreeA {
 			for (var idx in feat_idx_select) {
 				node.setFeature(feat_idx_select[idx], line[idx]);
 			}
-			console.log(node.getFeatures());
-			// console.log(parseInt(line[0]));
+			node.setFeature('age', parseInt(line[0]));
+			
+			// console.log(node.getFeatures());
 		}
 		
 		// add random edges to make dataset a graph
@@ -164,16 +166,37 @@ class SaNGreeA implements ISaNGreeA {
 	
 	
 	
-	private drawSample(array: any[], size: number) : any[] {
-		var result = [];
-		var seen = {};
+	private drawSample(array: any[], feat_idx_select: {}, size: number) : any[] {
+		var result = [],
+				seen = {},
+				feat_idx : string,
+				line_arr : any[],
+				entry: string,
+				entry_valid : boolean,
+				str_hierarchy : $GH.ContGenHierarchy | $GH.IStringGenHierarchy;
+				
 		while ( size ) {
 			var rand_idx = (Math.random()*array.length)|0;
+			// sample already taken?
 			if ( seen[rand_idx] ) {
 				continue;
 			}
-			result.push(array[rand_idx]);
-			size--;
+			// check if relevant entries are 'normalized'
+			// that is "contained in the relevant hierarchy"
+			line_arr = array[rand_idx].replace(/\s+/g, '').split(',');
+			entry_valid = true;
+			for ( feat_idx in  feat_idx_select ) {				
+				entry = line_arr[feat_idx];
+				str_hierarchy = this.getHierarchy(feat_idx_select[feat_idx]);
+				if ( str_hierarchy instanceof $GH.StringGenHierarchy && !str_hierarchy.getLevelEntry(entry) ) {
+					entry_valid = false;
+				}
+			}
+			
+			if ( entry_valid ) {
+				result.push(line_arr);
+				size--;
+			}
 		}		
 		
 		return result;

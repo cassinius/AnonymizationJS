@@ -144,8 +144,9 @@ describe('SANGREEA TESTS', () => {
 		});
 		
 		
-		it('should instantiate a graph with the expected #nodes', () => {
+		it('should instantiate a graph with the expected nr. of nodes', () => {
 			san.instantiateGraph();
+			expect(san._graph.nrNodes()).to.equal(300);
 		});
 		
 	});
