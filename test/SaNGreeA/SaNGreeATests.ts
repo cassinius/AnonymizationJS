@@ -146,11 +146,8 @@ describe('SANGREEA TESTS', () => {
 		
 		it('should instantiate a graph with the expected nr. of nodes', () => {
 			san.instantiateGraph();
-<<<<<<< HEAD
 			san.anonymizeGraph(5);
-=======
 			expect(san._graph.nrNodes()).to.equal(300);
->>>>>>> 4d7437553550ee767284d768f1d9c04ca8599fc8
 		});
 		
 	});

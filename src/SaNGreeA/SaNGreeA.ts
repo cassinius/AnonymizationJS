@@ -171,7 +171,6 @@ class SaNGreeA implements ISaNGreeA {
 			for (var idx in feat_idx_select) {
 				node.setFeature(feat_idx_select[idx], line[idx]);
 			}
-<<<<<<< HEAD
 			// TODO make generic
 			var age = parseInt(line[0]);
 			min_age = age < min_age ? age : min_age;
@@ -180,11 +179,6 @@ class SaNGreeA implements ISaNGreeA {
 			
 			// console.log(node.getFeatures());
 			// console.log(parseInt(line[0]));
-=======
-			node.setFeature('age', parseInt(line[0]));
-			
-			// console.log(node.getFeatures());
->>>>>>> 4d7437553550ee767284d768f1d9c04ca8599fc8
 		}
 		
 		// instantiate age hierarcy
@@ -200,12 +194,6 @@ class SaNGreeA implements ISaNGreeA {
 	}
 	
 	
-<<<<<<< HEAD
-	private drawSample(array: any[], feat_idx_select : {[idx: number] : string}, size: number) : any[] {
-		var result = [];
-		var seen = {};
-=======
-	
 	private drawSample(array: any[], feat_idx_select: {}, size: number) : any[] {
 		var result = [],
 				seen = {},
@@ -215,14 +203,12 @@ class SaNGreeA implements ISaNGreeA {
 				entry_valid : boolean,
 				str_hierarchy : $GH.ContGenHierarchy | $GH.IStringGenHierarchy;
 				
->>>>>>> 4d7437553550ee767284d768f1d9c04ca8599fc8
 		while ( size ) {
 			var rand_idx = (Math.random()*array.length)|0;
 			// sample already taken?
 			if ( seen[rand_idx] ) {
 				continue;
 			}
-<<<<<<< HEAD
 			var line = array[rand_idx].replace(/\s+/g, '').split(',');
 			var line_valid = true;
 			for (var idx in feat_idx_select) {
@@ -236,22 +222,6 @@ class SaNGreeA implements ISaNGreeA {
 			
 			if( line_valid ) {
 				result.push(line);
-=======
-			// check if relevant entries are 'normalized'
-			// that is "contained in the relevant hierarchy"
-			line_arr = array[rand_idx].replace(/\s+/g, '').split(',');
-			entry_valid = true;
-			for ( feat_idx in  feat_idx_select ) {				
-				entry = line_arr[feat_idx];
-				str_hierarchy = this.getHierarchy(feat_idx_select[feat_idx]);
-				if ( str_hierarchy instanceof $GH.StringGenHierarchy && !str_hierarchy.getLevelEntry(entry) ) {
-					entry_valid = false;
-				}
-			}
-			
-			if ( entry_valid ) {
-				result.push(line_arr);
->>>>>>> 4d7437553550ee767284d768f1d9c04ca8599fc8
 				size--;
 			}
 		}		
