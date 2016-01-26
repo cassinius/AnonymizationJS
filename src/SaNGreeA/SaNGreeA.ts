@@ -9,8 +9,8 @@ var Graphinius = require('../../node_modules/graphinius/index.js');
 var $G = Graphinius.$G;
 var $Search = Graphinius.$Search;
 
-console.log($G);
-console.log($Search);
+// console.log($G);
+// console.log($Search);
 
 interface ISaNGreeAOptions {
 	nr_draws: number;
@@ -31,15 +31,15 @@ enum HierarchyType {
  */
 interface nodeCluster {
 	nodes : {[id: string] : any};
-	levels : {[id: string] : number};
+	gen_feat : {[id: string] : string};
 	rangeCost : {[id: string] : number[]};
-	
 }
 
 
 interface ISaNGreeA {
 	_name: string;
 	_graph;
+	_clusters : Array<nodeCluster>;
 	
 	getOptions() : ISaNGreeAOptions;
 	getHierarchy(name: string) : $GH.IContGenHierarchy | $GH.IStringGenHierarchy;
@@ -49,6 +49,7 @@ interface ISaNGreeA {
 	
 	instantiateGraph() : void;
 	anonymizeGraph(k: number, alpha?: number, beta?: number) : void;
+	outputAnonymizedCSV(outfile: string) : void;
 }
 
 
@@ -58,6 +59,7 @@ class SaNGreeA implements ISaNGreeA {
 	 * - NO TYPE RESOLUTION YET -
 	 */
 	public _graph;
+	public _clusters : Array<nodeCluster>;
 	
 	private _options : ISaNGreeAOptions;
 	private _hierarchies : {[name: string] : $GH.IContGenHierarchy | $GH.IStringGenHierarchy} = {};
@@ -228,9 +230,7 @@ class SaNGreeA implements ISaNGreeA {
 		
 		return result;
 	}
-	
-
-	
+		
 	
 
 	anonymizeGraph(k: number, alpha: number = 1, beta: number = 0) : void {
@@ -267,9 +267,12 @@ class SaNGreeA implements ISaNGreeA {
 			
 			var Cl : nodeCluster = { 
 				nodes : {},
-				levels : {
-					'workclass': Number.POSITIVE_INFINITY,
-					'native-country': Number.POSITIVE_INFINITY
+				gen_feat : {
+					'workclass': X.getFeature('workclass'),
+					'native-country': X.getFeature('native-country'),
+					'marital-status': X.getFeature('marital-status'),
+					'sex': X.getFeature('sex'),
+					'race': X.getFeature('race')
 				},
 				rangeCost : {
 					'age': [X.getFeature('age'), X.getFeature('age')]
@@ -299,6 +302,8 @@ class SaNGreeA implements ISaNGreeA {
 					cont_costs = this.calculateContCosts(Cl, Y);
 					// console.log(Y.getID() + " " + cont_costs);
 					
+					// TODO normalize costs
+					// Only necessary when comparing to (N)SIL
 					if ( (cat_costs + cont_costs) < best_costs ) {
 						best_costs = (cat_costs + cont_costs);
 						current_best = Y;
@@ -312,7 +317,10 @@ class SaNGreeA implements ISaNGreeA {
 				
 				// add best candidate and update costs
 				Cl.nodes[current_best.getID()] = current_best;
+				
+				// TODO refactor the following methods
 				this.updateRange(Cl.rangeCost['age'], current_best.getFeature('age'));
+				this.updateLevels(Cl, current_best);
 				
 				// mark current best added
 				added[current_best.getID()] = true;				
@@ -325,15 +333,87 @@ class SaNGreeA implements ISaNGreeA {
 			S.push(Cl); // add cluster to clusters
 		}
 		
-		console.dir(S);
+		// console.dir(S);
 		console.log("Built " + S.length + " clusters.");
-		
+		this._clusters = S;
 	}
 	
-	private calculateCatCosts(Cl: nodeCluster, Y) {
-		var init_level = Number.POSITIVE_INFINITY
-		return 0;
+	
+	outputAnonymizedCSV(outfile: string) : void {
+		for ( var cl_idx in this._clusters ) {
+			var cluster = this._clusters[cl_idx];
+			// console.dir(cluster);
+		}
 	}
+	
+
+
+	private updateLevels(Cl: nodeCluster, Y) : void {
+		
+		var feat_array = ["workclass", "native-country", "marital-status", "race", "sex"];
+		
+		feat_array.forEach((feat) => {
+			var cat_gh = this.getHierarchy(feat);
+			
+			// TODO - !!!
+			if ( cat_gh instanceof $GH.StringGenHierarchy ) {
+				var Cl_feat = Cl.gen_feat[feat];
+				var Y_feat = Y.getFeature(feat);
+				var Cl_level = cat_gh.getLevelEntry(Cl_feat);
+				var Y_level = cat_gh.getLevelEntry(Y_feat);
+				// bark up the (right) tree (root should gen to itself)
+				while( Cl_feat !== Y_feat ) {
+					// console.log("Comparing features: " + Cl_feat + ", " + Y_feat);
+					// console.log("Comparing levels: " + Cl_level + ", " + Y_level);
+					
+					Y_feat = cat_gh.getGeneralizationOf(Y_feat);
+					Y_level = cat_gh.getLevelEntry(Y_feat);
+					if ( Cl_level > Y_level ) {
+						Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
+						Cl_level = cat_gh.getLevelEntry(Cl_feat);
+					}
+				}
+				// console.log("Should equal: " + Cl_feat + ", " + Y_feat);
+				Cl.gen_feat[feat] = Cl_feat;			
+			}
+		});
+	}
+	
+	
+	private calculateCatCosts(Cl: nodeCluster, Y) {
+		var costs = 0;
+		
+		var feat_array = ["workclass", "native-country", "marital-status", "race", "sex"];
+		
+		feat_array.forEach((feat) => {
+			var cat_gh = this.getHierarchy(feat);
+			
+			// TODO - !!!
+			if ( cat_gh instanceof $GH.StringGenHierarchy ) {
+				var Cl_feat = Cl.gen_feat[feat];
+				var Y_feat = Y.getFeature(feat);
+				var Cl_level = cat_gh.getLevelEntry(Cl_feat);
+				var Y_level = cat_gh.getLevelEntry(Y_feat);
+				// bark up the (right) tree (root should gen to itself)
+				while( Cl_feat !== Y_feat ) {
+					// console.log("Comparing features: " + Cl_feat + ", " + Y_feat);
+					// console.log("Comparing levels: " + Cl_level + ", " + Y_level);
+					
+					Y_feat = cat_gh.getGeneralizationOf(Y_feat);
+					Y_level = cat_gh.getLevelEntry(Y_feat);
+					if ( Cl_level > Y_level ) {
+						Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
+						Cl_level = cat_gh.getLevelEntry(Cl_feat);
+					}
+				}
+				// console.log("Should equal: " + Cl_feat + ", " + Y_feat);
+				costs += 1 - ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );				
+			}
+		});
+		
+		return costs / feat_array.length;
+	}
+	
 	
 	/**
 	 * TODO MAKE GENERIC
@@ -361,6 +441,9 @@ class SaNGreeA implements ISaNGreeA {
 		range[0] < range[0] ? nr : range[0];
 		range[1] = nr > range[1] ? nr : range[1];
 	}
+	
+	
+	
 	
 	
 }
