@@ -13,9 +13,9 @@ console.log($G);
 console.log($Search);
 
 interface ISaNGreeAOptions {
-	nr_draws: number,
-	edge_min:	number,
-	edge_max: number
+	nr_draws: number;
+	edge_min:	number;
+	edge_max: number;
 }
 
 enum HierarchyType {
@@ -39,6 +39,7 @@ interface nodeCluster {
 
 interface ISaNGreeA {
 	_name: string;
+	_graph;
 	
 	getOptions() : ISaNGreeAOptions;
 	getHierarchy(name: string) : $GH.IContGenHierarchy | $GH.IStringGenHierarchy;
@@ -56,7 +57,7 @@ class SaNGreeA implements ISaNGreeA {
 	 * TODO resolve ts files from graphinius in proper way
 	 * - NO TYPE RESOLUTION YET -
 	 */
-	private _graph;
+	public _graph;
 	
 	private _options : ISaNGreeAOptions;
 	private _hierarchies : {[name: string] : $GH.IContGenHierarchy | $GH.IStringGenHierarchy} = {};
@@ -170,6 +171,7 @@ class SaNGreeA implements ISaNGreeA {
 			for (var idx in feat_idx_select) {
 				node.setFeature(feat_idx_select[idx], line[idx]);
 			}
+<<<<<<< HEAD
 			// TODO make generic
 			var age = parseInt(line[0]);
 			min_age = age < min_age ? age : min_age;
@@ -178,6 +180,11 @@ class SaNGreeA implements ISaNGreeA {
 			
 			// console.log(node.getFeatures());
 			// console.log(parseInt(line[0]));
+=======
+			node.setFeature('age', parseInt(line[0]));
+			
+			// console.log(node.getFeatures());
+>>>>>>> 4d7437553550ee767284d768f1d9c04ca8599fc8
 		}
 		
 		// instantiate age hierarcy
@@ -193,14 +200,29 @@ class SaNGreeA implements ISaNGreeA {
 	}
 	
 	
+<<<<<<< HEAD
 	private drawSample(array: any[], feat_idx_select : {[idx: number] : string}, size: number) : any[] {
 		var result = [];
 		var seen = {};
+=======
+	
+	private drawSample(array: any[], feat_idx_select: {}, size: number) : any[] {
+		var result = [],
+				seen = {},
+				feat_idx : string,
+				line_arr : any[],
+				entry: string,
+				entry_valid : boolean,
+				str_hierarchy : $GH.ContGenHierarchy | $GH.IStringGenHierarchy;
+				
+>>>>>>> 4d7437553550ee767284d768f1d9c04ca8599fc8
 		while ( size ) {
 			var rand_idx = (Math.random()*array.length)|0;
+			// sample already taken?
 			if ( seen[rand_idx] ) {
 				continue;
 			}
+<<<<<<< HEAD
 			var line = array[rand_idx].replace(/\s+/g, '').split(',');
 			var line_valid = true;
 			for (var idx in feat_idx_select) {
@@ -214,6 +236,22 @@ class SaNGreeA implements ISaNGreeA {
 			
 			if( line_valid ) {
 				result.push(line);
+=======
+			// check if relevant entries are 'normalized'
+			// that is "contained in the relevant hierarchy"
+			line_arr = array[rand_idx].replace(/\s+/g, '').split(',');
+			entry_valid = true;
+			for ( feat_idx in  feat_idx_select ) {				
+				entry = line_arr[feat_idx];
+				str_hierarchy = this.getHierarchy(feat_idx_select[feat_idx]);
+				if ( str_hierarchy instanceof $GH.StringGenHierarchy && !str_hierarchy.getLevelEntry(entry) ) {
+					entry_valid = false;
+				}
+			}
+			
+			if ( entry_valid ) {
+				result.push(line_arr);
+>>>>>>> 4d7437553550ee767284d768f1d9c04ca8599fc8
 				size--;
 			}
 		}		
@@ -274,6 +312,7 @@ class SaNGreeA implements ISaNGreeA {
 			/**
 			 * SANGREEA INNER LOOP - GET NODE THAT MINIMIZES GIL
 			 * and add node to this cluster;
+			 * TODO fix loop
 			 */
 			while ( Object.keys(Cl.nodes).length < k && i < keys.length ) { // we haven't fulfilled k-anonymity yet...
 				best_costs = Number.POSITIVE_INFINITY;
