@@ -146,6 +146,7 @@ describe('SANGREEA TESTS', () => {
 		
 		it('should instantiate a graph with the expected #nodes', () => {
 			san.instantiateGraph();
+			san.anonymizeGraph(5);
 		});
 		
 	});

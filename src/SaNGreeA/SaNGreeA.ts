@@ -9,8 +9,8 @@ var Graphinius = require('../../node_modules/graphinius/index.js');
 var $G = Graphinius.$G;
 var $Search = Graphinius.$Search;
 
-// console.log($G);
-// console.log($Search);
+console.log($G);
+console.log($Search);
 
 interface ISaNGreeAOptions {
 	nr_draws: number,
@@ -23,6 +23,20 @@ enum HierarchyType {
 	CATEGORICAL
 }
 
+
+/**
+ *  at each turn, we need to know the nodes a cluster contains,
+ *  at which levels it's attributes are (workclass, native-country),
+ *  the range costs for it's numeric attributes
+ */
+interface nodeCluster {
+	nodes : {[id: string] : any};
+	levels : {[id: string] : number};
+	rangeCost : {[id: string] : number[]};
+	
+}
+
+
 interface ISaNGreeA {
 	_name: string;
 	
@@ -33,6 +47,7 @@ interface ISaNGreeA {
 	// setHierarchies(files: {[name: string] : HierarchyType}) : void;
 	
 	instantiateGraph() : void;
+	anonymizeGraph(k: number, alpha?: number, beta?: number) : void;
 }
 
 
@@ -122,6 +137,10 @@ class SaNGreeA implements ISaNGreeA {
 		var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
 		var hierarchies = Object.keys(this._hierarchies);
 		
+		// TODO make generic!
+		var min_age = Number.POSITIVE_INFINITY;
+		var max_age = Number.NEGATIVE_INFINITY;
+		
 		console.log(hierarchies);
 		console.log(str_cols);
 		
@@ -135,14 +154,14 @@ class SaNGreeA implements ISaNGreeA {
 		console.log(feat_idx_select);
 		
 		// draw sample of size draw_sample from dataset file
-		var drawn_input = this.drawSample(str_input, this._options.nr_draws);
+		var drawn_input = this.drawSample(str_input, feat_idx_select, this._options.nr_draws);
 		
 		for ( var i = 0; i < drawn_input.length; i++ ) {
 			// check for empty lines at the end
 			if ( !str_input[i] ) {
 				break;
 			}
-			var line = str_input[i].replace(/\s+/g, '').split(',');
+			var line = drawn_input[i];
 			
 			// add a node to the graph
 			var node = this._graph.addNode(i);
@@ -151,20 +170,30 @@ class SaNGreeA implements ISaNGreeA {
 			for (var idx in feat_idx_select) {
 				node.setFeature(feat_idx_select[idx], line[idx]);
 			}
-			console.log(node.getFeatures());
+			// TODO make generic
+			var age = parseInt(line[0]);
+			min_age = age < min_age ? age : min_age;
+			max_age = age > max_age ? age : max_age;
+			node.setFeature('age', parseInt(line[0]));
+			
+			// console.log(node.getFeatures());
 			// console.log(parseInt(line[0]));
 		}
+		
+		// instantiate age hierarcy
+		var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
+		this.setHierarchy('age', age_hierarchy);
 		
 		// add random edges to make dataset a graph
 		// false means 'undirected'
 		this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
 		
-		console.log(this._graph.getStats());
+		// console.log(this._graph.getStats());
+		// console.log(this.getHierarchies());
 	}
 	
 	
-	
-	private drawSample(array: any[], size: number) : any[] {
+	private drawSample(array: any[], feat_idx_select : {[idx: number] : string}, size: number) : any[] {
 		var result = [];
 		var seen = {};
 		while ( size ) {
@@ -172,12 +201,158 @@ class SaNGreeA implements ISaNGreeA {
 			if ( seen[rand_idx] ) {
 				continue;
 			}
-			result.push(array[rand_idx]);
-			size--;
+			var line = array[rand_idx].replace(/\s+/g, '').split(',');
+			var line_valid = true;
+			for (var idx in feat_idx_select) {
+				// console.log(line[idx]);
+				
+				var hierarchy = this.getHierarchy(feat_idx_select[idx]);
+				if ( hierarchy instanceof $GH.StringGenHierarchy && !hierarchy.getLevelEntry(line[idx])) {
+					line_valid = false;
+				}
+			}
+			
+			if( line_valid ) {
+				result.push(line);
+				size--;
+			}
 		}		
 		
 		return result;
 	}
+	
+
+	
+	
+
+	anonymizeGraph(k: number, alpha: number = 1, beta: number = 0) : void {
+		var S = [], // set of clusters
+				N = this._graph.getNodes(),
+				keys = Object.keys(N), // for length...
+				X, // our current node ID
+				// node_x, // our current node object
+				Y, // our candidate node ID
+				// node_y, // our candidate node object
+				current_best, // the currently best node
+				added = {}, // mark all nodes already added to clusters
+				cont_costs, // continuous costs
+				cat_costs, // categorical costs,
+				best_costs, // sum of the above
+				i, j;
+		
+		/**
+		 * MAIN LOOP OF THE SANGRIA ALGORITHM
+		 * every time this loop runs, we have
+		 * to build a new cluster
+		 */
+		for ( i = 0; i < keys.length; i++) {
+			X = N[i];
+			// console.log(X.getFeatures());
+			if ( added[X.getID()] ) {
+				continue; // we've already seen this one
+			}
+			
+			// cluster, has to be 'renewed' every cycle
+			// we don't want to write over the old one..
+			// TODO make generic
+			// TODO stop union type nonsense
+			
+			var Cl : nodeCluster = { 
+				nodes : {},
+				levels : {
+					'workclass': Number.POSITIVE_INFINITY,
+					'native-country': Number.POSITIVE_INFINITY
+				},
+				rangeCost : {
+					'age': [X.getFeature('age'), X.getFeature('age')]
+				}
+			};
+			
+			Cl.nodes[X.getID()] = X; // add node to cluster
+			added[X.getID()] = true; // mark added
+			
+			/**
+			 * SANGREEA INNER LOOP - GET NODE THAT MINIMIZES GIL
+			 * and add node to this cluster;
+			 */
+			while ( Object.keys(Cl.nodes).length < k && i < keys.length ) { // we haven't fulfilled k-anonymity yet...
+				best_costs = Number.POSITIVE_INFINITY;
+				
+				for ( j = 0; j < keys.length; j++ ) {
+					// get node and see if we've already added it
+					Y = N[j];
+					if ( added[Y.getID()] ) {
+						continue;
+					}
+					
+					// now calculate costs
+					cat_costs = this.calculateCatCosts(Cl, Y);
+					cont_costs = this.calculateContCosts(Cl, Y);
+					// console.log(Y.getID() + " " + cont_costs);
+					
+					if ( (cat_costs + cont_costs) < best_costs ) {
+						best_costs = (cat_costs + cont_costs);
+						current_best = Y;
+					}
+				}
+				
+				// console.log("Best costs: " + best_costs);
+				// console.log("Best node: " + current_best.getID());
+				
+				// console.log("Node to add: " + current_best);
+				
+				// add best candidate and update costs
+				Cl.nodes[current_best.getID()] = current_best;
+				this.updateRange(Cl.rangeCost['age'], current_best.getFeature('age'));
+				
+				// mark current best added
+				added[current_best.getID()] = true;				
+			}
+			
+			// here we have finished our cluster
+			// do we push it to the set of clusters
+			// or do we have to disperse it?			
+			// if (...)			
+			S.push(Cl); // add cluster to clusters
+		}
+		
+		console.dir(S);
+		console.log("Built " + S.length + " clusters.");
+		
+	}
+	
+	private calculateCatCosts(Cl: nodeCluster, Y) {
+		var init_level = Number.POSITIVE_INFINITY
+		return 0;
+	}
+	
+	/**
+	 * TODO MAKE GENERIC
+	 */
+	private calculateContCosts(Cl: nodeCluster, Y) {
+		// TODO make generic
+		var age_range = Cl.rangeCost['age'];
+		// expand range
+		var new_range: number[] = this.expandRange(age_range, Y.getFeature('age'));
+		// calculate cost
+		var age_hierarchy = this.getHierarchy('age');
+		var cost = age_hierarchy instanceof $GH.ContGenHierarchy? age_hierarchy.genCostOfRange(new_range[0], new_range[1]) : 0;
+		// console.log("Range cost: " + cost);
+		return cost;
+	}
+	
+	private expandRange(range: number[], nr: number) : number[] {
+		var min = nr < range[0] ? nr : range[0];
+		var max = nr > range[1] ? nr : range[1];
+		// console.log([min, max]);
+		return [min, max];
+	}
+	
+	private updateRange(range: number[], nr: number) : void {
+		range[0] < range[0] ? nr : range[0];
+		range[1] = nr > range[1] ? nr : range[1];
+	}
+	
 	
 }
 

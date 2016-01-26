@@ -1,34 +1,21 @@
-interface GraphNode {
+
+// function nodeNodeDistance( node_a:GraphNode, node_b:GraphNode) : Number {
+// 	var distance = 0;
 	
-}
+// 	return distance;
+// }
 
-interface SNNode extends GraphNode {
-	id 			: Number
-	label		: String
-}
 
-interface Cluster {
+// function nodeClusterDistance( node:GraphNode, cluster:SNCluster) : Number {
+// 	var distance = 0;
 	
-}
-
-interface SNCluster {
-	id		: Number
-	nodes : GraphNode[]
-}
+// 	return distance;
+// }
 
 
-function nodeNodeDistance( node_a:GraphNode, node_b:GraphNode) : Number {
-	var distance = 0;
-	
-	return distance;
-}
 
 
-function nodeClusterDistance( node:GraphNode, cluster:SNCluster) : Number {
-	var distance = 0;
-	
-	return distance;
-}
 
 
-export { nodeNodeDistance, nodeClusterDistance };
+
+export { };
