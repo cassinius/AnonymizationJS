@@ -149,7 +149,82 @@ describe('SANGREEA TESTS', () => {
 		
 		it('should instantiate a graph with the expected nr. of nodes', () => {
 			san.instantiateGraph();
-			san.anonymizeGraph(5);
+			san.anonymizeGraph(10);
+			
+			var outfile = (+new Date()).toString();
+			san.outputAnonymizedCSV(outfile);
+			// expect(san._graph.nrNodes()).to.equal(300);
+		});
+		
+		
+		it('should compute an anonymization with higher weight for race', () => {
+			var weights = {
+				'age': 0.1,
+				'workclass': 0.1,
+				'native-country': 0.1,
+				'sex': 0.1,
+				'race': 0.5,
+				'marital-status': 0.1 
+			}
+			
+			san = new $San.SaNGreeA("adults", adults, undefined, weights);
+			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+				strgh = new $GH.StringGenHierarchy(file);
+				san.setHierarchy(strgh._name, strgh);
+			});
+			
+			san.instantiateGraph();
+			san.anonymizeGraph(10);
+			
+			var outfile = (+new Date()).toString();
+			san.outputAnonymizedCSV(outfile);
+			// expect(san._graph.nrNodes()).to.equal(300);
+		});
+		
+		
+		it('should compute an anonymization with higher weight for marital status', () => {
+			var weights = {
+				'age': 0.04,
+				'workclass': 0.04,
+				'native-country': 0.04,
+				'sex': 0.04,
+				'race': 0.04,
+				'marital-status': 0.8 
+			}
+			
+			san = new $San.SaNGreeA("adults", adults, undefined, weights);
+			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+				strgh = new $GH.StringGenHierarchy(file);
+				san.setHierarchy(strgh._name, strgh);
+			});
+			
+			san.instantiateGraph();
+			san.anonymizeGraph(10);
+			
+			var outfile = (+new Date()).toString();
+			san.outputAnonymizedCSV(outfile);
+			// expect(san._graph.nrNodes()).to.equal(300);
+		});
+		
+		
+		it('should compute an anonymization with higher weight for marital status', () => {
+			var weights = {
+				'age': 0.95,
+				'workclass': 0.01,
+				'native-country': 0.01,
+				'sex': 0.01,
+				'race': 0.01,
+				'marital-status': 0.1 
+			}
+			
+			san = new $San.SaNGreeA("adults", adults, undefined, weights);
+			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+				strgh = new $GH.StringGenHierarchy(file);
+				san.setHierarchy(strgh._name, strgh);
+			});
+			
+			san.instantiateGraph();
+			san.anonymizeGraph(10);
 			
 			var outfile = (+new Date()).toString();
 			san.outputAnonymizedCSV(outfile);

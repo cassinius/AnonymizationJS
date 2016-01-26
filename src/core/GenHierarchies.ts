@@ -54,6 +54,8 @@ interface IStringGenHierarchy {
 	getEntries(): {[key: string] : IStringGHEntry};
 	getLevelEntry(key: string) : number;
 	getGeneralizationOf(key: string) : string;
+	// TODO write test
+	getName(key: string) : string;
 }
 
 
@@ -119,13 +121,17 @@ class StringGenHierarchy implements IStringGenHierarchy {
 	getLevelEntry(key: string) : number {
 		return this._entries[key] ? this._entries[key].level : undefined;
 	}
-
 	
 	/**
 	 * Should we include level information in the return value?
 	 */
 	getGeneralizationOf(key: string) : string {
 		return this._entries[key] ? this._entries[key].gen : undefined;
+	}
+	
+	
+	getName(key: string) : string {
+		return this._entries[key].name;
 	}
 	
 }

@@ -32,7 +32,7 @@ enum HierarchyType {
 interface nodeCluster {
 	nodes : {[id: string] : any};
 	gen_feat : {[id: string] : string};
-	rangeCost : {[id: string] : number[]};
+	gen_ranges : {[id: string] : number[]};
 }
 
 
@@ -60,14 +60,28 @@ class SaNGreeA implements ISaNGreeA {
 	 */
 	public _graph;
 	public _clusters : Array<nodeCluster>;
+	public _weights;
 	
 	private _options : ISaNGreeAOptions;
 	private _hierarchies : {[name: string] : $GH.IContGenHierarchy | $GH.IStringGenHierarchy} = {};
 	
 	constructor( public _name: string = "default", 
 							 private _input_file : string,
-							 opts? : ISaNGreeAOptions)
+							 opts? : ISaNGreeAOptions,
+							 weights? : {})
 	{
+		console.log("Given weights: " + weights);
+		
+		// TODO make generic (hack!!)
+		this._weights = weights || {
+			'age': 1/6,
+			'workclass': 1/6,
+			'native-country': 1/6,
+			'sex': 1/6,
+			'race': 1/6,
+			'marital-status': 1/6
+		}
+		
 		if ( _input_file === "" ) {
 			throw new Error('Input file cannot be an empty string');
 		}
@@ -157,14 +171,32 @@ class SaNGreeA implements ISaNGreeA {
 		console.log(feat_idx_select);
 		
 		// draw sample of size draw_sample from dataset file
-		var drawn_input = this.drawSample(str_input, feat_idx_select, this._options.nr_draws);
+		// var drawn_input = this.drawSample(str_input, feat_idx_select, this._options.nr_draws);
 		
-		for ( var i = 0; i < drawn_input.length; i++ ) {
+		/**
+		 * FOR COMPARISON REASONS, we're just going through the first 300 entries
+		 */
+		var draw = 300;
+		for ( var i = 0; i < draw; i++ ) { // drawn_input.length
 			// check for empty lines at the end
 			if ( !str_input[i] ) {
 				break;
 			}
-			var line = drawn_input[i];
+			var line = str_input[i].replace(/\s+/g, '').split(',');
+			
+			// TODO - THIS IS JUST FOR COMPARISON !!
+			var line_valid = true;
+			for (var idx in feat_idx_select) {
+				// console.log(line[idx]);
+				var hierarchy = this.getHierarchy(feat_idx_select[idx]);
+				if ( hierarchy instanceof $GH.StringGenHierarchy && !hierarchy.getLevelEntry(line[idx])) {
+					line_valid = false;
+				}
+			}
+			if ( !line_valid ) {
+				draw++;
+				continue;
+			}			
 			
 			// add a node to the graph
 			var node = this._graph.addNode(i);
@@ -254,7 +286,7 @@ class SaNGreeA implements ISaNGreeA {
 		 * to build a new cluster
 		 */
 		for ( i = 0; i < keys.length; i++) {
-			X = N[i];
+			X = N[keys[i]];
 			// console.log(X.getFeatures());
 			if ( added[X.getID()] ) {
 				continue; // we've already seen this one
@@ -274,7 +306,7 @@ class SaNGreeA implements ISaNGreeA {
 					'sex': X.getFeature('sex'),
 					'race': X.getFeature('race')
 				},
-				rangeCost : {
+				gen_ranges : {
 					'age': [X.getFeature('age'), X.getFeature('age')]
 				}
 			};
@@ -292,7 +324,7 @@ class SaNGreeA implements ISaNGreeA {
 				
 				for ( j = 0; j < keys.length; j++ ) {
 					// get node and see if we've already added it
-					Y = N[j];
+					Y = N[keys[j]];
 					if ( added[Y.getID()] ) {
 						continue;
 					}
@@ -319,7 +351,7 @@ class SaNGreeA implements ISaNGreeA {
 				Cl.nodes[current_best.getID()] = current_best;
 				
 				// TODO refactor the following methods
-				this.updateRange(Cl.rangeCost['age'], current_best.getFeature('age'));
+				this.updateRange(Cl.gen_ranges['age'], current_best.getFeature('age'));
 				this.updateLevels(Cl, current_best);
 				
 				// mark current best added
@@ -339,14 +371,50 @@ class SaNGreeA implements ISaNGreeA {
 	}
 	
 	
-	outputAnonymizedCSV(outfile: string) : void {
+	/**
+	 * TODO better way to do this than manually 
+	 * constructing the string ?!?!
+	 */
+	outputAnonymizedCSV(outfile: string) : void {		
+		var outstring = "";
+		// for (var hi in this._hierarchies) {
+		// 	outstring += hi + ", ";
+		// }
+		// outstring = outstring.slice(0, -2) + "\n";
+		
 		for ( var cl_idx in this._clusters ) {
 			var cluster = this._clusters[cl_idx];
-			// console.dir(cluster);
+					
+			for ( var count in cluster.nodes ) {				
+				// first, let's write out the age range
+				var age_range = cluster.gen_ranges['age'];
+				if ( age_range[0] === age_range[1] ) {
+					outstring += age_range[0] + ", ";
+				}
+				else {
+					outstring += "[" + age_range[0] + " - " + age_range[1] + "], ";
+				}
+				
+				// now, all the categorical features
+				for (var hi in this._hierarchies) {
+					var h = this._hierarchies[hi];
+					if (h instanceof $GH.StringGenHierarchy) {
+						outstring += h.getName(cluster.gen_feat[hi]) + ", ";
+					}
+				}
+				outstring = outstring.slice(0, -2) + "\n";
+			}
+
 		}
+		
+		// TODO... here we go again...
+		// var out_arr = outstring.split("\n");
+		var first_line = "age, workclass, native-country, sex, race, marital-status \n";
+		outstring = first_line + outstring;
+		
+		fs.writeFileSync("./test/output/" + outfile + ".csv", outstring);
 	}
 	
-
 
 	private updateLevels(Cl: nodeCluster, Y) : void {
 		
@@ -407,7 +475,8 @@ class SaNGreeA implements ISaNGreeA {
 					}
 				}
 				// console.log("Should equal: " + Cl_feat + ", " + Y_feat);
-				costs += 1 - ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );				
+				// console.log(this._weights[feat]);
+				costs += this._weights[feat] * ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );				
 			}
 		});
 		
@@ -420,14 +489,14 @@ class SaNGreeA implements ISaNGreeA {
 	 */
 	private calculateContCosts(Cl: nodeCluster, Y) {
 		// TODO make generic
-		var age_range = Cl.rangeCost['age'];
+		var age_range = Cl.gen_ranges['age'];
 		// expand range
 		var new_range: number[] = this.expandRange(age_range, Y.getFeature('age'));
 		// calculate cost
 		var age_hierarchy = this.getHierarchy('age');
 		var cost = age_hierarchy instanceof $GH.ContGenHierarchy? age_hierarchy.genCostOfRange(new_range[0], new_range[1]) : 0;
 		// console.log("Range cost: " + cost);
-		return cost;
+		return this._weights['age'] * cost;
 	}
 	
 	private expandRange(range: number[], nr: number) : number[] {
