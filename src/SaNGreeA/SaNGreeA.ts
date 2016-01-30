@@ -42,10 +42,15 @@ interface ISaNGreeA {
 	_clusters : Array<nodeCluster>;
 	
 	getOptions() : ISaNGreeAOptions;
-	getHierarchy(name: string) : $GH.IContGenHierarchy | $GH.IStringGenHierarchy;
-	getHierarchies() : {[name: string] : $GH.IContGenHierarchy | $GH.IStringGenHierarchy};
-	setHierarchy(name: string, genh: $GH.IContGenHierarchy | $GH.IStringGenHierarchy);
-	// setHierarchies(files: {[name: string] : HierarchyType}) : void;
+	
+	getContHierarchy(name: string) : $GH.IContGenHierarchy;
+	getCatHierarchy(name: string) : $GH.IStringGenHierarchy;
+	
+	getContHierarchies() : {[name: string] : $GH.IContGenHierarchy};
+	getCatHierarchies() : {[name: string] : $GH.IStringGenHierarchy};
+	
+	setContHierarchy(name: string, genh: $GH.IContGenHierarchy);
+	setCatHierarchy(name: string, genh: $GH.IStringGenHierarchy);
 	
 	instantiateGraph() : void;
 	anonymizeGraph(k: number, alpha?: number, beta?: number) : void;
@@ -63,7 +68,19 @@ class SaNGreeA implements ISaNGreeA {
 	public _weights;
 	
 	private _options : ISaNGreeAOptions;
-	private _hierarchies : {[name: string] : $GH.IContGenHierarchy | $GH.IStringGenHierarchy} = {};
+	
+	/**
+	 * We're building everything in the algorithm around our hierarchies
+	 * That means, we automatically consider all and only the columns in 
+	 * the data file (as long as they exist) which are specified in a
+	 * hierarchy given to the algorithm
+	 * 
+	 * This also means, that any range-based attributes present in the
+	 * data file must
+	 */
+	private _cont_hierarchies : {[name: string] : $GH.IContGenHierarchy} = {};
+	private _cat_hierarchies : {[name: string] : $GH.IStringGenHierarchy} = {};
+	
 	
 	constructor( public _name: string = "default", 
 							 private _input_file : string,
@@ -108,33 +125,31 @@ class SaNGreeA implements ISaNGreeA {
 		return this._options;
 	}
 	
-	getHierarchies() : {[name: string] : $GH.IContGenHierarchy | $GH.IStringGenHierarchy} {
-		return this._hierarchies;
+	getContHierarchies() : {[name: string] : $GH.IContGenHierarchy} {
+		return this._cont_hierarchies;
 	}
 	
-	getHierarchy(name: string) : $GH.IContGenHierarchy | $GH.IStringGenHierarchy {
-		return this._hierarchies[name];
+	getCatHierarchies() : {[name: string] : $GH.IStringGenHierarchy} {
+		return this._cat_hierarchies;
 	}
 	
-	setHierarchy(name: string, genh: $GH.IContGenHierarchy | $GH.IStringGenHierarchy) {
-		this._hierarchies[name] = genh;
+	getContHierarchy(name: string) : $GH.IContGenHierarchy {
+		return this._cont_hierarchies[name];
+	}
+	
+	getCatHierarchy(name: string) : $GH.IStringGenHierarchy {
+		return this._cat_hierarchies[name];
+	}
+	
+	setContHierarchy(name: string, genh: $GH.IContGenHierarchy) {
+		this._cont_hierarchies[name] = genh;
+	}
+	
+	setCatHierarchy(name: string, genh: $GH.IStringGenHierarchy) {
+		this._cat_hierarchies[name] = genh;
 	}	
 	
-	/**
-	 * !!! HIERARCHIES := COLUMNS !!!
-	 * TODO test for empty string / non-existing files
-	 */	
-	// setHierarchies(files: {[name: string] : HierarchyType}) : void {
-	// 	var gen_h : $GH.IContGenHierarchy | $GH.IStringGenHierarchy;
-	// 	for ( var file in files ) {
-	// 		if ( files[file] === HierarchyType.CATEGORICAL ) {
-	// 			gen_h = new $GH.StringGenHierarchy(file);
-	// 		}
-	// 		else if ( files[file] === HierarchyType.CONTINUOUS ) {
-	// 			// gen_h = new $GH.ContGenHierarchy(file);				
-	// 		}
-	// 	}
-	// }
+	
 	
 	instantiateGraph() : void {
 		// var cols = Object.keys(this._hierarchies);
@@ -152,23 +167,36 @@ class SaNGreeA implements ISaNGreeA {
 	private readCSV(file: string, graph) {
 		var str_input = fs.readFileSync(file).toString().split('\n');
 		var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
-		var hierarchies = Object.keys(this._hierarchies);
+		var cont_hierarchies = Object.keys(this._cont_hierarchies);
+		var cat_hierarchies = Object.keys(this._cat_hierarchies);
 		
-		// TODO make generic!
+		/**
+		 * @TODO make generic!
+		 */
 		var min_age = Number.POSITIVE_INFINITY;
 		var max_age = Number.NEGATIVE_INFINITY;
 		
-		console.log(hierarchies);
+		console.log(cont_hierarchies);
+		console.log(cat_hierarchies);
 		console.log(str_cols);
 		
-		// construct the index array for feature selection
-		var feat_idx_select : {[idx: number] : string} = {};
+		/**
+		 * Construct the index array for feature selection
+		 */
+		var cont_feat_idx_select : {[idx: number] : string} = {};
 		str_cols.forEach((col, idx) => {
-			if (_.indexOf(hierarchies, col) >= 0) {
-				feat_idx_select[idx] = col;
+			if (_.indexOf(cont_hierarchies, col) >= 0) {
+				cont_feat_idx_select[idx] = col;
 			}
 		});
-		console.log(feat_idx_select);
+		var cat_feat_idx_select : {[idx: number] : string} = {};
+		str_cols.forEach((col, idx) => {
+			if (_.indexOf(cat_hierarchies, col) >= 0) {
+				cat_feat_idx_select[idx] = col;
+			}
+		});
+		
+		// console.log(cont_feat_idx_select);
 		
 		// draw sample of size draw_sample from dataset file
 		// var drawn_input = this.drawSample(str_input, feat_idx_select, this._options.nr_draws);
@@ -184,12 +212,19 @@ class SaNGreeA implements ISaNGreeA {
 			}
 			var line = str_input[i].replace(/\s+/g, '').split(',');
 			
-			// TODO - THIS IS JUST FOR COMPARISON !!
 			var line_valid = true;
-			for (var idx in feat_idx_select) {
+			for (var idx in cat_feat_idx_select) {
 				// console.log(line[idx]);
-				var hierarchy = this.getHierarchy(feat_idx_select[idx]);
-				if ( hierarchy instanceof $GH.StringGenHierarchy && !hierarchy.getLevelEntry(line[idx])) {
+				var cat_hierarchy = this.getCatHierarchy(cat_feat_idx_select[idx]);
+				if ( cat_hierarchy && !cat_hierarchy.getLevelEntry(line[idx])) {
+					// we have found an entry unspecified in our gen hierarchy
+					line_valid = false;
+				}
+			}
+			for (var idx in cont_feat_idx_select) {
+				var cont_hierarchy = this.getContHierarchy(cont_feat_idx_select[idx]);
+				if ( +line[idx] !== +line[idx] ) {
+					// we have a numeric value that's not a numeric value
 					line_valid = false;
 				}
 			}
@@ -202,8 +237,11 @@ class SaNGreeA implements ISaNGreeA {
 			var node = this._graph.addNode(i);
 			
 			// add features (columns in the dataset) 
-			for (var idx in feat_idx_select) {
-				node.setFeature(feat_idx_select[idx], line[idx]);
+			for (var idx in cat_feat_idx_select) {
+				node.setFeature(cat_feat_idx_select[idx], line[idx]);
+			}
+			for (var idx in cont_feat_idx_select) {
+				node.setFeature(cont_feat_idx_select[idx], +line[idx]);
 			}
 			// TODO make generic
 			var age = parseInt(line[0]);
@@ -217,7 +255,7 @@ class SaNGreeA implements ISaNGreeA {
 		
 		// instantiate age hierarcy
 		var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
-		this.setHierarchy('age', age_hierarchy);
+		this.setContHierarchy('age', age_hierarchy);
 		
 		// add random edges to make dataset a graph
 		// false means 'undirected'
@@ -231,40 +269,45 @@ class SaNGreeA implements ISaNGreeA {
 	/**
 	 * On conditional request, we can also draw a random sample
 	 */
-	private drawSample(array: any[], feat_idx_select: {}, size: number) : any[] {
-		var result = [],
-				seen = {},
-				feat_idx : string,
-				line_arr : any[],
-				entry: string,
-				entry_valid : boolean,
-				str_hierarchy : $GH.ContGenHierarchy | $GH.IStringGenHierarchy;
+	// private drawSample(array: any[], feat_idx_select: {}, size: number) : any[] {
+	// 	var result = [],
+	// 			seen = {},
+	// 			feat_idx : string,
+	// 			line_arr : any[],
+	// 			entry: string,
+	// 			entry_valid : boolean,
+	// 			str_hierarchy : $GH.ContGenHierarchy | $GH.IStringGenHierarchy;
 				
-		while ( size ) {
-			var rand_idx = (Math.random()*array.length)|0;
-			// sample already taken?
-			if ( seen[rand_idx] ) {
-				continue;
-			}
-			var line = array[rand_idx].replace(/\s+/g, '').split(',');
-			var line_valid = true;
-			for (var idx in feat_idx_select) {
-				// console.log(line[idx]);
-				
-				var hierarchy = this.getHierarchy(feat_idx_select[idx]);
-				if ( hierarchy instanceof $GH.StringGenHierarchy && !hierarchy.getLevelEntry(line[idx])) {
-					line_valid = false;
-				}
-			}
+	// 	while ( size ) {
+	// 		var rand_idx = (Math.random()*array.length)|0;
+	// 		// sample already taken?
+	// 		if ( seen[rand_idx] ) {
+	// 			continue;
+	// 		}
+	// 		var line = array[rand_idx].replace(/\s+/g, '').split(',');
+	// 		var line_valid = true;
+	// 		for (var idx in feat_idx_select) {
+	// 			// console.log(line[idx]);
+	// 			var cat_hierarchy = this.getCatHierarchy(feat_idx_select[idx]);
+	// 			if ( cat_hierarchy && !cat_hierarchy.getLevelEntry(line[idx])) {
+	// 				// we have found an entry unspecified in our gen hierarchy
+	// 				line_valid = false;
+	// 			}
+	// 			var cont_hierarchy = this.getContHierarchy(feat_idx_select[idx]);
+	// 			if ( +line[idx] !== +line[idx] ) {
+	// 				// we have a numeric value that's not a numeric value
+	// 				line_valid = false;
+	// 			}
+	// 		}
 			
-			if( line_valid ) {
-				result.push(line);
-				size--;
-			}
-		}		
+	// 		if( line_valid ) {
+	// 			result.push(line);
+	// 			size--;
+	// 		}
+	// 	}		
 		
-		return result;
-	}
+	// 	return result;
+	// }
 		
 	
 
@@ -273,9 +316,7 @@ class SaNGreeA implements ISaNGreeA {
 				N = this._graph.getNodes(),
 				keys = Object.keys(N), // for length...
 				X, // our current node ID
-				// node_x, // our current node object
 				Y, // our candidate node ID
-				// node_y, // our candidate node object
 				current_best, // the currently best node
 				added = {}, // mark all nodes already added to clusters
 				cont_costs, // continuous costs
@@ -399,11 +440,9 @@ class SaNGreeA implements ISaNGreeA {
 				}
 				
 				// now, all the categorical features
-				for (var hi in this._hierarchies) {
-					var h = this._hierarchies[hi];
-					if (h instanceof $GH.StringGenHierarchy) {
-						outstring += h.getName(cluster.gen_feat[hi]) + ", ";
-					}
+				for (var hi in this._cat_hierarchies) {
+					var h = this._cat_hierarchies[hi];
+					outstring += h.getName(cluster.gen_feat[hi]) + ", ";
 				}
 				outstring = outstring.slice(0, -2) + "\n";
 			}
@@ -419,71 +458,57 @@ class SaNGreeA implements ISaNGreeA {
 	}
 	
 
-	private updateLevels(Cl: nodeCluster, Y) : void {
-		
-		var feat_array = ["workclass", "native-country", "marital-status", "race", "sex"];
-		
-		feat_array.forEach((feat) => {
-			var cat_gh = this.getHierarchy(feat);
+	private updateLevels(Cl: nodeCluster, Y) : void {		
+		for (var feat in this._cat_hierarchies) {
+			var cat_gh = this.getCatHierarchy(feat);
 			
-			// TODO - !!!
-			if ( cat_gh instanceof $GH.StringGenHierarchy ) {
-				var Cl_feat = Cl.gen_feat[feat];
-				var Y_feat = Y.getFeature(feat);
-				var Cl_level = cat_gh.getLevelEntry(Cl_feat);
-				var Y_level = cat_gh.getLevelEntry(Y_feat);
-				// bark up the (right) tree (root should gen to itself)
-				while( Cl_feat !== Y_feat ) {
-					// console.log("Comparing features: " + Cl_feat + ", " + Y_feat);
-					// console.log("Comparing levels: " + Cl_level + ", " + Y_level);
-					
-					Y_feat = cat_gh.getGeneralizationOf(Y_feat);
-					Y_level = cat_gh.getLevelEntry(Y_feat);
-					if ( Cl_level > Y_level ) {
-						Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
-						Cl_level = cat_gh.getLevelEntry(Cl_feat);
-					}
+			var Cl_feat = Cl.gen_feat[feat];
+			var Y_feat = Y.getFeature(feat);
+			var Cl_level = cat_gh.getLevelEntry(Cl_feat);
+			var Y_level = cat_gh.getLevelEntry(Y_feat);
+			// bark up the (right) tree (root should gen to itself)
+			while( Cl_feat !== Y_feat ) {
+				// console.log("Comparing features: " + Cl_feat + ", " + Y_feat);
+				// console.log("Comparing levels: " + Cl_level + ", " + Y_level);
+				
+				Y_feat = cat_gh.getGeneralizationOf(Y_feat);
+				Y_level = cat_gh.getLevelEntry(Y_feat);
+				if ( Cl_level > Y_level ) {
+					Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
+					Cl_level = cat_gh.getLevelEntry(Cl_feat);
 				}
-				// console.log("Should equal: " + Cl_feat + ", " + Y_feat);
-				Cl.gen_feat[feat] = Cl_feat;			
 			}
-		});
+			// console.log("Should equal: " + Cl_feat + ", " + Y_feat);
+			Cl.gen_feat[feat] = Cl_feat;			
+		}
 	}
 	
 	
 	private calculateCatCosts(Cl: nodeCluster, Y) {
 		var costs = 0;
 		
-		var feat_array = ["workclass", "native-country", "marital-status", "race", "sex"];
-		
-		feat_array.forEach((feat) => {
-			var cat_gh = this.getHierarchy(feat);
-			
-			// TODO - !!!
-			if ( cat_gh instanceof $GH.StringGenHierarchy ) {
-				var Cl_feat = Cl.gen_feat[feat];
-				var Y_feat = Y.getFeature(feat);
-				var Cl_level = cat_gh.getLevelEntry(Cl_feat);
-				var Y_level = cat_gh.getLevelEntry(Y_feat);
-				// bark up the (right) tree (root should gen to itself)
-				while( Cl_feat !== Y_feat ) {
-					// console.log("Comparing features: " + Cl_feat + ", " + Y_feat);
-					// console.log("Comparing levels: " + Cl_level + ", " + Y_level);
+		for (var feat in this._cat_hierarchies) {	
+			var cat_gh = this.getCatHierarchy(feat);
 					
-					Y_feat = cat_gh.getGeneralizationOf(Y_feat);
-					Y_level = cat_gh.getLevelEntry(Y_feat);
-					if ( Cl_level > Y_level ) {
-						Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
-						Cl_level = cat_gh.getLevelEntry(Cl_feat);
-					}
+			var Cl_feat = Cl.gen_feat[feat];
+			var Y_feat = Y.getFeature(feat);
+			var Cl_level = cat_gh.getLevelEntry(Cl_feat);
+			var Y_level = cat_gh.getLevelEntry(Y_feat);
+			// bark up the (right) tree (root should gen to itself)
+			while( Cl_feat !== Y_feat ) {
+				// console.log("Comparing features: " + Cl_feat + ", " + Y_feat);
+				// console.log("Comparing levels: " + Cl_level + ", " + Y_level);
+				
+				Y_feat = cat_gh.getGeneralizationOf(Y_feat);
+				Y_level = cat_gh.getLevelEntry(Y_feat);
+				if ( Cl_level > Y_level ) {
+					Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
+					Cl_level = cat_gh.getLevelEntry(Cl_feat);
 				}
-				// console.log("Should equal: " + Cl_feat + ", " + Y_feat);
-				// console.log(this._weights[feat]);
-				costs += this._weights[feat] * ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );				
 			}
-		});
-		
-		return costs / feat_array.length;
+			costs += this._weights[feat] * ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );			
+		}	
+		return costs / Object.keys(this._cat_hierarchies).length;
 	}
 	
 	
@@ -496,7 +521,7 @@ class SaNGreeA implements ISaNGreeA {
 		// expand range
 		var new_range: number[] = this.expandRange(age_range, Y.getFeature('age'));
 		// calculate cost
-		var age_hierarchy = this.getHierarchy('age');
+		var age_hierarchy = this.getContHierarchy('age');
 		var cost = age_hierarchy instanceof $GH.ContGenHierarchy? age_hierarchy.genCostOfRange(new_range[0], new_range[1]) : 0;
 		// console.log("Range cost: " + cost);
 		return this._weights['age'] * cost;
@@ -513,11 +538,8 @@ class SaNGreeA implements ISaNGreeA {
 		range[0] < range[0] ? nr : range[0];
 		range[1] = nr > range[1] ? nr : range[1];
 	}
-	
-	
-	
-	
-	
+
+
 }
 
 	

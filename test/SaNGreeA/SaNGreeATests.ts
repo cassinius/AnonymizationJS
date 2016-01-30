@@ -91,15 +91,16 @@ describe('SANGREEA TESTS', () => {
 	
 		it('should have no gen hierarchies after instantiation', () => {
 			san = new $San.SaNGreeA("test", adults);
-			expect(Object.keys(san.getHierarchies()).length).to.equal(0);
+			expect(Object.keys(san.getCatHierarchies()).length).to.equal(0);
+			expect(Object.keys(san.getContHierarchies()).length).to.equal(0);
 		});
 	
 		
 		it('should correctly set a new string hierarchy', () => {
 			strgh = new $GH.StringGenHierarchy(workclass_file);
 			san = new $San.SaNGreeA("test", adults);
-			san.setHierarchy("workclass", strgh);
-			hierarchy = san.getHierarchy("workclass");
+			san.setCatHierarchy("workclass", strgh);
+			hierarchy = san.getCatHierarchy("workclass");
 			expect(hierarchy).to.be.an.instanceof($GH.StringGenHierarchy);
 			if ( hierarchy instanceof $GH.StringGenHierarchy ) {
 				expect(hierarchy.nrLevels()).to.equal(2);
@@ -110,8 +111,8 @@ describe('SANGREEA TESTS', () => {
 		it('should correctly set a new continuous hierarchy', () => {
 			contgh = new $GH.ContGenHierarchy("age", 11, 99);
 			san = new $San.SaNGreeA("test", adults);
-			san.setHierarchy("age", contgh);
-			hierarchy = san.getHierarchy("age");
+			san.setContHierarchy("age", contgh);
+			hierarchy = san.getContHierarchy("age");
 			expect(hierarchy).to.be.an.instanceof($GH.ContGenHierarchy);
 			if ( hierarchy instanceof $GH.ContGenHierarchy ) {
 				expect(hierarchy.genCostOfRange(30, 52)).to.equal(1/4);
@@ -137,13 +138,12 @@ describe('SANGREEA TESTS', () => {
 			san = new $San.SaNGreeA("adults", adults);
 			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
-				san.setHierarchy(strgh._name, strgh);
+				san.setCatHierarchy(strgh._name, strgh);
 			});
-			expect(san.getHierarchy('workclass')).not.to.be.undefined;
-			expect(san.getHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
-			expect(san.getHierarchy('native-country')).not.to.be.undefined;
-			expect(san.getHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
-			// contgh = new $GH.ContGenHierarchy()
+			expect(san.getCatHierarchy('workclass')).not.to.be.undefined;
+			expect(san.getCatHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
+			expect(san.getCatHierarchy('native-country')).not.to.be.undefined;
+			expect(san.getCatHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
 		});
 		
 		
@@ -170,7 +170,7 @@ describe('SANGREEA TESTS', () => {
 			san = new $San.SaNGreeA("adults", adults, undefined, weights);
 			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
-				san.setHierarchy(strgh._name, strgh);
+				san.setCatHierarchy(strgh._name, strgh);
 			});
 			
 			san.instantiateGraph();
@@ -195,7 +195,7 @@ describe('SANGREEA TESTS', () => {
 			san = new $San.SaNGreeA("adults", adults, undefined, weights);
 			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
-				san.setHierarchy(strgh._name, strgh);
+				san.setCatHierarchy(strgh._name, strgh);
 			});
 			
 			san.instantiateGraph();
