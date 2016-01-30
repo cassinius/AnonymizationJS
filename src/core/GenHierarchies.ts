@@ -161,6 +161,12 @@ class ContGenHierarchy implements IContGenHierarchy {
 		if ( from > to ) {
 			throw new Error('Cannot generalize to negative range.');
 		}
+		if ( from < this._min ) {
+			throw new Error('Cannot generalize span. From parameter less than range min.');
+		}
+		if ( to > this._max ) {
+			throw new Error('Cannot generalize span. To parameter greater than range max.');
+		}
 		return ((to - from) / (this._max - this._min));
 	}
 	

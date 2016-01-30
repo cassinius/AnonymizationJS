@@ -168,6 +168,18 @@ describe('String Generalization Hierarchies Tests: ', () => {
 			});
 			
 			
+			it('should throw an error if gen span is out of range (from span < range min)', () => {
+				contgh = new $GH.ContGenHierarchy("test", 11, 99);
+				expect(contgh.genCostOfRange.bind(contgh, 8, 12)).to.throw('Cannot generalize span. From parameter less than range min.');
+			});
+			
+			
+			it('should throw an error if gen span is out of range (from span < range min)', () => {
+				contgh = new $GH.ContGenHierarchy("test", 11, 99);
+				expect(contgh.genCostOfRange.bind(contgh, 88, 112)).to.throw('Cannot generalize span. To parameter greater than range max.');
+			});
+			
+			
 			it('should correctly compute some generalization cost, all positive', () => {
 				contgh = new $GH.ContGenHierarchy("test", 11, 99);
 				expect(contgh.genCostOfRange(25, 29)).to.equal(1/22);
@@ -176,7 +188,7 @@ describe('String Generalization Hierarchies Tests: ', () => {
 			
 			it('should correctly compute some generalization cost, all negative', () => {
 				contgh = new $GH.ContGenHierarchy("test", -99, -11);
-				expect(contgh.genCostOfRange(-8, 0)).to.equal(1/11);
+				expect(contgh.genCostOfRange(-20, -12)).to.equal(1/11);
 			});
 						
 			
