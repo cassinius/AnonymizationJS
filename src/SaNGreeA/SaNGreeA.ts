@@ -228,6 +228,9 @@ class SaNGreeA implements ISaNGreeA {
 	}
 	
 	
+	/**
+	 * On conditional request, we can also draw a random sample
+	 */
 	private drawSample(array: any[], feat_idx_select: {}, size: number) : any[] {
 		var result = [],
 				seen = {},

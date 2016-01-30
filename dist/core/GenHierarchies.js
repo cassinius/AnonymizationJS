@@ -2,55 +2,70 @@ var fs = require('fs');
 var StringGenHierarchy = (function () {
     function StringGenHierarchy(filePath) {
         this.filePath = filePath;
-        this._levels = [];
+        this._entries = {};
+        this._nr_levels = 0;
         var json = JSON.parse(fs.readFileSync(filePath).toString());
         this._name = json.name;
         this.readFromJson(json);
     }
     StringGenHierarchy.prototype.readFromJson = function (json) {
-        if (!json.levels
-            || !json.levels[0]
-            || !json.levels[0].entries
-            || Object.keys(json.levels[0].entries).length !== 1) {
-            throw new Error("JSON invalid. Level 0 does not contain exactly 1 entry.");
-        }
-        for (var level_idx in json.levels) {
-            var json_level = json.levels[level_idx];
-            var level = ({
-                "id": json_level.id,
-                "cost": json_level.cost,
-                "entries": {}
-            });
-            for (var entry_key in json_level.entries) {
-                var json_entry = json_level.entries[entry_key];
-                level.entries[entry_key] = json_entry;
+        var level_1s = 0;
+        for (var entry_idx in json.entries) {
+            var json_entry = json.entries[entry_idx];
+            var level = +json_entry.level;
+            if (level === 0) {
+                level_1s++;
             }
-            this._levels.push(level);
+            if (level > this._nr_levels) {
+                this._nr_levels = level;
+            }
+            var entry = ({
+                "name": json_entry.name,
+                "gen": json_entry.gen,
+                "level": json_entry.level
+            });
+            this._entries[entry_idx] = entry;
+        }
+        if (level_1s !== 1) {
+            throw new Error("JSON invalid. Level 0 must contain exactly 1 entry.");
         }
     };
-    StringGenHierarchy.prototype.getLevels = function () {
-        return this._levels;
+    StringGenHierarchy.prototype.nrLevels = function () {
+        return this._nr_levels;
+    };
+    StringGenHierarchy.prototype.getEntries = function () {
+        return this._entries;
     };
     StringGenHierarchy.prototype.getLevelEntry = function (key) {
-        var i = this._levels.length;
-        while (i--) {
-            var entry = this._levels[i].entries[key];
-            if (entry) {
-                return i;
-            }
-        }
-        return undefined;
+        return this._entries[key] ? this._entries[key].level : undefined;
     };
     StringGenHierarchy.prototype.getGeneralizationOf = function (key) {
-        var i = this._levels.length;
-        while (i--) {
-            var entry = this._levels[i].entries[key];
-            if (entry) {
-                return entry.gen;
-            }
-        }
-        return undefined;
+        return this._entries[key] ? this._entries[key].gen : undefined;
+    };
+    StringGenHierarchy.prototype.getName = function (key) {
+        return this._entries[key].name;
     };
     return StringGenHierarchy;
 })();
 exports.StringGenHierarchy = StringGenHierarchy;
+var ContGenHierarchy = (function () {
+    function ContGenHierarchy(_name, _min, _max) {
+        this._name = _name;
+        this._min = _min;
+        this._max = _max;
+        if (_min > _max) {
+            throw new Error('Range invalid. Min greater than Max.');
+        }
+        if (_min === _max) {
+            throw new Error('Range invalid. Min equals Max.');
+        }
+    }
+    ContGenHierarchy.prototype.genCostOfRange = function (from, to) {
+        if (from > to) {
+            throw new Error('Cannot generalize to negative range.');
+        }
+        return ((to - from) / (this._max - this._min));
+    };
+    return ContGenHierarchy;
+})();
+exports.ContGenHierarchy = ContGenHierarchy;

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>SNCluster | Graphinius</title>
+	<title>IContGenHierarchy | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,13 +57,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_sangreea_sndistancefuncs_.html">&quot;SaNGreeA/SNDistanceFuncs&quot;</a>
+					<a href="../modules/_core_genhierarchies_.html">&quot;core/GenHierarchies&quot;</a>
 				</li>
 				<li>
-					<a href="_sangreea_sndistancefuncs_.sncluster.html">SNCluster</a>
+					<a href="_core_genhierarchies_.icontgenhierarchy.html">IContGenHierarchy</a>
 				</li>
 			</ul>
-			<h1>Interface SNCluster</h1>
+			<h1>Interface IContGenHierarchy</h1>
 		</div>
 	</div>
 </header>
@@ -74,8 +74,14 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">SNCluster</span>
+						<span class="target">IContGenHierarchy</span>
 					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel">
+				<h3>Implemented by</h3>
+				<ul class="tsd-hierarchy">
+					<li><a href="../classes/_core_genhierarchies_.contgenhierarchy.html" class="tsd-signature-type">ContGenHierarchy</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -85,8 +91,15 @@
 						<section class="tsd-index-section tsd-is-not-exported">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_sangreea_sndistancefuncs_.sncluster.html#id" class="tsd-kind-icon">id</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_sangreea_sndistancefuncs_.sncluster.html#nodes" class="tsd-kind-icon">nodes</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_core_genhierarchies_.icontgenhierarchy.html#_max" class="tsd-kind-icon">_max</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_core_genhierarchies_.icontgenhierarchy.html#_min" class="tsd-kind-icon">_min</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_core_genhierarchies_.icontgenhierarchy.html#_name" class="tsd-kind-icon">_name</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section tsd-is-not-exported">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-not-exported"><a href="_core_genhierarchies_.icontgenhierarchy.html#gencostofrange" class="tsd-kind-icon">gen<wbr>Cost<wbr>OfRange</a></li>
 							</ul>
 						</section>
 					</div>
@@ -95,24 +108,63 @@
 			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="id" class="tsd-anchor"></a>
-					<h3>id</h3>
-					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Number</span></div>
+					<a name="_max" class="tsd-anchor"></a>
+					<h3>_max</h3>
+					<div class="tsd-signature tsd-kind-icon">_max<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SNDistanceFuncs.ts#L15">SaNGreeA/SNDistanceFuncs.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/core/GenHierarchies.ts#L143">core/GenHierarchies.ts:143</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="nodes" class="tsd-anchor"></a>
-					<h3>nodes</h3>
-					<div class="tsd-signature tsd-kind-icon">nodes<span class="tsd-signature-symbol">:</span> <a href="_sangreea_sndistancefuncs_.graphnode.html" class="tsd-signature-type">GraphNode</a><span class="tsd-signature-symbol">[]</span></div>
+					<a name="_min" class="tsd-anchor"></a>
+					<h3>_min</h3>
+					<div class="tsd-signature tsd-kind-icon">_min<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SNDistanceFuncs.ts#L16">SaNGreeA/SNDistanceFuncs.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/core/GenHierarchies.ts#L142">core/GenHierarchies.ts:142</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="_name" class="tsd-anchor"></a>
+					<h3>_name</h3>
+					<div class="tsd-signature tsd-kind-icon">_name<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/core/GenHierarchies.ts#L141">core/GenHierarchies.ts:141</a></li>
+						</ul>
+					</aside>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-not-exported">
+					<a name="gencostofrange" class="tsd-anchor"></a>
+					<h3>gen<wbr>Cost<wbr>OfRange</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">gen<wbr>Cost<wbr>OfRange<span class="tsd-signature-symbol">(</span>from<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, to<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/core/GenHierarchies.ts#L145">core/GenHierarchies.ts:145</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>from: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>to: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -122,48 +174,54 @@
 					<li class="globals  ">
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
-					<li class="current tsd-kind-external-module">
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_sangreea_sndistancefuncs_.html">"<wbr>SaNGree<wbr>A/SNDistance<wbr>Funcs"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="../modules/_sangreea_sangreea_.html">"<wbr>SaNGree<wbr>A/SaNGree<wbr>A"</a>
 					</li>
-					<li class=" tsd-kind-external-module">
+					<li class="current tsd-kind-external-module">
 						<a href="../modules/_core_genhierarchies_.html">"core/<wbr>Gen<wbr>Hierarchies"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_sangreea_sndistancefuncs_.cluster.html" class="tsd-kind-icon">Cluster</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../classes/_core_genhierarchies_.contgenhierarchy.html" class="tsd-kind-icon">Cont<wbr>Gen<wbr>Hierarchy</a>
 					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_sangreea_sndistancefuncs_.graphnode.html" class="tsd-kind-icon">Graph<wbr>Node</a>
+					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="../classes/_core_genhierarchies_.stringgenhierarchy.html" class="tsd-kind-icon">String<wbr>Gen<wbr>Hierarchy</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_sangreea_sndistancefuncs_.sncluster.html" class="tsd-kind-icon">SNCluster</a>
+						<a href="_core_genhierarchies_.icontgenhierarchy.html" class="tsd-kind-icon">ICont<wbr>Gen<wbr>Hierarchy</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_sangreea_sndistancefuncs_.sncluster.html#id" class="tsd-kind-icon">id</a>
+								<a href="_core_genhierarchies_.icontgenhierarchy.html#_max" class="tsd-kind-icon">_max</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_sangreea_sndistancefuncs_.sncluster.html#nodes" class="tsd-kind-icon">nodes</a>
+								<a href="_core_genhierarchies_.icontgenhierarchy.html#_min" class="tsd-kind-icon">_min</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_core_genhierarchies_.icontgenhierarchy.html#_name" class="tsd-kind-icon">_name</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-not-exported">
+								<a href="_core_genhierarchies_.icontgenhierarchy.html#gencostofrange" class="tsd-kind-icon">gen<wbr>Cost<wbr>OfRange</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
 					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="_sangreea_sndistancefuncs_.snnode.html" class="tsd-kind-icon">SNNode</a>
+						<a href="_core_genhierarchies_.istringghentry.html" class="tsd-kind-icon">IStringGHEntry</a>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_sangreea_sndistancefuncs_.html#nodeclusterdistance" class="tsd-kind-icon">node<wbr>Cluster<wbr>Distance</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_genhierarchies_.istringgenhierarchy.html" class="tsd-kind-icon">IString<wbr>Gen<wbr>Hierarchy</a>
 					</li>
-					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../modules/_sangreea_sndistancefuncs_.html#nodenodedistance" class="tsd-kind-icon">node<wbr>Node<wbr>Distance</a>
+					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-is-not-exported">
+						<a href="_core_genhierarchies_.stringgenjson.html" class="tsd-kind-icon">String<wbr>GenJSON</a>
 					</li>
 				</ul>
 			</nav>

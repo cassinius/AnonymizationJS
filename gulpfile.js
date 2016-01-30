@@ -14,7 +14,7 @@ var paths = {
 	typescripts: ['src/**/*.ts', 'test/**/*.ts', 'test_async_nomock/**/*.ts'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'test/**/*.js', 'test_async_nomock/**/*Tests.js', 'build', 'dist', 'docs'],
+	clean: ['src/**/*.js', 'test/**/*.js', 'test_async_nomock/**/*Tests.js', 'test/output/*', 'build', 'dist', 'docs'],
 	tests: ['test/**/*.js']
 };
 
