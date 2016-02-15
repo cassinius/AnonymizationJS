@@ -8,7 +8,7 @@ import * as $San from '../../src/SaNGreeA/SaNGreeA';
 var expect = chai.expect,
 		assert = chai.assert,
 		opts : $San.ISaNGreeAOptions,
-		adults = './test/input/test_data/adult_data.csv',
+		adults = './test/io/test_input/adult_data.csv',
 		san : $San.ISaNGreeA;
 		
 		
@@ -86,7 +86,7 @@ describe('SANGREEA TESTS', () => {
 		var strgh : $GH.IStringGenHierarchy,
 				contgh : $GH.IContGenHierarchy,
 				hierarchy : $GH.IStringGenHierarchy | $GH.IContGenHierarchy,
-				workclass_file = './test/input/test_data/WorkClassGH.json';
+				workclass_file = './test/io/test_input/WorkClassGH.json';
 	
 	
 		it('should have no gen hierarchies after instantiation', () => {
@@ -127,11 +127,11 @@ describe('SANGREEA TESTS', () => {
 		var strgh : $GH.IStringGenHierarchy,
 				contgh : $GH.IContGenHierarchy,
 				hierarchy : $GH.IStringGenHierarchy | $GH.IContGenHierarchy,
-				workclass_file = './test/input/test_data/WorkClassGH.json',
-				sex_file = './test/input/test_data/SexGH.json',
-				race_file = './test/input/test_data/RaceGH.json',
-				marital_file = './test/input/test_data/MaritalStatusGH.json',
-				nat_country_file = './test/input/test_data/NativeCountryGH.json';
+				workclass_file = './test/io/test_input/WorkClassGH.json',
+				sex_file = './test/io/test_input/SexGH.json',
+				race_file = './test/io/test_input/RaceGH.json',
+				marital_file = './test/io/test_input/MaritalStatusGH.json',
+				nat_country_file = './test/io/test_input/NativeCountryGH.json';
 				
 				
 		beforeEach(() => {
@@ -180,7 +180,7 @@ describe('SANGREEA TESTS', () => {
 			san.outputAnonymizedCSV(outfile);
 			// expect(san._graph.nrNodes()).to.equal(300);
 		});
-				
+		
 		
 		it('should compute an anonymization with higher weight for marital status', () => {
 			var weights = {
@@ -203,6 +203,7 @@ describe('SANGREEA TESTS', () => {
 			
 			var outfile = (+new Date()).toString();
 			san.outputAnonymizedCSV(outfile);
+      
 			// expect(san._graph.nrNodes()).to.equal(300);
 		});
 		

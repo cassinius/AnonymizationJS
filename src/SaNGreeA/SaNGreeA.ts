@@ -12,13 +12,15 @@ var $Search = Graphinius.$Search;
 // console.log($G);
 // console.log($Search);
 
-interface ISaNGreeAOptions {
+
+export interface ISaNGreeAOptions {
 	nr_draws: number;
 	edge_min:	number;
 	edge_max: number;
 }
 
-enum HierarchyType {
+
+export enum HierarchyType {
 	CONTINUOUS,
 	CATEGORICAL
 }
@@ -29,14 +31,14 @@ enum HierarchyType {
  *  at which levels it's attributes are (workclass, native-country),
  *  the range costs for it's numeric attributes
  */
-interface nodeCluster {
+export interface nodeCluster {
 	nodes : {[id: string] : any};
 	gen_feat : {[id: string] : string};
 	gen_ranges : {[id: string] : number[]};
 }
 
 
-interface ISaNGreeA {
+export interface ISaNGreeA {
 	_name: string;
 	_graph;
 	_clusters : Array<nodeCluster>;
@@ -65,8 +67,7 @@ class SaNGreeA implements ISaNGreeA {
 	 */
 	public _graph;
 	public _clusters : Array<nodeCluster>;
-	public _weights;
-	
+	public _weights;	
 	private _options : ISaNGreeAOptions;
 	
 	/**
@@ -75,8 +76,8 @@ class SaNGreeA implements ISaNGreeA {
 	 * the data file (as long as they exist) which are specified in a
 	 * hierarchy given to the algorithm
 	 * 
-	 * This also means, that any range-based attributes present in the
-	 * data file must
+	 * This also means that any range-based hierarchies must be updated
+   * on the fly with min/max range
 	 */
 	private _cont_hierarchies : {[name: string] : $GH.IContGenHierarchy} = {};
 	private _cat_hierarchies : {[name: string] : $GH.IStringGenHierarchy} = {};
@@ -87,9 +88,13 @@ class SaNGreeA implements ISaNGreeA {
 							 opts? : ISaNGreeAOptions,
 							 weights? : {})
 	{
-		console.log("Given weights: " + weights);
+		// console.log("Given weights: " + weights);
 		
-		// TODO make generic (hack!!)
+		/** 
+     * TODO make generic (hack!!)
+     * TODO wait for all Hierarchies to be set, so - 
+     * calculate only at beginning of actual anonymization run?
+     */ 
 		this._weights = weights || {
 			'age': 1/6,
 			'workclass': 1/6,
@@ -151,11 +156,18 @@ class SaNGreeA implements ISaNGreeA {
 	
 	
 	
-	instantiateGraph() : void {
+	instantiateGraph(name: string = "default") : void {
 		// var cols = Object.keys(this._hierarchies);
 		this._graph = new $G.Graph("adults");
 		// console.dir(this._graph);
 		this.readCSV(this._input_file, this._graph);
+		/**
+     * add random edges to make dataset a graph
+     * false means 'undirected'
+     * @TODO needs separate test cases and an implementation 
+     * of a network distance function (SIL) before use
+     */		
+		// this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
 	}
 	
 	
@@ -177,9 +189,9 @@ class SaNGreeA implements ISaNGreeA {
 		var min_age = Number.POSITIVE_INFINITY;
 		var max_age = Number.NEGATIVE_INFINITY;
 		
-		console.log(cont_hierarchies);
-		console.log(cat_hierarchies);
-		console.log(str_cols);
+		// console.log(cont_hierarchies);
+		// console.log(cat_hierarchies);
+		// console.log(str_cols);
 		
 		/**
 		 * Construct the index array for feature selection
@@ -209,7 +221,7 @@ class SaNGreeA implements ISaNGreeA {
 		for ( var i = 0; i < draw; i++ ) { // drawn_input.length
 			// check for empty lines at the end
 			if ( !str_input[i] ) {
-				break;
+				continue;
 			}
 			var line = str_input[i].replace(/\s+/g, '').split(',');
 			
@@ -257,13 +269,6 @@ class SaNGreeA implements ISaNGreeA {
 		// instantiate age hierarcy
 		var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
 		this.setContHierarchy('age', age_hierarchy);
-		
-		// add random edges to make dataset a graph
-		// false means 'undirected'
-		this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
-		
-		// console.log(this._graph.getStats());
-		// console.log(this.getHierarchies());
 	}
 	
 	
@@ -309,6 +314,50 @@ class SaNGreeA implements ISaNGreeA {
 		
 	// 	return result;
 	// }
+  
+  
+  
+	/**
+	 * TODO better way to do this than manually 
+	 * constructing the string ?!?!
+	 */
+	outputAnonymizedCSV(outfile: string) : void {		
+		var outstring = "";
+		// for (var hi in this._hierarchies) {
+		// 	outstring += hi + ", ";
+		// }
+		// outstring = outstring.slice(0, -2) + "\n";
+		
+		for ( var cl_idx in this._clusters ) {
+			var cluster = this._clusters[cl_idx];
+					
+			for ( var count in cluster.nodes ) {				
+				// first, let's write out the age range
+				var age_range = cluster.gen_ranges['age'];
+				if ( age_range[0] === age_range[1] ) {
+					outstring += age_range[0] + ", ";
+				}
+				else {
+					outstring += "[" + age_range[0] + " - " + age_range[1] + "], ";
+				}
+				
+				// now, all the categorical features
+				for (var hi in this._cat_hierarchies) {
+					var h = this._cat_hierarchies[hi];
+					outstring += h.getName(cluster.gen_feat[hi]) + ", ";
+				}
+				outstring = outstring.slice(0, -2) + "\n";
+			}
+
+		}
+		
+		// TODO... here we go again...
+		// var out_arr = outstring.split("\n");
+		var first_line = "age, workclass, native-country, sex, race, marital-status \n";
+		outstring = first_line + outstring;
+		
+		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+	}
 		
 	
 
@@ -337,11 +386,13 @@ class SaNGreeA implements ISaNGreeA {
 				continue; // we've already seen this one
 			}
 			
-			// cluster, has to be 'renewed' every cycle
-			// we don't want to write over the old one..
-			// TODO make generic
-			// TODO stop union type nonsense
-			
+			/**
+       * NODE CLUSTER
+       * this should become it's own class..
+       * @TODO make generic
+       * @TODO look up extendable TS interfaces 
+       *       or enums (runtime add / delete)
+       */			
 			var Cl : nodeCluster = { 
 				nodes : {},
 				gen_feat : {
@@ -388,10 +439,9 @@ class SaNGreeA implements ISaNGreeA {
 				}
 				
 				// console.log("Best costs: " + best_costs);
-				// console.log("Best node: " + current_best.getID());
-				
+				// console.log("Best node: " + current_best.getID());				
 				// console.log("Node to add: " + current_best);
-				
+        				
 				// add best candidate and update costs
 				Cl.nodes[current_best.getID()] = current_best;
 				
@@ -413,49 +463,6 @@ class SaNGreeA implements ISaNGreeA {
 		// console.dir(S);
 		console.log("Built " + S.length + " clusters.");
 		this._clusters = S;
-	}
-	
-	
-	/**
-	 * TODO better way to do this than manually 
-	 * constructing the string ?!?!
-	 */
-	outputAnonymizedCSV(outfile: string) : void {		
-		var outstring = "";
-		// for (var hi in this._hierarchies) {
-		// 	outstring += hi + ", ";
-		// }
-		// outstring = outstring.slice(0, -2) + "\n";
-		
-		for ( var cl_idx in this._clusters ) {
-			var cluster = this._clusters[cl_idx];
-					
-			for ( var count in cluster.nodes ) {				
-				// first, let's write out the age range
-				var age_range = cluster.gen_ranges['age'];
-				if ( age_range[0] === age_range[1] ) {
-					outstring += age_range[0] + ", ";
-				}
-				else {
-					outstring += "[" + age_range[0] + " - " + age_range[1] + "], ";
-				}
-				
-				// now, all the categorical features
-				for (var hi in this._cat_hierarchies) {
-					var h = this._cat_hierarchies[hi];
-					outstring += h.getName(cluster.gen_feat[hi]) + ", ";
-				}
-				outstring = outstring.slice(0, -2) + "\n";
-			}
-
-		}
-		
-		// TODO... here we go again...
-		// var out_arr = outstring.split("\n");
-		var first_line = "age, workclass, native-country, sex, race, marital-status \n";
-		outstring = first_line + outstring;
-		
-		fs.writeFileSync("./test/output/" + outfile + ".csv", outstring);
 	}
 	
 
@@ -544,4 +551,4 @@ class SaNGreeA implements ISaNGreeA {
 }
 
 	
-export { ISaNGreeA, SaNGreeA, ISaNGreeAOptions, HierarchyType };
+export { SaNGreeA };
