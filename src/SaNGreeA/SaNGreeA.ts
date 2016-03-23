@@ -1,16 +1,12 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import _ 		= require('lodash');
 import fs 	= require('fs');
 import path = require('path');
-import * as $GH from '../../src/core/GenHierarchies';
+import * as $GH from '../core/GenHierarchies';
 
-var Graphinius = require('../../node_modules/graphinius/index.js');
-var $G = Graphinius.$G;
-var $Search = Graphinius.$Search;
+var $G = require('graphinius').$G;
 
-// console.log($G);
-// console.log($Search);
+console.log($G);
 
 
 export interface ISaNGreeAOptions {
@@ -158,7 +154,7 @@ class SaNGreeA implements ISaNGreeA {
 	
 	instantiateGraph(name: string = "default") : void {
 		// var cols = Object.keys(this._hierarchies);
-		this._graph = new $G.Graph("adults");
+		this._graph = new $G.core.Graph("adults");
 		// console.dir(this._graph);
 		this.readCSV(this._input_file, this._graph);
 		/**
@@ -198,13 +194,13 @@ class SaNGreeA implements ISaNGreeA {
 		 */
 		var cont_feat_idx_select : {[idx: number] : string} = {};
 		str_cols.forEach((col, idx) => {
-			if (_.indexOf(cont_hierarchies, col) >= 0) {
+			if ( cont_hierarchies.indexOf(col) !== -1 ) {
 				cont_feat_idx_select[idx] = col;
 			}
 		});
 		var cat_feat_idx_select : {[idx: number] : string} = {};
 		str_cols.forEach((col, idx) => {
-			if (_.indexOf(cat_hierarchies, col) >= 0) {
+			if ( cat_hierarchies.indexOf(col) !== -1 ) {
 				cat_feat_idx_select[idx] = col;
 			}
 		});

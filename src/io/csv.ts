@@ -1,14 +1,13 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import _ 		= require('lodash');
 import fs 	= require('fs');
 import path = require('path');
-import * as $GH from '../../src/core/GenHierarchies';
+import * as $GH from '../core/GenHierarchies';
 
-var Graphinius = require('../../node_modules/graphinius/index.js');
-var $G = Graphinius.$G;
+// var Graphinius = require('graphinius');
+// var $G = Graphinius.$G;
 
-console.log($G);
+// console.log($G);
 
 export interface ICSV {
   _sep : string;

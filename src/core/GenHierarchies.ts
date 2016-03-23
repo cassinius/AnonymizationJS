@@ -39,13 +39,13 @@ import fs	= require('fs');
 //					{Never-worked: {name: 'Never-worked', gen: other}}
 //				]
 
-interface StringGenJSON {
+export interface StringGenJSON {
 	name: string;
 	entries: {[key: string] : IStringGHEntry};
 }
 
 
-interface IStringGenHierarchy {
+export interface IStringGenHierarchy {
 	_name: string;
 	
 	readFromJson(json: StringGenJSON) : void;
@@ -59,7 +59,7 @@ interface IStringGenHierarchy {
 }
 
 
-interface IStringGHEntry {
+export interface IStringGHEntry {
 	name: string;
 	gen: string;
 	level: number;
@@ -137,7 +137,7 @@ class StringGenHierarchy implements IStringGenHierarchy {
 }
 
 
-interface IContGenHierarchy {
+export interface IContGenHierarchy {
 	_name: string;
 	_min: number;
 	_max: number;
@@ -173,4 +173,4 @@ class ContGenHierarchy implements IContGenHierarchy {
 }
 
 
-export { IStringGenHierarchy, StringGenHierarchy, IContGenHierarchy, ContGenHierarchy };
+export { StringGenHierarchy, ContGenHierarchy };

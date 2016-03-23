@@ -3,7 +3,9 @@ var clean 			= require('gulp-clean');
 var mocha 			= require('gulp-mocha');
 var ts 					= require('gulp-typescript');
 var tdoc 				= require("gulp-typedoc");
-var browserify 	= require('gulp-browserify');
+var webpack 		= require('webpack-stream');
+var uglify 			= require('gulp-uglify');
+var rename 			= require('gulp-rename');
 var istanbul 		= require('gulp-istanbul');
 
 
@@ -16,7 +18,7 @@ var paths = {
 	testsources: ['src/**/*.js'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'test/**/*.js', 'test/io/test_output/*', 'build', 'dist', 'docs'],
+	clean: ['src/**/*.js', 'test/**/*.js', 'test/io/test_output/*', 'build', 'dist', 'docs', 'build'],
 	tests: ['test/**/*.js']
 };
 
@@ -24,7 +26,7 @@ var paths = {
 //----------------------------
 // TASKS
 //----------------------------
-gulp.task('build', function () {
+gulp.task('build', ['clean'], function () {
 	return gulp.src(paths.typescripts, {base: "."})
 						 .pipe(ts({
 							 target: "ES5",
@@ -36,7 +38,7 @@ gulp.task('build', function () {
 
 
 // Packaging - Node / Commonjs
-gulp.task('dist', ['clean', 'tdoc'], function () {
+gulp.task('dist', ['tdoc'], function () {
 	return gulp.src(paths.distsources)
 						 .pipe(ts({
 							 target: "ES5",
@@ -47,20 +49,25 @@ gulp.task('dist', ['clean', 'tdoc'], function () {
 });
 
 
-// Packaging - Browser
-// TODO rework into webpack !!
-gulp.task('browserify', ['dist'], function() {
-	// Single entry point to browserify 
-	gulp.src('./index.js')
-		.pipe(browserify({
-		  insertGlobals : false
-		}))
-		.pipe(gulp.dest('./build/graphinius'))
+// Packaging - Webpack
+gulp.task('pack', ['dist'], function() {
+	return gulp.src('./index.js')
+		.pipe(webpack( require('./webpack.config.js') ))
+		.pipe(gulp.dest('build/'));
+});
+
+
+// Uglification...
+gulp.task('bundle', ['pack'], function() {
+	return gulp.src('build/anonymization.js')
+		.pipe(uglify())
+		.pipe(rename('anonymization.min.js'))
+		.pipe(gulp.dest('build'));
 });
 
 
 // Documentation (type doc)
-gulp.task("tdoc", function() {
+gulp.task("tdoc", ['clean'], function() {
     return gulp
         .src(paths.typesources)
         .pipe(tdoc({
@@ -69,8 +76,7 @@ gulp.task("tdoc", function() {
             out: "docs/",
             name: "Graphinius"//,
 						// theme: "minimal"
-        }))
-    ;
+        }));
 });
 
 
