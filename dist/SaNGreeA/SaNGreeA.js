@@ -1,3 +1,4 @@
+"use strict";
 var fs = require('fs');
 var $GH = require('../core/GenHierarchies');
 var $G = require('graphinius').$G;
@@ -252,5 +253,5 @@ var SaNGreeA = (function () {
         range[1] = nr > range[1] ? nr : range[1];
     };
     return SaNGreeA;
-})();
+}());
 exports.SaNGreeA = SaNGreeA;

@@ -75,6 +75,7 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	var fs = __webpack_require__(2);
 	var StringGenHierarchy = (function () {
 	    function StringGenHierarchy(filePath) {
@@ -123,7 +124,7 @@
 	        return this._entries[key].name;
 	    };
 	    return StringGenHierarchy;
-	})();
+	}());
 	exports.StringGenHierarchy = StringGenHierarchy;
 	var ContGenHierarchy = (function () {
 	    function ContGenHierarchy(_name, _min, _max) {
@@ -150,7 +151,7 @@
 	        return ((to - from) / (this._max - this._min));
 	    };
 	    return ContGenHierarchy;
-	})();
+	}());
 	exports.ContGenHierarchy = ContGenHierarchy;
 
 
@@ -164,6 +165,7 @@
 /* 3 */
 /***/ function(module, exports) {
 
+	"use strict";
 	var CSV = (function () {
 	    function CSV(_sep) {
 	        if (_sep === void 0) { _sep = ","; }
@@ -172,7 +174,7 @@
 	    CSV.prototype.readCSV = function () {
 	    };
 	    return CSV;
-	})();
+	}());
 	exports.CSV = CSV;
 
 
@@ -180,6 +182,7 @@
 /* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
 	var fs = __webpack_require__(2);
 	var $GH = __webpack_require__(1);
 	var $G = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"graphinius\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())).$G;
@@ -434,7 +437,7 @@
 	        range[1] = nr > range[1] ? nr : range[1];
 	    };
 	    return SaNGreeA;
-	})();
+	}());
 	exports.SaNGreeA = SaNGreeA;
 
 

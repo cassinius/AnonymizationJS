@@ -1,3 +1,4 @@
+"use strict";
 var fs = require('fs');
 var StringGenHierarchy = (function () {
     function StringGenHierarchy(filePath) {
@@ -46,7 +47,7 @@ var StringGenHierarchy = (function () {
         return this._entries[key].name;
     };
     return StringGenHierarchy;
-})();
+}());
 exports.StringGenHierarchy = StringGenHierarchy;
 var ContGenHierarchy = (function () {
     function ContGenHierarchy(_name, _min, _max) {
@@ -73,5 +74,5 @@ var ContGenHierarchy = (function () {
         return ((to - from) / (this._max - this._min));
     };
     return ContGenHierarchy;
-})();
+}());
 exports.ContGenHierarchy = ContGenHierarchy;

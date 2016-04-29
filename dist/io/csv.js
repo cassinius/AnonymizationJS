@@ -1,3 +1,4 @@
+"use strict";
 var CSV = (function () {
     function CSV(_sep) {
         if (_sep === void 0) { _sep = ","; }
@@ -6,5 +7,5 @@ var CSV = (function () {
     CSV.prototype.readCSV = function () {
     };
     return CSV;
-})();
+}());
 exports.CSV = CSV;
