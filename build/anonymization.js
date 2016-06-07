@@ -311,6 +311,22 @@
 	        var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
 	        this.setContHierarchy('age', age_hierarchy);
 	    };
+	    SaNGreeA.prototype.outputPreprocCSV = function (outfile) {
+	        var outstring = "", nodes = this._graph.getNodes(), node = null, feature = null;
+	        for (var node_key in this._graph.getNodes()) {
+	            node = nodes[node_key];
+	            outstring += node.getFeature('age') + ", ";
+	            outstring += node.getFeature('workclass') + ", ";
+	            outstring += node.getFeature('native-country') + ", ";
+	            outstring += node.getFeature('sex') + ", ";
+	            outstring += node.getFeature('race') + ", ";
+	            outstring += node.getFeature('marital-status') + ", ";
+	            outstring += "\n";
+	        }
+	        var first_line = "age, workclass, native-country, sex, race, marital-status \n";
+	        outstring = first_line + outstring;
+	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+	    };
 	    SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
 	        var outstring = "";
 	        for (var cl_idx in this._clusters) {

@@ -149,10 +149,13 @@ describe('SANGREEA TESTS', () => {
 		
 		it('should instantiate a graph with the expected nr. of nodes', () => {
 			san.instantiateGraph();
+      var preprocOutfile = "cleared_input_" + (+new Date()).toString();
+      san.outputPreprocCSV(preprocOutfile);
+      
 			san.anonymizeGraph(10);
 			
-			var outfile = (+new Date()).toString();
-			san.outputAnonymizedCSV(outfile);
+			var anonymizedOutfile = "normal_weights_" + (+new Date()).toString();
+			san.outputAnonymizedCSV(anonymizedOutfile);
 			// expect(san._graph.nrNodes()).to.equal(300);
 		});
 		
@@ -176,13 +179,13 @@ describe('SANGREEA TESTS', () => {
 			san.instantiateGraph();
 			san.anonymizeGraph(10);
 			
-			var outfile = (+new Date()).toString();
-			san.outputAnonymizedCSV(outfile);
+			var anonymizedOutfileRace = "race_weights_" + (+new Date()).toString();
+			san.outputAnonymizedCSV(anonymizedOutfileRace);
 			// expect(san._graph.nrNodes()).to.equal(300);
 		});
 		
 		
-		it('should compute an anonymization with higher weight for marital status', () => {
+		it('should compute an anonymization with higher weight for age', () => {
 			var weights = {
 				'age': 0.95,
 				'workclass': 0.01,
@@ -201,8 +204,8 @@ describe('SANGREEA TESTS', () => {
 			san.instantiateGraph();
 			san.anonymizeGraph(10);
 			
-			var outfile = (+new Date()).toString();
-			san.outputAnonymizedCSV(outfile);
+			var anonymizedOutfileAge = "age_weights_" + (+new Date()).toString();
+			san.outputAnonymizedCSV(anonymizedOutfileAge);
       
 			// expect(san._graph.nrNodes()).to.equal(300);
 		});

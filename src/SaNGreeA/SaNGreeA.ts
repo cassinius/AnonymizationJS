@@ -52,6 +52,8 @@ export interface ISaNGreeA {
 	
 	instantiateGraph() : void;
 	anonymizeGraph(k: number, alpha?: number, beta?: number) : void;
+  
+  outputPreprocCSV(outfile: string) : void;
 	outputAnonymizedCSV(outfile: string) : void;
 }
 
@@ -209,7 +211,8 @@ class SaNGreeA implements ISaNGreeA {
 		
 		// draw sample of size draw_sample from dataset file
 		// var drawn_input = this.drawSample(str_input, feat_idx_select, this._options.nr_draws);
-		
+    
+    
 		/**
 		 * FOR COMPARISON REASONS, we're just going through the first 300 entries
 		 */
@@ -240,7 +243,7 @@ class SaNGreeA implements ISaNGreeA {
 			if ( !line_valid ) {
 				draw++;
 				continue;
-			}			
+			}
 			
 			// add a node to the graph
 			var node = this._graph.addNode(i);
@@ -258,14 +261,47 @@ class SaNGreeA implements ISaNGreeA {
 			max_age = age > max_age ? age : max_age;
 			node.setFeature('age', parseInt(line[0]));
 			
-			// console.log(node.getFeatures());
+			// console.log(node.getFeatures());      
+			// console.log(line);
 			// console.log(parseInt(line[0]));
 		}
 		
 		// instantiate age hierarcy
 		var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
 		this.setContHierarchy('age', age_hierarchy);
+    
+    /**
+     * Just for sake of comparison 
+     */
+    
 	}
+  
+  
+  outputPreprocCSV(outfile: string) : void {
+    var outstring = "",
+        nodes = this._graph.getNodes(),
+        node = null,
+        feature = null;
+    
+    for ( var node_key in this._graph.getNodes() ) {
+      node = nodes[node_key];
+      
+      // we have to keep order ;)
+      outstring += node.getFeature('age') + ", ";
+      outstring += node.getFeature('workclass') + ", ";
+      outstring += node.getFeature('native-country') + ", ";
+      outstring += node.getFeature('sex') + ", ";
+      outstring += node.getFeature('race') + ", ";
+      outstring += node.getFeature('marital-status') + ", ";      
+      outstring += "\n";      
+    }
+    
+    var first_line = "age, workclass, native-country, sex, race, marital-status \n";
+		outstring = first_line + outstring;
+		
+		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+  }
+  
 	
 	
 	/**
