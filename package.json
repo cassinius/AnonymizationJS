@@ -1,6 +1,6 @@
 {
   "name": "anonymiationjs",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "Collection of Anonymization Algorithms in Typescript - Graph version based on Graphinius JS",
   "main": "index.js",
   "directories": {
