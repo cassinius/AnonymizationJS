@@ -69,6 +69,7 @@ var SaNGreeA = (function () {
         if (name === void 0) { name = "default"; }
         this._graph = new $G.core.Graph("adults");
         this.readCSV(this._input_file, this._graph);
+        this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
     };
     SaNGreeA.prototype.readCSV = function (file, graph) {
         var str_input = fs.readFileSync(file).toString().split('\n');
@@ -131,6 +132,7 @@ var SaNGreeA = (function () {
         var outstring = "", nodes = this._graph.getNodes(), node = null, feature = null;
         for (var node_key in this._graph.getNodes()) {
             node = nodes[node_key];
+            outstring += node.getID() + ", ";
             outstring += node.getFeature('age') + ", ";
             outstring += node.getFeature('workclass') + ", ";
             outstring += node.getFeature('native-country') + ", ";
@@ -139,7 +141,7 @@ var SaNGreeA = (function () {
             outstring += node.getFeature('marital-status') + ", ";
             outstring += "\n";
         }
-        var first_line = "age, workclass, native-country, sex, race, marital-status \n";
+        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status \n";
         outstring = first_line + outstring;
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };

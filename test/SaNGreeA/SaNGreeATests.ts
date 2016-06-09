@@ -4,6 +4,8 @@ import * as chai from 'chai';
 import * as $GH from '../../src/core/GenHierarchies';
 import * as $San from '../../src/SaNGreeA/SaNGreeA';
 
+var $G = require('graphinius').$G;
+// console.dir($G);
 
 var expect = chai.expect,
 		assert = chai.assert,
@@ -144,6 +146,15 @@ describe('SANGREEA TESTS', () => {
 			expect(san.getCatHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
 			expect(san.getCatHierarchy('native-country')).not.to.be.undefined;
 			expect(san.getCatHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
+		});
+		
+		
+		it('should produce an adjacency list representing a drawn sample graph', () => {
+			san.instantiateGraph();
+			
+			var outfile = "./test/io/test_output/adult_graph_adj_list.csv";
+			var csvOut = new $G.output.CsvOutput(",", false, false);
+			csvOut.writeToAdjacencyListFile(outfile, san._graph);
 		});
 		
 		

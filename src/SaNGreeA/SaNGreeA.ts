@@ -165,7 +165,7 @@ class SaNGreeA implements ISaNGreeA {
      * @TODO needs separate test cases and an implementation 
      * of a network distance function (SIL) before use
      */		
-		// this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
+		this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
 	}
 	
 	
@@ -287,6 +287,7 @@ class SaNGreeA implements ISaNGreeA {
       node = nodes[node_key];
       
       // we have to keep order ;)
+			outstring += node.getID() + ", ";
       outstring += node.getFeature('age') + ", ";
       outstring += node.getFeature('workclass') + ", ";
       outstring += node.getFeature('native-country') + ", ";
@@ -296,7 +297,7 @@ class SaNGreeA implements ISaNGreeA {
       outstring += "\n";      
     }
     
-    var first_line = "age, workclass, native-country, sex, race, marital-status \n";
+    var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status \n";
 		outstring = first_line + outstring;
 		
 		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);

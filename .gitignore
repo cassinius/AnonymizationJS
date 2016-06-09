@@ -38,4 +38,4 @@ test/**/*.js
 test_async_nomock/**/*.js
 
 # Test Output
-test/output/**/*
+test/io/test_output/**/*
