@@ -163,7 +163,7 @@ describe('SANGREEA TESTS', () => {
       var preprocOutfile = "cleared_input_" + (+new Date()).toString();
       san.outputPreprocCSV(preprocOutfile);
       
-			san.anonymizeGraph(10);
+			san.anonymizeGraph(9);
 			
 			var anonymizedOutfile = "normal_weights_" + (+new Date()).toString();
 			san.outputAnonymizedCSV(anonymizedOutfile);

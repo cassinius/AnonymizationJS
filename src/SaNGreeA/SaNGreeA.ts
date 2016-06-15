@@ -101,6 +101,7 @@ class SaNGreeA implements ISaNGreeA {
 			'race': 1/6,
 			'marital-status': 1/6
 		}
+		// console.log(this._weights);
 		
 		if ( _input_file === "" ) {
 			throw new Error('Input file cannot be an empty string');
@@ -396,15 +397,16 @@ class SaNGreeA implements ISaNGreeA {
 
 	anonymizeGraph(k: number, alpha: number = 1, beta: number = 0) : void {
 		var S = [], // set of clusters
-				N = this._graph.getNodes(),
-				keys = Object.keys(N), // for length...
+				nodes = this._graph.getNodes(),
+				keys = Object.keys(nodes), // for length...
 				current_node, // our current node ID
 				candidate, // our candidate node ID
 				current_best, // the currently best node
 				added = {}, // mark all nodes already added to clusters
+				nr_open = Object.keys(nodes).length,
 				cont_costs, // continuous costs
 				cat_costs, // categorical costs,
-				best_costs, // sum of the above
+				best_costs, // sum of the above,
 				i, j;
 		
 		/**
@@ -413,7 +415,7 @@ class SaNGreeA implements ISaNGreeA {
 		 * to build a new cluster
 		 */
 		for ( i = 0; i < keys.length; i++) {
-			current_node = N[keys[i]];
+			current_node = nodes[keys[i]];
 			// console.log(X.getFeatures());
 			if ( added[current_node.getID()] ) {
 				continue; // we've already seen this one
@@ -442,21 +444,26 @@ class SaNGreeA implements ISaNGreeA {
 			
 			Cl.nodes[current_node.getID()] = current_node; // add node to cluster
 			added[current_node.getID()] = true; // mark added
+			nr_open--; // count down
 			
 			/**
 			 * SANGREEA INNER LOOP - GET NODE THAT MINIMIZES GIL
 			 * and add node to this cluster;
 			 * TODO fix loop
 			 */
-			while ( Object.keys(Cl.nodes).length < k && i < keys.length ) { // we haven't fulfilled k-anonymity yet...
+			while ( Object.keys(Cl.nodes).length < k && nr_open ) { // we haven't fulfilled k-anonymity yet...
 				best_costs = Number.POSITIVE_INFINITY;
 				
-				for ( j = 0; j < keys.length; j++ ) {
+				for ( j = i + 1; j < keys.length; j++ ) {
+					
 					// get node and see if we've already added it
-					candidate = N[keys[j]];
+					candidate = nodes[keys[j]];
 					if ( added[candidate.getID()] ) {
 						continue;
 					}
+					
+					// console.log('i: ' + i);
+					// console.log('j: ' + j);
 					
 					// now calculate costs
 					cat_costs = this.calculateCatCosts(Cl, candidate);
@@ -483,7 +490,8 @@ class SaNGreeA implements ISaNGreeA {
 				this.updateLevels(Cl, current_best);
 				
 				// mark current best added
-				added[current_best.getID()] = true;				
+				added[current_best.getID()] = true;
+				nr_open--; // count down		
 			}
 			
 			// here we have finished our cluster

@@ -171,9 +171,9 @@ var SaNGreeA = (function () {
     SaNGreeA.prototype.anonymizeGraph = function (k, alpha, beta) {
         if (alpha === void 0) { alpha = 1; }
         if (beta === void 0) { beta = 0; }
-        var S = [], N = this._graph.getNodes(), keys = Object.keys(N), current_node, candidate, current_best, added = {}, cont_costs, cat_costs, best_costs, i, j;
+        var S = [], nodes = this._graph.getNodes(), keys = Object.keys(nodes), current_node, candidate, current_best, added = {}, nr_open = Object.keys(nodes).length, cont_costs, cat_costs, best_costs, i, j;
         for (i = 0; i < keys.length; i++) {
-            current_node = N[keys[i]];
+            current_node = nodes[keys[i]];
             if (added[current_node.getID()]) {
                 continue;
             }
@@ -192,10 +192,11 @@ var SaNGreeA = (function () {
             };
             Cl.nodes[current_node.getID()] = current_node;
             added[current_node.getID()] = true;
-            while (Object.keys(Cl.nodes).length < k && i < keys.length) {
+            nr_open--;
+            while (Object.keys(Cl.nodes).length < k && nr_open) {
                 best_costs = Number.POSITIVE_INFINITY;
-                for (j = 0; j < keys.length; j++) {
-                    candidate = N[keys[j]];
+                for (j = i + 1; j < keys.length; j++) {
+                    candidate = nodes[keys[j]];
                     if (added[candidate.getID()]) {
                         continue;
                     }
@@ -210,6 +211,7 @@ var SaNGreeA = (function () {
                 this.updateRange(Cl.gen_ranges['age'], current_best.getFeature('age'));
                 this.updateLevels(Cl, current_best);
                 added[current_best.getID()] = true;
+                nr_open--;
             }
             S.push(Cl);
         }
