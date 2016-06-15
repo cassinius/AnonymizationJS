@@ -379,13 +379,14 @@ class SaNGreeA implements ISaNGreeA {
 				nr_open = Object.keys(nodes).length,
 				cont_costs, // continuous costs
 				cat_costs, // categorical costs,
+        GIL : number, // generalization information loss
+        SIL : number, // structural information loss
+        total_costs : number, // GIL + SIL
 				best_costs, // sum of the above,
 				i, j;
 		
 		/**
 		 * MAIN LOOP OF THE SANGRIA ALGORITHM
-		 * every time this loop runs, we have
-		 * to build a new cluster
 		 */
 		for ( i = 0; i < keys.length; i++) {
 			current_node = nodes[keys[i]];
@@ -436,11 +437,18 @@ class SaNGreeA implements ISaNGreeA {
 					// now calculate costs
 					cat_costs = this.calculateCatCosts(Cl, candidate);
 					cont_costs = this.calculateContCosts(Cl, candidate);
+          GIL = cat_costs + cont_costs;
+          
+          // only compute SIL if we need to
+          SIL = this._config.BETA > 0 ? this.calculateSIL(Cl, candidate) : 0;
+          // console.log("SIL: " + SIL);
+          
+          total_costs = this._config.ALPHA * GIL + this._config.BETA * SIL;
 					
 					// TODO normalize costs
 					// Only necessary when comparing to (N)SIL
-					if ( (cat_costs + cont_costs) < best_costs ) {
-						best_costs = (cat_costs + cont_costs);
+					if ( total_costs < best_costs ) {
+						best_costs = total_costs;
 						current_best = candidate;
 					}
 				}
@@ -468,13 +476,29 @@ class SaNGreeA implements ISaNGreeA {
 		console.log("Built " + S.length + " clusters.");
 		this._clusters = S;
 	}
-	
   
-  calculateSIL(Cl: nodeCluster, node) : number {
-    var cost = 0.0;
+  
+  private calculateSIL(Cl: nodeCluster, candidate) : number {
+        
+    var population_size = this._graph.nrNodes() - 2; // subtract the two involved nodes
+        var dists = [];
+
+        var candidate_neighbors : Array<string> = candidate.reachNodes().map((ne) => ne.node.getID());
+        for ( var cl_node in Cl.nodes ) {
+            var dist = population_size;
+            var cl_node_neighbors : Array<string> = Cl.nodes[cl_node].reachNodes().map((ne) => ne.node.getID());
+            
+            for (var idx in cl_node_neighbors) {
+              var neighbor = cl_node_neighbors[idx];
+              if ( neighbor !== candidate.getID() && candidate_neighbors.indexOf(neighbor) !== -1) {
+                --dist;
+              }
+            }
+            
+            dists.push(dist / population_size);
+        }
     
-    
-    return cost;
+    return dists.reduce((a, b) => a + b, 0) / dists.length;
   }
   
 

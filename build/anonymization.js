@@ -342,7 +342,7 @@
 	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
 	    };
 	    SaNGreeA.prototype.anonymizeGraph = function () {
-	        var S = [], nodes = this._graph.getNodes(), keys = Object.keys(nodes), current_node, candidate, current_best, added = {}, nr_open = Object.keys(nodes).length, cont_costs, cat_costs, best_costs, i, j;
+	        var S = [], nodes = this._graph.getNodes(), keys = Object.keys(nodes), current_node, candidate, current_best, added = {}, nr_open = Object.keys(nodes).length, cont_costs, cat_costs, GIL, SIL, total_costs, best_costs, i, j;
 	        for (i = 0; i < keys.length; i++) {
 	            current_node = nodes[keys[i]];
 	            if (added[current_node.getID()]) {
@@ -373,8 +373,11 @@
 	                    }
 	                    cat_costs = this.calculateCatCosts(Cl, candidate);
 	                    cont_costs = this.calculateContCosts(Cl, candidate);
-	                    if ((cat_costs + cont_costs) < best_costs) {
-	                        best_costs = (cat_costs + cont_costs);
+	                    GIL = cat_costs + cont_costs;
+	                    SIL = this._config.BETA > 0 ? this.calculateSIL(Cl, candidate) : 0;
+	                    total_costs = this._config.ALPHA * GIL + this._config.BETA * SIL;
+	                    if (total_costs < best_costs) {
+	                        best_costs = total_costs;
 	                        current_best = candidate;
 	                    }
 	                }
@@ -389,9 +392,22 @@
 	        console.log("Built " + S.length + " clusters.");
 	        this._clusters = S;
 	    };
-	    SaNGreeA.prototype.calculateSIL = function (Cl, node) {
-	        var cost = 0.0;
-	        return cost;
+	    SaNGreeA.prototype.calculateSIL = function (Cl, candidate) {
+	        var population_size = this._graph.nrNodes() - 2;
+	        var dists = [];
+	        var candidate_neighbors = candidate.reachNodes().map(function (ne) { return ne.node.getID(); });
+	        for (var cl_node in Cl.nodes) {
+	            var dist = population_size;
+	            var cl_node_neighbors = Cl.nodes[cl_node].reachNodes().map(function (ne) { return ne.node.getID(); });
+	            for (var idx in cl_node_neighbors) {
+	                var neighbor = cl_node_neighbors[idx];
+	                if (neighbor !== candidate.getID() && candidate_neighbors.indexOf(neighbor) !== -1) {
+	                    --dist;
+	                }
+	            }
+	            dists.push(dist / population_size);
+	        }
+	        return dists.reduce(function (a, b) { return a + b; }, 0) / dists.length;
 	    };
 	    SaNGreeA.prototype.updateLevels = function (Cl, Y) {
 	        for (var feat in this._cat_hierarchies) {
@@ -464,9 +480,9 @@
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 7,
-	    'ALPHA': 0.8,
-	    'BETA': 0.2,
+	    'K_FACTOR': 10,
+	    'ALPHA': 0.2,
+	    'BETA': 0.8,
 	    'GEN_WEIGHT_VECTORS': {
 	        'equal': {
 	            'categorical': {

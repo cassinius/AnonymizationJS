@@ -5,7 +5,7 @@ import * as $GH from '../../src/core/GenHierarchies';
 import * as $San from '../../src/SaNGreeA/SaNGreeA';
 
 var $G = require('graphinius').$G;
-// console.dir($G);
+console.dir($G);
 import * as $C from '../../src/config/SaNGreeAConfig';
 
 var expect = chai.expect,
@@ -19,15 +19,6 @@ describe('SANGREEA TESTS', () => {
 	describe('Basic instantiation tests', () => {
     
     var config;
-    
-    // afterEach(() => {
-    //   config.NR_DRAWS = 300;
-    //   config.EDGE_MAX = 10;
-    //   config.EDGE_MIN = 3;
-    //   config.K_FACTOR = 10;
-    //   config.ALPHA = 0.8;
-    //   config.BETA = 0.2;
-    // });
     
     beforeEach(() => {
       // Copy the JSON from the file, resetting it to defaults...

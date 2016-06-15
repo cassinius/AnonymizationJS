@@ -4,9 +4,9 @@ var CONFIG = {
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
-    'K_FACTOR': 7,
-    'ALPHA': 0.8,
-    'BETA': 0.2,
+    'K_FACTOR': 10,
+    'ALPHA': 0.2,
+    'BETA': 0.8,
     'GEN_WEIGHT_VECTORS': {
         'equal': {
             'categorical': {

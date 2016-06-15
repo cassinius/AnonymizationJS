@@ -8,11 +8,11 @@ var CONFIG = {
   // Max # of edges per node for graph generation
   'EDGE_MAX' : 10,
   // The k anonymization factor
-  'K_FACTOR'  : 7,
+  'K_FACTOR'  : 10,
   // Weight of the Generalization Information Loss
-  'ALPHA'     : 0.8,
+  'ALPHA'     : 0.2,
   // Weight of the Structural Information Loss
-  'BETA'      : 0.2,
+  'BETA'      : 0.8,
   // Weight vector for generalization categories
   'GEN_WEIGHT_VECTORS' : {
     'equal': {
