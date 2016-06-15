@@ -6,78 +6,84 @@ import * as $San from '../../src/SaNGreeA/SaNGreeA';
 
 var $G = require('graphinius').$G;
 // console.dir($G);
+import * as $C from '../../src/config/SaNGreeAConfig';
 
 var expect = chai.expect,
 		assert = chai.assert,
-		opts : $San.ISaNGreeAOptions,
 		adults = './test/io/test_input/adult_data.csv',
 		san : $San.ISaNGreeA;
-		
+    	
 		
 describe('SANGREEA TESTS', () => {
 	
 	describe('Basic instantiation tests', () => {
+    
+    var config;
+    
+    // afterEach(() => {
+    //   config.NR_DRAWS = 300;
+    //   config.EDGE_MAX = 10;
+    //   config.EDGE_MIN = 3;
+    //   config.K_FACTOR = 10;
+    //   config.ALPHA = 0.8;
+    //   config.BETA = 0.2;
+    // });
+    
+    beforeEach(() => {
+      // Copy the JSON from the file, resetting it to defaults...
+      config = JSON.parse(JSON.stringify($C.CONFIG));
+    });
+    
 		
 		it('should correctly instantiate a Sangreea object with default params', () => {
 			san = new $San.SaNGreeA("test", adults);
 			expect(san).not.to.be.undefined;
 			expect(san._name).to.equal("test");
-			expect(san.getOptions().nr_draws).to.equal(300);
+			expect(san.getConfig().NR_DRAWS).to.equal(300);
 		});
 		
 		
 		it('should throw an error if input file is set to empty string', () => {
 			assert.throw(function () {
-				new $San.SaNGreeA("test", "", opts)
+				new $San.SaNGreeA("test", "")
 			}, 'Input file cannot be an empty string');
 		});
 		
 		
 		it('should throw an error if nr_draws is set to a negative value', () => {
-			opts = {
-				nr_draws: -3,
-				edge_min: 0,
-				edge_max: 10
-			}
+			config.NR_DRAWS = -3;
+      
 			assert.throw(function () {
-				new $San.SaNGreeA("test", adults, opts)
+				new $San.SaNGreeA("test", adults, config)
 			}, 'Options invalid. Nr_draws can not be negative.');
 		});
 		
 		
 		it('should throw an error if edge_min is set to a negative value', () => {
-			opts = {
-				nr_draws: 300,
-				edge_min: -1,
-				edge_max: 10
-			}
+		  config.EDGE_MIN = -1;
+      
 			assert.throw(function () {
-				new $San.SaNGreeA("test", adults, opts)
+				new $San.SaNGreeA("test", adults, config)
 			}, 'Options invalid. Edge_min can not be negative.');
 		});
 		
 		
 		it('should throw an error if edge_max is set to a negative value', () => {
-			opts = {
-				nr_draws: 300,
-				edge_min: 0,
-				edge_max: -10
-			}
+			config.EDGE_MAX = -1;
+      
 			assert.throw(function () {
-				new $San.SaNGreeA("test", adults, opts)
+				new $San.SaNGreeA("test", adults, config)
 			}, 'Options invalid. Edge_max can not be negative.');
 		});
 		
 		
 		it('should throw an error if edge_min is greater than edge_max', () => {
-			opts = {
-				nr_draws: 300,
-				edge_min: 5,
-				edge_max: 2
-			}
+			config.EDGE_MIN = 10;
+      config.EDGE_MAX = 1;
+      
 			assert.throw(function () {
-				new $San.SaNGreeA("test", adults, opts)
-			}, 'Options invalid. Edge_max cannot exceed edge_min.');
+				new $San.SaNGreeA("test", adults, config)
+			}, 'Options invalid. Edge_min cannot exceed edge_max.');
 		});
 		
 	});
@@ -155,70 +161,62 @@ describe('SANGREEA TESTS', () => {
 			var outfile = "./test/io/test_output/adult_graph_adj_list.csv";
 			var csvOut = new $G.output.CsvOutput(",", false, false);
 			csvOut.writeToAdjacencyListFile(outfile, san._graph);
+      
+      expect("this test case").not.to.equal("being without pertinent expectation.");
 		});
 		
 		
 		it('should instantiate a graph with the expected nr. of nodes', () => {
 			san.instantiateGraph();
-      var preprocOutfile = "cleared_input_" + (+new Date()).toString();
+      var preprocOutfile = "input_sanitized";
       san.outputPreprocCSV(preprocOutfile);
       
-			san.anonymizeGraph(9);
+			san.anonymizeGraph();
 			
-			var anonymizedOutfile = "normal_weights_" + (+new Date()).toString();
+			var anonymizedOutfile = "output_normal_weights";
 			san.outputAnonymizedCSV(anonymizedOutfile);
-			// expect(san._graph.nrNodes()).to.equal(300);
+      
+			expect(san._graph.nrNodes()).to.equal(300);
 		});
 		
 		
 		it('should compute an anonymization with higher weight for race', () => {
-			var weights = {
-				'age': 0.1,
-				'workclass': 0.1,
-				'native-country': 0.1,
-				'sex': 0.1,
-				'race': 0.5,
-				'marital-status': 0.1 
-			}
+			var config = JSON.parse(JSON.stringify($C.CONFIG));
+      config.VECTOR = 'emph_race';
 			
-			san = new $San.SaNGreeA("adults", adults, undefined, weights);
+			san = new $San.SaNGreeA("adults", adults, config);
 			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
 				san.setCatHierarchy(strgh._name, strgh);
 			});
 			
 			san.instantiateGraph();
-			san.anonymizeGraph(10);
+			san.anonymizeGraph();
 			
-			var anonymizedOutfileRace = "race_weights_" + (+new Date()).toString();
+			var anonymizedOutfileRace = "output_race_weights";
 			san.outputAnonymizedCSV(anonymizedOutfileRace);
-			// expect(san._graph.nrNodes()).to.equal(300);
+      
+			expect(san._graph.nrNodes()).to.equal(300);
 		});
 		
 		
 		it('should compute an anonymization with higher weight for age', () => {
-			var weights = {
-				'age': 0.95,
-				'workclass': 0.01,
-				'native-country': 0.01,
-				'sex': 0.01,
-				'race': 0.01,
-				'marital-status': 0.1 
-			}
+      var config = JSON.parse(JSON.stringify($C.CONFIG));
+      config.VECTOR = 'emph_age';
 			
-			san = new $San.SaNGreeA("adults", adults, undefined, weights);
+			san = new $San.SaNGreeA("adults", adults, config);
 			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
 				san.setCatHierarchy(strgh._name, strgh);
 			});
 			
 			san.instantiateGraph();
-			san.anonymizeGraph(10);
+			san.anonymizeGraph();
 			
-			var anonymizedOutfileAge = "age_weights_" + (+new Date()).toString();
+			var anonymizedOutfileAge = "output_age_weights";
 			san.outputAnonymizedCSV(anonymizedOutfileAge);
       
-			// expect(san._graph.nrNodes()).to.equal(300);
+			expect(san._graph.nrNodes()).to.equal(300);
 		});
 		
 	});

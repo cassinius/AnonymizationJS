@@ -3,16 +3,19 @@
 import fs 	= require('fs');
 import path = require('path');
 import * as $GH from '../core/GenHierarchies';
+import * as $C from '../config/SaNGreeAConfig';
 
 var $G = require('graphinius').$G;
 
-console.log($G);
-
-
-export interface ISaNGreeAOptions {
-	nr_draws: number;
-	edge_min:	number;
-	edge_max: number;
+export interface ISaNGreeAConfig {
+	NR_DRAWS    : number;
+	EDGE_MIN    :	number;
+	EDGE_MAX    : number;
+  K_FACTOR    : number;
+  ALPHA       : number;
+  BETA        : number;
+  GEN_WEIGHT_VECTORS : {};
+  VECTOR      : string;
 }
 
 
@@ -39,8 +42,8 @@ export interface ISaNGreeA {
 	_graph;
 	_clusters : Array<nodeCluster>;
 	
-	getOptions() : ISaNGreeAOptions;
-	
+  getConfig(): ISaNGreeAConfig;
+  
 	getContHierarchy(name: string) : $GH.IContGenHierarchy;
 	getCatHierarchy(name: string) : $GH.IStringGenHierarchy;
 	
@@ -51,7 +54,7 @@ export interface ISaNGreeA {
 	setCatHierarchy(name: string, genh: $GH.IStringGenHierarchy);
 	
 	instantiateGraph() : void;
-	anonymizeGraph(k: number, alpha?: number, beta?: number) : void;
+	anonymizeGraph() : void;
   
   outputPreprocCSV(outfile: string) : void;
 	outputAnonymizedCSV(outfile: string) : void;
@@ -65,8 +68,11 @@ class SaNGreeA implements ISaNGreeA {
 	 */
 	public _graph;
 	public _clusters : Array<nodeCluster>;
-	public _weights;	
-	private _options : ISaNGreeAOptions;
+	public _weights;
+  public _alpha : number;
+  public _beta : number;
+  public _k_factor : number;
+  public _config : ISaNGreeAConfig;
 	
 	/**
 	 * We're building everything in the algorithm around our hierarchies
@@ -83,51 +89,31 @@ class SaNGreeA implements ISaNGreeA {
 	
 	constructor( public _name: string = "default", 
 							 private _input_file : string,
-							 opts? : ISaNGreeAOptions,
-							 weights? : {})
-	{
-		// console.log("Given weights: " + weights);
-		
-		/** 
-     * TODO make generic (hack!!)
-     * TODO wait for all Hierarchies to be set, so - 
-     * calculate only at beginning of actual anonymization run?
-     */ 
-		this._weights = weights || {
-			'age': 1/6,
-			'workclass': 1/6,
-			'native-country': 1/6,
-			'sex': 1/6,
-			'race': 1/6,
-			'marital-status': 1/6
-		}
-		// console.log(this._weights);
+							 public config? : ISaNGreeAConfig)
+	{		
+		this._config = config || $C.CONFIG;
+    
 		
 		if ( _input_file === "" ) {
 			throw new Error('Input file cannot be an empty string');
 		}
-		this._options = opts || {
-			nr_draws: 300,
-			edge_min: 1,
-			edge_max: 10
-		}
-		if ( this._options.nr_draws < 0 ) {
+		if ( this._config.NR_DRAWS < 0 ) {
 			throw new Error('Options invalid. Nr_draws can not be negative.');
 		}
-		if ( this._options.edge_min < 0 ) {
+		if ( this._config.EDGE_MIN < 0 ) {
 			throw new Error('Options invalid. Edge_min can not be negative.');
 		}
-		if ( this._options.edge_max < 0 ) {
+		if ( this._config.EDGE_MAX < 0 ) {
 			throw new Error('Options invalid. Edge_max can not be negative.');
 		}
-		if ( this._options.edge_max < this._options.edge_min ) {
-			throw new Error('Options invalid. Edge_max cannot exceed edge_min.');
+		if ( this._config.EDGE_MAX < this._config.EDGE_MIN ) {
+			throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
 		}
 	}
-	
-	getOptions() : ISaNGreeAOptions {
-		return this._options;
-	}
+  
+  getConfig(): ISaNGreeAConfig {
+    return this._config;
+  }
 	
 	getContHierarchies() : {[name: string] : $GH.IContGenHierarchy} {
 		return this._cont_hierarchies;
@@ -166,7 +152,7 @@ class SaNGreeA implements ISaNGreeA {
      * @TODO needs separate test cases and an implementation 
      * of a network distance function (SIL) before use
      */		
-		this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
+		this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
 	}
 	
 	
@@ -217,7 +203,7 @@ class SaNGreeA implements ISaNGreeA {
 		/**
 		 * FOR COMPARISON REASONS, we're just going through the first 300 entries
 		 */
-		var draw = 300;
+    var draw = this._config.NR_DRAWS;
 		for ( var i = 0; i < draw; i++ ) { // drawn_input.length
 			// check for empty lines at the end
 			if ( !str_input[i] ) {
@@ -261,20 +247,11 @@ class SaNGreeA implements ISaNGreeA {
 			min_age = age < min_age ? age : min_age;
 			max_age = age > max_age ? age : max_age;
 			node.setFeature('age', parseInt(line[0]));
-			
-			// console.log(node.getFeatures());      
-			// console.log(line);
-			// console.log(parseInt(line[0]));
 		}
 		
 		// instantiate age hierarcy
 		var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
 		this.setContHierarchy('age', age_hierarchy);
-    
-    /**
-     * Just for sake of comparison 
-     */
-    
 	}
   
   
@@ -357,14 +334,10 @@ class SaNGreeA implements ISaNGreeA {
 	 */
 	outputAnonymizedCSV(outfile: string) : void {		
 		var outstring = "";
-		// for (var hi in this._hierarchies) {
-		// 	outstring += hi + ", ";
-		// }
-		// outstring = outstring.slice(0, -2) + "\n";
 		
 		for ( var cl_idx in this._clusters ) {
 			var cluster = this._clusters[cl_idx];
-					
+			
 			for ( var count in cluster.nodes ) {				
 				// first, let's write out the age range
 				var age_range = cluster.gen_ranges['age'];
@@ -395,7 +368,7 @@ class SaNGreeA implements ISaNGreeA {
 		
 	
 
-	anonymizeGraph(k: number, alpha: number = 1, beta: number = 0) : void {
+	anonymizeGraph() : void {
 		var S = [], // set of clusters
 				nodes = this._graph.getNodes(),
 				keys = Object.keys(nodes), // for length...
@@ -416,9 +389,8 @@ class SaNGreeA implements ISaNGreeA {
 		 */
 		for ( i = 0; i < keys.length; i++) {
 			current_node = nodes[keys[i]];
-			// console.log(X.getFeatures());
 			if ( added[current_node.getID()] ) {
-				continue; // we've already seen this one
+				continue;
 			}
 			
 			/**
@@ -442,16 +414,15 @@ class SaNGreeA implements ISaNGreeA {
 				}
 			};
 			
-			Cl.nodes[current_node.getID()] = current_node; // add node to cluster
-			added[current_node.getID()] = true; // mark added
-			nr_open--; // count down
+			Cl.nodes[current_node.getID()] = current_node;
+			added[current_node.getID()] = true;
+			nr_open--;
 			
 			/**
 			 * SANGREEA INNER LOOP - GET NODE THAT MINIMIZES GIL
 			 * and add node to this cluster;
-			 * TODO fix loop
 			 */
-			while ( Object.keys(Cl.nodes).length < k && nr_open ) { // we haven't fulfilled k-anonymity yet...
+			while ( Object.keys(Cl.nodes).length < this._config.K_FACTOR && nr_open ) {
 				best_costs = Number.POSITIVE_INFINITY;
 				
 				for ( j = i + 1; j < keys.length; j++ ) {
@@ -462,13 +433,9 @@ class SaNGreeA implements ISaNGreeA {
 						continue;
 					}
 					
-					// console.log('i: ' + i);
-					// console.log('j: ' + j);
-					
 					// now calculate costs
 					cat_costs = this.calculateCatCosts(Cl, candidate);
 					cont_costs = this.calculateContCosts(Cl, candidate);
-					// console.log(Y.getID() + " " + cont_costs);
 					
 					// TODO normalize costs
 					// Only necessary when comparing to (N)SIL
@@ -477,10 +444,6 @@ class SaNGreeA implements ISaNGreeA {
 						current_best = candidate;
 					}
 				}
-				
-				// console.log("Best costs: " + best_costs);
-				// console.log("Best node: " + current_best.getID());				
-				// console.log("Node to add: " + current_best);
         				
 				// add best candidate and update costs
 				Cl.nodes[current_best.getID()] = current_best;
@@ -491,7 +454,7 @@ class SaNGreeA implements ISaNGreeA {
 				
 				// mark current best added
 				added[current_best.getID()] = true;
-				nr_open--; // count down		
+				nr_open--;		
 			}
 			
 			// here we have finished our cluster
@@ -506,6 +469,14 @@ class SaNGreeA implements ISaNGreeA {
 		this._clusters = S;
 	}
 	
+  
+  calculateSIL(Cl: nodeCluster, node) : number {
+    var cost = 0.0;
+    
+    
+    return cost;
+  }
+  
 
 	private updateLevels(Cl: nodeCluster, Y) : void {		
 		for (var feat in this._cat_hierarchies) {
@@ -555,8 +526,9 @@ class SaNGreeA implements ISaNGreeA {
 					Cl_level = cat_gh.getLevelEntry(Cl_feat);
 				}
 			}
-			costs += this._weights[feat] * ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );			
-		}	
+      var cat_weights = this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['categorical'];
+			costs += cat_weights[feat] * ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );			
+		}
 		return costs / Object.keys(this._cat_hierarchies).length;
 	}
 	
@@ -573,7 +545,9 @@ class SaNGreeA implements ISaNGreeA {
 		var age_hierarchy = this.getContHierarchy('age');
 		var cost = age_hierarchy instanceof $GH.ContGenHierarchy? age_hierarchy.genCostOfRange(new_range[0], new_range[1]) : 0;
 		// console.log("Range cost: " + cost);
-		return this._weights['age'] * cost;
+    
+    var range_weights = this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['range'];
+		return range_weights['age'] * cost;
 	}
 	
 	private expandRange(range: number[], nr: number) : number[] {

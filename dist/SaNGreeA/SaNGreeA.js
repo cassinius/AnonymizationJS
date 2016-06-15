@@ -1,51 +1,40 @@
 "use strict";
 var fs = require('fs');
 var $GH = require('../core/GenHierarchies');
+var $C = require('../config/SaNGreeAConfig');
 var $G = require('graphinius').$G;
-console.log($G);
 (function (HierarchyType) {
     HierarchyType[HierarchyType["CONTINUOUS"] = 0] = "CONTINUOUS";
     HierarchyType[HierarchyType["CATEGORICAL"] = 1] = "CATEGORICAL";
 })(exports.HierarchyType || (exports.HierarchyType = {}));
 var HierarchyType = exports.HierarchyType;
 var SaNGreeA = (function () {
-    function SaNGreeA(_name, _input_file, opts, weights) {
+    function SaNGreeA(_name, _input_file, config) {
         if (_name === void 0) { _name = "default"; }
         this._name = _name;
         this._input_file = _input_file;
+        this.config = config;
         this._cont_hierarchies = {};
         this._cat_hierarchies = {};
-        this._weights = weights || {
-            'age': 1 / 6,
-            'workclass': 1 / 6,
-            'native-country': 1 / 6,
-            'sex': 1 / 6,
-            'race': 1 / 6,
-            'marital-status': 1 / 6
-        };
+        this._config = config || $C.CONFIG;
         if (_input_file === "") {
             throw new Error('Input file cannot be an empty string');
         }
-        this._options = opts || {
-            nr_draws: 300,
-            edge_min: 1,
-            edge_max: 10
-        };
-        if (this._options.nr_draws < 0) {
+        if (this._config.NR_DRAWS < 0) {
             throw new Error('Options invalid. Nr_draws can not be negative.');
         }
-        if (this._options.edge_min < 0) {
+        if (this._config.EDGE_MIN < 0) {
             throw new Error('Options invalid. Edge_min can not be negative.');
         }
-        if (this._options.edge_max < 0) {
+        if (this._config.EDGE_MAX < 0) {
             throw new Error('Options invalid. Edge_max can not be negative.');
         }
-        if (this._options.edge_max < this._options.edge_min) {
-            throw new Error('Options invalid. Edge_max cannot exceed edge_min.');
+        if (this._config.EDGE_MAX < this._config.EDGE_MIN) {
+            throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
         }
     }
-    SaNGreeA.prototype.getOptions = function () {
-        return this._options;
+    SaNGreeA.prototype.getConfig = function () {
+        return this._config;
     };
     SaNGreeA.prototype.getContHierarchies = function () {
         return this._cont_hierarchies;
@@ -69,7 +58,7 @@ var SaNGreeA = (function () {
         if (name === void 0) { name = "default"; }
         this._graph = new $G.core.Graph("adults");
         this.readCSV(this._input_file, this._graph);
-        this._graph.createRandomEdgesSpan(this._options.edge_min, this._options.edge_max, false);
+        this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
     };
     SaNGreeA.prototype.readCSV = function (file, graph) {
         var str_input = fs.readFileSync(file).toString().split('\n');
@@ -90,7 +79,7 @@ var SaNGreeA = (function () {
                 cat_feat_idx_select[idx] = col;
             }
         });
-        var draw = 300;
+        var draw = this._config.NR_DRAWS;
         for (var i = 0; i < draw; i++) {
             if (!str_input[i]) {
                 continue;
@@ -168,9 +157,7 @@ var SaNGreeA = (function () {
         outstring = first_line + outstring;
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };
-    SaNGreeA.prototype.anonymizeGraph = function (k, alpha, beta) {
-        if (alpha === void 0) { alpha = 1; }
-        if (beta === void 0) { beta = 0; }
+    SaNGreeA.prototype.anonymizeGraph = function () {
         var S = [], nodes = this._graph.getNodes(), keys = Object.keys(nodes), current_node, candidate, current_best, added = {}, nr_open = Object.keys(nodes).length, cont_costs, cat_costs, best_costs, i, j;
         for (i = 0; i < keys.length; i++) {
             current_node = nodes[keys[i]];
@@ -193,7 +180,7 @@ var SaNGreeA = (function () {
             Cl.nodes[current_node.getID()] = current_node;
             added[current_node.getID()] = true;
             nr_open--;
-            while (Object.keys(Cl.nodes).length < k && nr_open) {
+            while (Object.keys(Cl.nodes).length < this._config.K_FACTOR && nr_open) {
                 best_costs = Number.POSITIVE_INFINITY;
                 for (j = i + 1; j < keys.length; j++) {
                     candidate = nodes[keys[j]];
@@ -217,6 +204,10 @@ var SaNGreeA = (function () {
         }
         console.log("Built " + S.length + " clusters.");
         this._clusters = S;
+    };
+    SaNGreeA.prototype.calculateSIL = function (Cl, node) {
+        var cost = 0.0;
+        return cost;
     };
     SaNGreeA.prototype.updateLevels = function (Cl, Y) {
         for (var feat in this._cat_hierarchies) {
@@ -252,7 +243,8 @@ var SaNGreeA = (function () {
                     Cl_level = cat_gh.getLevelEntry(Cl_feat);
                 }
             }
-            costs += this._weights[feat] * ((cat_gh.nrLevels() - Cl_level) / cat_gh.nrLevels());
+            var cat_weights = this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['categorical'];
+            costs += cat_weights[feat] * ((cat_gh.nrLevels() - Cl_level) / cat_gh.nrLevels());
         }
         return costs / Object.keys(this._cat_hierarchies).length;
     };
@@ -261,7 +253,8 @@ var SaNGreeA = (function () {
         var new_range = this.expandRange(age_range, Y.getFeature('age'));
         var age_hierarchy = this.getContHierarchy('age');
         var cost = age_hierarchy instanceof $GH.ContGenHierarchy ? age_hierarchy.genCostOfRange(new_range[0], new_range[1]) : 0;
-        return this._weights['age'] * cost;
+        var range_weights = this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['range'];
+        return range_weights['age'] * cost;
     };
     SaNGreeA.prototype.expandRange = function (range, nr) {
         var min = nr < range[0] ? nr : range[0];
