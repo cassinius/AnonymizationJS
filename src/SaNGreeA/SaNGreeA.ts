@@ -287,13 +287,13 @@ class SaNGreeA implements ISaNGreeA {
       node = nodes[node_key];
       
       // we have to keep order ;)
-			outstring += node.getID() + ", ";
-      outstring += node.getFeature('age') + ", ";
-      outstring += node.getFeature('workclass') + ", ";
-      outstring += node.getFeature('native-country') + ", ";
-      outstring += node.getFeature('sex') + ", ";
-      outstring += node.getFeature('race') + ", ";
-      outstring += node.getFeature('marital-status') + ", ";      
+			outstring += node.getID() + ",";
+      outstring += node.getFeature('age') + ",";
+      outstring += node.getFeature('workclass') + ",";
+      outstring += node.getFeature('native-country') + ",";
+      outstring += node.getFeature('sex') + ",";
+      outstring += node.getFeature('race') + ",";
+      outstring += node.getFeature('marital-status');      
       outstring += "\n";      
     }
     
@@ -398,8 +398,8 @@ class SaNGreeA implements ISaNGreeA {
 		var S = [], // set of clusters
 				N = this._graph.getNodes(),
 				keys = Object.keys(N), // for length...
-				X, // our current node ID
-				Y, // our candidate node ID
+				current_node, // our current node ID
+				candidate, // our candidate node ID
 				current_best, // the currently best node
 				added = {}, // mark all nodes already added to clusters
 				cont_costs, // continuous costs
@@ -413,9 +413,9 @@ class SaNGreeA implements ISaNGreeA {
 		 * to build a new cluster
 		 */
 		for ( i = 0; i < keys.length; i++) {
-			X = N[keys[i]];
+			current_node = N[keys[i]];
 			// console.log(X.getFeatures());
-			if ( added[X.getID()] ) {
+			if ( added[current_node.getID()] ) {
 				continue; // we've already seen this one
 			}
 			
@@ -429,19 +429,19 @@ class SaNGreeA implements ISaNGreeA {
 			var Cl : nodeCluster = { 
 				nodes : {},
 				gen_feat : {
-					'workclass': X.getFeature('workclass'),
-					'native-country': X.getFeature('native-country'),
-					'marital-status': X.getFeature('marital-status'),
-					'sex': X.getFeature('sex'),
-					'race': X.getFeature('race')
+					'workclass': current_node.getFeature('workclass'),
+					'native-country': current_node.getFeature('native-country'),
+					'marital-status': current_node.getFeature('marital-status'),
+					'sex': current_node.getFeature('sex'),
+					'race': current_node.getFeature('race')
 				},
 				gen_ranges : {
-					'age': [X.getFeature('age'), X.getFeature('age')]
+					'age': [current_node.getFeature('age'), current_node.getFeature('age')]
 				}
 			};
 			
-			Cl.nodes[X.getID()] = X; // add node to cluster
-			added[X.getID()] = true; // mark added
+			Cl.nodes[current_node.getID()] = current_node; // add node to cluster
+			added[current_node.getID()] = true; // mark added
 			
 			/**
 			 * SANGREEA INNER LOOP - GET NODE THAT MINIMIZES GIL
@@ -453,21 +453,21 @@ class SaNGreeA implements ISaNGreeA {
 				
 				for ( j = 0; j < keys.length; j++ ) {
 					// get node and see if we've already added it
-					Y = N[keys[j]];
-					if ( added[Y.getID()] ) {
+					candidate = N[keys[j]];
+					if ( added[candidate.getID()] ) {
 						continue;
 					}
 					
 					// now calculate costs
-					cat_costs = this.calculateCatCosts(Cl, Y);
-					cont_costs = this.calculateContCosts(Cl, Y);
+					cat_costs = this.calculateCatCosts(Cl, candidate);
+					cont_costs = this.calculateContCosts(Cl, candidate);
 					// console.log(Y.getID() + " " + cont_costs);
 					
 					// TODO normalize costs
 					// Only necessary when comparing to (N)SIL
 					if ( (cat_costs + cont_costs) < best_costs ) {
 						best_costs = (cat_costs + cont_costs);
-						current_best = Y;
+						current_best = candidate;
 					}
 				}
 				

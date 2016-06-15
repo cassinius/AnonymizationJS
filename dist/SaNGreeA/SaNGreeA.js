@@ -132,13 +132,13 @@ var SaNGreeA = (function () {
         var outstring = "", nodes = this._graph.getNodes(), node = null, feature = null;
         for (var node_key in this._graph.getNodes()) {
             node = nodes[node_key];
-            outstring += node.getID() + ", ";
-            outstring += node.getFeature('age') + ", ";
-            outstring += node.getFeature('workclass') + ", ";
-            outstring += node.getFeature('native-country') + ", ";
-            outstring += node.getFeature('sex') + ", ";
-            outstring += node.getFeature('race') + ", ";
-            outstring += node.getFeature('marital-status') + ", ";
+            outstring += node.getID() + ",";
+            outstring += node.getFeature('age') + ",";
+            outstring += node.getFeature('workclass') + ",";
+            outstring += node.getFeature('native-country') + ",";
+            outstring += node.getFeature('sex') + ",";
+            outstring += node.getFeature('race') + ",";
+            outstring += node.getFeature('marital-status');
             outstring += "\n";
         }
         var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status \n";
@@ -171,39 +171,39 @@ var SaNGreeA = (function () {
     SaNGreeA.prototype.anonymizeGraph = function (k, alpha, beta) {
         if (alpha === void 0) { alpha = 1; }
         if (beta === void 0) { beta = 0; }
-        var S = [], N = this._graph.getNodes(), keys = Object.keys(N), X, Y, current_best, added = {}, cont_costs, cat_costs, best_costs, i, j;
+        var S = [], N = this._graph.getNodes(), keys = Object.keys(N), current_node, candidate, current_best, added = {}, cont_costs, cat_costs, best_costs, i, j;
         for (i = 0; i < keys.length; i++) {
-            X = N[keys[i]];
-            if (added[X.getID()]) {
+            current_node = N[keys[i]];
+            if (added[current_node.getID()]) {
                 continue;
             }
             var Cl = {
                 nodes: {},
                 gen_feat: {
-                    'workclass': X.getFeature('workclass'),
-                    'native-country': X.getFeature('native-country'),
-                    'marital-status': X.getFeature('marital-status'),
-                    'sex': X.getFeature('sex'),
-                    'race': X.getFeature('race')
+                    'workclass': current_node.getFeature('workclass'),
+                    'native-country': current_node.getFeature('native-country'),
+                    'marital-status': current_node.getFeature('marital-status'),
+                    'sex': current_node.getFeature('sex'),
+                    'race': current_node.getFeature('race')
                 },
                 gen_ranges: {
-                    'age': [X.getFeature('age'), X.getFeature('age')]
+                    'age': [current_node.getFeature('age'), current_node.getFeature('age')]
                 }
             };
-            Cl.nodes[X.getID()] = X;
-            added[X.getID()] = true;
+            Cl.nodes[current_node.getID()] = current_node;
+            added[current_node.getID()] = true;
             while (Object.keys(Cl.nodes).length < k && i < keys.length) {
                 best_costs = Number.POSITIVE_INFINITY;
                 for (j = 0; j < keys.length; j++) {
-                    Y = N[keys[j]];
-                    if (added[Y.getID()]) {
+                    candidate = N[keys[j]];
+                    if (added[candidate.getID()]) {
                         continue;
                     }
-                    cat_costs = this.calculateCatCosts(Cl, Y);
-                    cont_costs = this.calculateContCosts(Cl, Y);
+                    cat_costs = this.calculateCatCosts(Cl, candidate);
+                    cont_costs = this.calculateContCosts(Cl, candidate);
                     if ((cat_costs + cont_costs) < best_costs) {
                         best_costs = (cat_costs + cont_costs);
-                        current_best = Y;
+                        current_best = candidate;
                     }
                 }
                 Cl.nodes[current_best.getID()] = current_best;
