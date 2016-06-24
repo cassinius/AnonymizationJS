@@ -53,7 +53,8 @@ export interface ISaNGreeA {
 	setContHierarchy(name: string, genh: $GH.IContGenHierarchy);
 	setCatHierarchy(name: string, genh: $GH.IStringGenHierarchy);
 	
-	instantiateGraph() : void;
+  readCSV(file: string, graph) : void;
+	instantiateGraph(createEdges?: boolean) : void;
 	anonymizeGraph() : void;
   
   outputPreprocCSV(outfile: string) : void;
@@ -109,6 +110,8 @@ class SaNGreeA implements ISaNGreeA {
 		if ( this._config.EDGE_MAX < this._config.EDGE_MIN ) {
 			throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
 		}
+        
+		this._graph = new $G.core.Graph(this._name);
 	}
   
   getConfig(): ISaNGreeAConfig {
@@ -141,18 +144,12 @@ class SaNGreeA implements ISaNGreeA {
 	
 	
 	
-	instantiateGraph(name: string = "default") : void {
-		// var cols = Object.keys(this._hierarchies);
-		this._graph = new $G.core.Graph("adults");
-		// console.dir(this._graph);
+	instantiateGraph(createEdges = true ) : void {    
 		this.readCSV(this._input_file, this._graph);
-		/**
-     * add random edges to make dataset a graph
-     * false means 'undirected'
-     * @TODO needs separate test cases and an implementation 
-     * of a network distance function (SIL) before use
-     */		
-		this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
+		
+    if( createEdges === true ) {
+		  this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
+    }
 	}
 	
 	
@@ -162,7 +159,7 @@ class SaNGreeA implements ISaNGreeA {
 	 * GENERALIZE FOR LATER USE.... 
 	 * ... look at how we handle age !!!!!
 	 */
-	private readCSV(file: string, graph) {
+	readCSV(file: string, graph) {
 		var str_input = fs.readFileSync(file).toString().split('\n');
 		var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
 		var cont_hierarchies = Object.keys(this._cont_hierarchies);
@@ -207,10 +204,10 @@ class SaNGreeA implements ISaNGreeA {
 		for ( var i = 0; i < draw; i++ ) { // drawn_input.length
 			// check for empty lines at the end
 			if ( !str_input[i] ) {
-				break;
+				continue;
 			}
 			var line = str_input[i].replace(/\s+/g, '').split(',');
-			
+			      
 			var line_valid = true;
 			for (var idx in cat_feat_idx_select) {
 				// console.log(line[idx]);
@@ -242,6 +239,9 @@ class SaNGreeA implements ISaNGreeA {
 			for (var idx in cont_feat_idx_select) {
 				node.setFeature(cont_feat_idx_select[idx], +line[idx]);
 			}
+      
+      node.setFeature("income", line[line.length-1]);
+      
 			// TODO make generic
 			var age = parseInt(line[0]);
 			min_age = age < min_age ? age : min_age;
@@ -271,11 +271,12 @@ class SaNGreeA implements ISaNGreeA {
       outstring += node.getFeature('native-country') + ",";
       outstring += node.getFeature('sex') + ",";
       outstring += node.getFeature('race') + ",";
-      outstring += node.getFeature('marital-status');      
-      outstring += "\n";      
+      outstring += node.getFeature('marital-status') + ",";
+      outstring += node.getFeature('income');      
+      outstring += "\n";
     }
     
-    var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status \n";
+    var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, income \n";
 		outstring = first_line + outstring;
 		
 		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
@@ -353,6 +354,9 @@ class SaNGreeA implements ISaNGreeA {
 					var h = this._cat_hierarchies[hi];
 					outstring += h.getName(cluster.gen_feat[hi]) + ", ";
 				}
+        
+        // outstring += ", " + 
+        
 				outstring = outstring.slice(0, -2) + "\n";
 			}
 

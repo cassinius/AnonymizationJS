@@ -121,7 +121,7 @@ describe('SANGREEA TESTS', () => {
 	});
 	
 	
-	describe('Read CSV and instantiate graph', () => {
+	describe('Read CSV and instantiate graph - ', () => {
 		
 		var strgh : $GH.IStringGenHierarchy,
 				contgh : $GH.IContGenHierarchy,
@@ -210,6 +210,22 @@ describe('SANGREEA TESTS', () => {
       
 			expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
 		});
+    
+    
+    it('should write out the cleaned input data source for python', () => {
+      var config = JSON.parse(JSON.stringify($C.CONFIG));
+      config.NR_DRAWS = 50000;
+      san = new $San.SaNGreeA("adults", adults, config);
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+				strgh = new $GH.StringGenHierarchy(file);
+				san.setCatHierarchy(strgh._name, strgh);
+			});
+      
+      san.readCSV(adults, san._graph);
+      var preprocOutfile = "input_for_python";
+      san.outputPreprocCSV(preprocOutfile);
+      expect(true).to.be.true;
+    });
 		
 	});
 	

@@ -32,6 +32,7 @@ var SaNGreeA = (function () {
         if (this._config.EDGE_MAX < this._config.EDGE_MIN) {
             throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
         }
+        this._graph = new $G.core.Graph(this._name);
     }
     SaNGreeA.prototype.getConfig = function () {
         return this._config;
@@ -54,11 +55,12 @@ var SaNGreeA = (function () {
     SaNGreeA.prototype.setCatHierarchy = function (name, genh) {
         this._cat_hierarchies[name] = genh;
     };
-    SaNGreeA.prototype.instantiateGraph = function (name) {
-        if (name === void 0) { name = "default"; }
-        this._graph = new $G.core.Graph("adults");
+    SaNGreeA.prototype.instantiateGraph = function (createEdges) {
+        if (createEdges === void 0) { createEdges = true; }
         this.readCSV(this._input_file, this._graph);
-        this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
+        if (createEdges === true) {
+            this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
+        }
     };
     SaNGreeA.prototype.readCSV = function (file, graph) {
         var str_input = fs.readFileSync(file).toString().split('\n');
@@ -82,7 +84,7 @@ var SaNGreeA = (function () {
         var draw = this._config.NR_DRAWS;
         for (var i = 0; i < draw; i++) {
             if (!str_input[i]) {
-                break;
+                continue;
             }
             var line = str_input[i].replace(/\s+/g, '').split(',');
             var line_valid = true;
@@ -109,6 +111,7 @@ var SaNGreeA = (function () {
             for (var idx in cont_feat_idx_select) {
                 node.setFeature(cont_feat_idx_select[idx], +line[idx]);
             }
+            node.setFeature("income", line[line.length - 1]);
             var age = parseInt(line[0]);
             min_age = age < min_age ? age : min_age;
             max_age = age > max_age ? age : max_age;
@@ -127,10 +130,11 @@ var SaNGreeA = (function () {
             outstring += node.getFeature('native-country') + ",";
             outstring += node.getFeature('sex') + ",";
             outstring += node.getFeature('race') + ",";
-            outstring += node.getFeature('marital-status');
+            outstring += node.getFeature('marital-status') + ",";
+            outstring += node.getFeature('income');
             outstring += "\n";
         }
-        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status \n";
+        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, income \n";
         outstring = first_line + outstring;
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };
