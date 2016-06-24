@@ -266,7 +266,7 @@
 	        var draw = this._config.NR_DRAWS;
 	        for (var i = 0; i < draw; i++) {
 	            if (!str_input[i]) {
-	                continue;
+	                break;
 	            }
 	            var line = str_input[i].replace(/\s+/g, '').split(',');
 	            var line_valid = true;
@@ -481,8 +481,8 @@
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
 	    'K_FACTOR': 10,
-	    'ALPHA': 0.2,
-	    'BETA': 0.8,
+	    'ALPHA': 1,
+	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
 	        'equal': {
 	            'categorical': {

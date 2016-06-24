@@ -207,7 +207,7 @@ class SaNGreeA implements ISaNGreeA {
 		for ( var i = 0; i < draw; i++ ) { // drawn_input.length
 			// check for empty lines at the end
 			if ( !str_input[i] ) {
-				continue;
+				break;
 			}
 			var line = str_input[i].replace(/\s+/g, '').split(',');
 			

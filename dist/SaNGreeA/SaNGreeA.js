@@ -82,7 +82,7 @@ var SaNGreeA = (function () {
         var draw = this._config.NR_DRAWS;
         for (var i = 0; i < draw; i++) {
             if (!str_input[i]) {
-                continue;
+                break;
             }
             var line = str_input[i].replace(/\s+/g, '').split(',');
             var line_valid = true;

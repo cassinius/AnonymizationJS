@@ -5,8 +5,8 @@ var CONFIG = {
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
     'K_FACTOR': 10,
-    'ALPHA': 0.2,
-    'BETA': 0.8,
+    'ALPHA': 1,
+    'BETA': 0,
     'GEN_WEIGHT_VECTORS': {
         'equal': {
             'categorical': {

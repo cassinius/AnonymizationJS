@@ -10,9 +10,9 @@ var CONFIG = {
   // The k anonymization factor
   'K_FACTOR'  : 10,
   // Weight of the Generalization Information Loss
-  'ALPHA'     : 0.2,
+  'ALPHA'     : 1,
   // Weight of the Structural Information Loss
-  'BETA'      : 0.8,
+  'BETA'      : 0,
   // Weight vector for generalization categories
   'GEN_WEIGHT_VECTORS' : {
     'equal': {

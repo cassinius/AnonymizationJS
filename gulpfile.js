@@ -96,7 +96,7 @@ gulp.task('pre-cov-test', ['build'], function () {
 });
 
 
-gulp.task('cov-test', ['pre-cov-test'], function () {
+gulp.task('coverage', ['pre-cov-test'], function () {
   return gulp.src(paths.tests)
     .pipe(mocha({reporter: 'nyan',
 						 		 timeout: 60000}))

@@ -30,7 +30,7 @@ describe('SANGREEA TESTS', () => {
 			san = new $San.SaNGreeA("test", adults);
 			expect(san).not.to.be.undefined;
 			expect(san._name).to.equal("test");
-			expect(san.getConfig().NR_DRAWS).to.equal(300);
+			expect(san.getConfig().NR_DRAWS).to.equal(config.NR_DRAWS);
 		});
 		
 		
@@ -131,10 +131,11 @@ describe('SANGREEA TESTS', () => {
 				race_file = './test/io/test_input/RaceGH.json',
 				marital_file = './test/io/test_input/MaritalStatusGH.json',
 				nat_country_file = './test/io/test_input/NativeCountryGH.json';
+	  var config;
 				
-				
-		beforeEach(() => {
-			san = new $San.SaNGreeA("adults", adults);
+		beforeEach(() => {      
+      config = JSON.parse(JSON.stringify($C.CONFIG));
+			san = new $San.SaNGreeA("adults", adults, config);
 			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
 				san.setCatHierarchy(strgh._name, strgh);
@@ -167,7 +168,7 @@ describe('SANGREEA TESTS', () => {
 			var anonymizedOutfile = "output_normal_weights";
 			san.outputAnonymizedCSV(anonymizedOutfile);
       
-			expect(san._graph.nrNodes()).to.equal(300);
+			expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
 		});
 		
 		
@@ -187,7 +188,7 @@ describe('SANGREEA TESTS', () => {
 			var anonymizedOutfileRace = "output_race_weights";
 			san.outputAnonymizedCSV(anonymizedOutfileRace);
       
-			expect(san._graph.nrNodes()).to.equal(300);
+			expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
 		});
 		
 		
@@ -207,7 +208,7 @@ describe('SANGREEA TESTS', () => {
 			var anonymizedOutfileAge = "output_age_weights";
 			san.outputAnonymizedCSV(anonymizedOutfileAge);
       
-			expect(san._graph.nrNodes()).to.equal(300);
+			expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
 		});
 		
 	});
