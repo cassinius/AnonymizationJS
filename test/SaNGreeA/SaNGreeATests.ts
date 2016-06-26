@@ -131,9 +131,11 @@ describe('SANGREEA TESTS', () => {
 				race_file = './test/io/test_input/RaceGH.json',
 				marital_file = './test/io/test_input/MaritalStatusGH.json',
 				nat_country_file = './test/io/test_input/NativeCountryGH.json';
-	  var config;
+	  var config : $San.ISaNGreeAConfig,
+        timestamp;
 				
-		beforeEach(() => {      
+		beforeEach(() => {
+      timestamp = +new Date;    
       config = JSON.parse(JSON.stringify($C.CONFIG));
 			san = new $San.SaNGreeA("adults", adults, config);
 			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
@@ -147,7 +149,7 @@ describe('SANGREEA TESTS', () => {
 		});
 		
 		
-		it('should produce an adjacency list representing a drawn sample graph', () => {
+		it.skip('should produce an adjacency list representing a drawn sample graph', () => {
 			san.instantiateGraph();
 			
 			var outfile = "./test/io/test_output/adult_graph_adj_list.csv";
@@ -157,63 +159,63 @@ describe('SANGREEA TESTS', () => {
       expect("this test case").not.to.equal("being without pertinent expectation.");
 		});
 		
-		
-		it('should instantiate a graph with the expected nr. of nodes', () => {
-			san.instantiateGraph();
-      var preprocOutfile = "input_sanitized";
-      san.outputPreprocCSV(preprocOutfile);
+        
+    it('should anonymize a graph with equally distributed weights of 1/6', () => {
+      san.instantiateGraph( false );
       
-			san.anonymizeGraph();
-			
-			var anonymizedOutfile = "output_normal_weights";
-			san.outputAnonymizedCSV(anonymizedOutfile);
+      // TODO MAKE IT AN OWN TEST CASE
+      // var preprocOutfile = "input_sanitized";
+      // san.outputPreprocCSV(preprocOutfile);
       
-			expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
-		});
-		
-		
-		it('should compute an anonymization with higher weight for race', () => {
-			var config = JSON.parse(JSON.stringify($C.CONFIG));
+      san.anonymizeGraph();
+      
+      var anonymizedOutfile = "output_normal_weights_" + timestamp;
+      san.outputAnonymizedCSV(anonymizedOutfile);
+      
+      expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
+    });
+    
+    
+    it('should compute an anonymization with higher weight for race', () => {
       config.VECTOR = 'emph_race';
-			
-			san = new $San.SaNGreeA("adults", adults, config);
-			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
-				strgh = new $GH.StringGenHierarchy(file);
-				san.setCatHierarchy(strgh._name, strgh);
-			});
-			
-			san.instantiateGraph();
-			san.anonymizeGraph();
-			
-			var anonymizedOutfileRace = "output_race_weights";
-			san.outputAnonymizedCSV(anonymizedOutfileRace);
       
-			expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
-		});
-		
-		
-		it('should compute an anonymization with higher weight for age', () => {
-      var config = JSON.parse(JSON.stringify($C.CONFIG));
+      san = new $San.SaNGreeA("adults", adults, config);
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+        strgh = new $GH.StringGenHierarchy(file);
+        san.setCatHierarchy(strgh._name, strgh);
+      });
+      
+      san.instantiateGraph( false );
+      san.anonymizeGraph();
+      
+      var anonymizedOutfileRace = "output_race_weights_" + timestamp;
+      san.outputAnonymizedCSV(anonymizedOutfileRace);
+      
+      expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
+    });
+    
+    
+    it('should compute an anonymization with higher weight for age', () => {
       config.VECTOR = 'emph_age';
-			
-			san = new $San.SaNGreeA("adults", adults, config);
-			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
-				strgh = new $GH.StringGenHierarchy(file);
-				san.setCatHierarchy(strgh._name, strgh);
-			});
-			
-			san.instantiateGraph();
-			san.anonymizeGraph();
-			
-			var anonymizedOutfileAge = "output_age_weights";
-			san.outputAnonymizedCSV(anonymizedOutfileAge);
       
-			expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
-		});
+      san = new $San.SaNGreeA("adults", adults, config);
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+        strgh = new $GH.StringGenHierarchy(file);
+        san.setCatHierarchy(strgh._name, strgh);
+      });
+      
+      san.instantiateGraph( false );
+      san.anonymizeGraph();
+      
+      var anonymizedOutfileAge = "output_age_weights_" + timestamp;
+      san.outputAnonymizedCSV(anonymizedOutfileAge);
+      
+      expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
+    });
     
     
-    it('should write out the cleaned input data source for python', () => {
-      var config = JSON.parse(JSON.stringify($C.CONFIG));
+    it.skip('should write out the cleaned input data source for python', () => {
+      var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
       config.NR_DRAWS = 50000;
       san = new $San.SaNGreeA("adults", adults, config);
       [workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
@@ -227,6 +229,8 @@ describe('SANGREEA TESTS', () => {
       expect(true).to.be.true;
     });
 		
+   
+    
 	});
 	
 });

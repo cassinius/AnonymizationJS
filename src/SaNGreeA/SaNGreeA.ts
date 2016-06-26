@@ -8,14 +8,17 @@ import * as $C from '../config/SaNGreeAConfig';
 var $G = require('graphinius').$G;
 
 export interface ISaNGreeAConfig {
-	NR_DRAWS    : number;
-	EDGE_MIN    :	number;
-	EDGE_MAX    : number;
-  K_FACTOR    : number;
-  ALPHA       : number;
-  BETA        : number;
-  GEN_WEIGHT_VECTORS : {};
-  VECTOR      : string;
+  INPUT_FILE            : string;
+  TARGET_COLUMNS        : Array<string>;
+  AVERAGE_OUTPUT_RANGES : boolean;
+	NR_DRAWS              : number;
+	EDGE_MIN              :	number;
+	EDGE_MAX              : number;
+  K_FACTOR              : number;
+  ALPHA                 : number;
+  BETA                  : number;
+  GEN_WEIGHT_VECTORS    : {};
+  VECTOR                : string;
 }
 
 
@@ -272,7 +275,7 @@ class SaNGreeA implements ISaNGreeA {
       outstring += node.getFeature('sex') + ",";
       outstring += node.getFeature('race') + ",";
       outstring += node.getFeature('marital-status') + ",";
-      outstring += node.getFeature('income');      
+      outstring += node.getFeature('income');
       outstring += "\n";
     }
     
@@ -337,15 +340,21 @@ class SaNGreeA implements ISaNGreeA {
 		var outstring = "";
 		
 		for ( var cl_idx in this._clusters ) {
-			var cluster = this._clusters[cl_idx];
+			var cluster = this._clusters[cl_idx],
+          nodes = cluster.nodes;
 			
-			for ( var count in cluster.nodes ) {				
+			for ( var node_id in nodes ) {
+                			
 				// first, let's write out the age range
 				var age_range = cluster.gen_ranges['age'];
 				if ( age_range[0] === age_range[1] ) {
 					outstring += age_range[0] + ", ";
 				}
-				else {
+				else if ( this._config.AVERAGE_OUTPUT_RANGES ) {
+          var avg_age = ( age_range[0] + age_range[1] ) / 2.0;
+          outstring += avg_age + ", ";
+        }
+        else {
 					outstring += "[" + age_range[0] + " - " + age_range[1] + "], ";
 				}
 				
@@ -355,21 +364,21 @@ class SaNGreeA implements ISaNGreeA {
 					outstring += h.getName(cluster.gen_feat[hi]) + ", ";
 				}
         
-        // outstring += ", " + 
-        
-				outstring = outstring.slice(0, -2) + "\n";
+        // again, generalize for all target columns
+        outstring += nodes[node_id].getFeature('income');        
+				outstring += "\n";
 			}
 
 		}
 		
 		// TODO... here we go again...
 		// var out_arr = outstring.split("\n");
-		var first_line = "age, workclass, native-country, sex, race, marital-status \n";
+		var first_line = "age, workclass, native-country, sex, race, marital-status, income \n";
 		outstring = first_line + outstring;
 		
 		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
 	}
-		
+
 	
 
 	anonymizeGraph() : void {

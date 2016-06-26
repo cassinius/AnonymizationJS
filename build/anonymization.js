@@ -325,11 +325,15 @@
 	    SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
 	        var outstring = "";
 	        for (var cl_idx in this._clusters) {
-	            var cluster = this._clusters[cl_idx];
-	            for (var count in cluster.nodes) {
+	            var cluster = this._clusters[cl_idx], nodes = cluster.nodes;
+	            for (var node_id in nodes) {
 	                var age_range = cluster.gen_ranges['age'];
 	                if (age_range[0] === age_range[1]) {
 	                    outstring += age_range[0] + ", ";
+	                }
+	                else if (this._config.AVERAGE_OUTPUT_RANGES) {
+	                    var avg_age = (age_range[0] + age_range[1]) / 2.0;
+	                    outstring += avg_age + ", ";
 	                }
 	                else {
 	                    outstring += "[" + age_range[0] + " - " + age_range[1] + "], ";
@@ -338,10 +342,11 @@
 	                    var h = this._cat_hierarchies[hi];
 	                    outstring += h.getName(cluster.gen_feat[hi]) + ", ";
 	                }
-	                outstring = outstring.slice(0, -2) + "\n";
+	                outstring += nodes[node_id].getFeature('income');
+	                outstring += "\n";
 	            }
 	        }
-	        var first_line = "age, workclass, native-country, sex, race, marital-status \n";
+	        var first_line = "age, workclass, native-country, sex, race, marital-status, income \n";
 	        outstring = first_line + outstring;
 	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
 	    };
@@ -480,11 +485,16 @@
 
 	"use strict";
 	var CONFIG = {
-	    'NR_DRAWS': 300,
+	    'INPUT_FILE': '',
+	    'TARGET_COLUMNS': [
+	        'income'
+	    ],
+	    'AVERAGE_OUTPUT_RANGES': true,
+	    'NR_DRAWS': 30169,
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 10,
+	    'K_FACTOR': 25,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {

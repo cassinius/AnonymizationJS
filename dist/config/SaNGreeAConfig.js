@@ -1,10 +1,15 @@
 "use strict";
 var CONFIG = {
-    'NR_DRAWS': 300,
+    'INPUT_FILE': '',
+    'TARGET_COLUMNS': [
+        'income'
+    ],
+    'AVERAGE_OUTPUT_RANGES': true,
+    'NR_DRAWS': 30169,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
-    'K_FACTOR': 10,
+    'K_FACTOR': 25,
     'ALPHA': 1,
     'BETA': 0,
     'GEN_WEIGHT_VECTORS': {

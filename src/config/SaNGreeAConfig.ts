@@ -1,4 +1,11 @@
 var CONFIG = {
+  // Which file to read
+  'INPUT_FILE' : '',
+  // columns to preserve for later processing of anonymized dataset
+  'TARGET_COLUMNS' : [
+    'income'
+  ],
+  'AVERAGE_OUTPUT_RANGES' : true,
   // How many data points to fetch
   'NR_DRAWS' : 300,
   // Do we wnat to sample the dataset randomly?
@@ -8,11 +15,11 @@ var CONFIG = {
   // Max # of edges per node for graph generation
   'EDGE_MAX' : 10,
   // The k anonymization factor
-  'K_FACTOR'  : 10,
+  'K_FACTOR' : 25,
   // Weight of the Generalization Information Loss
-  'ALPHA'     : 1,
+  'ALPHA' : 1,
   // Weight of the Structural Information Loss
-  'BETA'      : 0,
+  'BETA' : 0,
   // Weight vector for generalization categories
   'GEN_WEIGHT_VECTORS' : {
     'equal': {

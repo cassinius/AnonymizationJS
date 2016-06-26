@@ -83,7 +83,7 @@ gulp.task("tdoc", ['clean'], function() {
 gulp.task('test', ['build'], function () {
 	return gulp.src(paths.tests, {read: false})
 						 .pipe(mocha({reporter: 'nyan',
-						 							timeout: 60000}));
+						 							timeout: Number.POSITIVE_INFINITY}));
 });
 
 
@@ -99,7 +99,7 @@ gulp.task('pre-cov-test', ['build'], function () {
 gulp.task('coverage', ['pre-cov-test'], function () {
   return gulp.src(paths.tests)
     .pipe(mocha({reporter: 'nyan',
-						 		 timeout: 60000}))
+						 		 timeout: Number.POSITIVE_INFINITY}))
     // Creating the reports after tests ran
     .pipe(istanbul.writeReports())
     // Enforce a coverage of at least 90%
