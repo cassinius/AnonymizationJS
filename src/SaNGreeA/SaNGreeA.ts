@@ -60,7 +60,7 @@ export interface ISaNGreeA {
 	instantiateGraph(createEdges?: boolean) : void;
 	anonymizeGraph() : void;
   
-  outputPreprocCSV(outfile: string) : void;
+  outputPreprocCSV(outfile: string, skip?: {}) : void;
 	outputAnonymizedCSV(outfile: string) : void;
 }
 
@@ -258,14 +258,37 @@ class SaNGreeA implements ISaNGreeA {
 	}
   
   
-  outputPreprocCSV(outfile: string) : void {
+	/**
+	 * TODO replace with array-based version that is
+	 * subsequently given to the CSV class which implements
+	 * a generic array-to-csv-output method
+	 */
+  outputPreprocCSV(outfile: string, skip?: {}) : void {
     var outstring = "",
         nodes = this._graph.getNodes(),
         node = null,
         feature = null;
+		
+		var rows_eliminated = 0;
     
     for ( var node_key in this._graph.getNodes() ) {
       node = nodes[node_key];
+			
+			/**
+			 * Eliminate rows with specific 
+			 * TODO just for right-to-forget, take out again,
+			 * or generalize out to distinct function
+			 */
+			var prob = parseFloat(skip['prob']),
+					feat = skip['feat'],
+					value = skip['value'];
+					
+			if (skip && prob != null && feat != null && value != null ) {
+				if ( Math.random() < prob && node.getFeature(feat) === value ) {
+					rows_eliminated++;
+					continue;
+				}
+			}
       
       // we have to keep order ;)
 			outstring += node.getID() + ",";
@@ -281,6 +304,8 @@ class SaNGreeA implements ISaNGreeA {
     
     var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, income \n";
 		outstring = first_line + outstring;
+		
+		console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
 		
 		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
   }

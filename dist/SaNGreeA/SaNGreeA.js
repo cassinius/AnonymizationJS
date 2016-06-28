@@ -120,10 +120,18 @@ var SaNGreeA = (function () {
         var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
         this.setContHierarchy('age', age_hierarchy);
     };
-    SaNGreeA.prototype.outputPreprocCSV = function (outfile) {
+    SaNGreeA.prototype.outputPreprocCSV = function (outfile, skip) {
         var outstring = "", nodes = this._graph.getNodes(), node = null, feature = null;
+        var rows_eliminated = 0;
         for (var node_key in this._graph.getNodes()) {
             node = nodes[node_key];
+            var prob = parseFloat(skip['prob']), feat = skip['feat'], value = skip['value'];
+            if (skip && prob != null && feat != null && value != null) {
+                if (Math.random() < prob && node.getFeature(feat) === value) {
+                    rows_eliminated++;
+                    continue;
+                }
+            }
             outstring += node.getID() + ",";
             outstring += node.getFeature('age') + ",";
             outstring += node.getFeature('workclass') + ",";
@@ -136,6 +144,7 @@ var SaNGreeA = (function () {
         }
         var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, income \n";
         outstring = first_line + outstring;
+        console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };
     SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {

@@ -5,7 +5,7 @@ var CONFIG = {
         'income'
     ],
     'AVERAGE_OUTPUT_RANGES': true,
-    'NR_DRAWS': 30169,
+    'NR_DRAWS': 300,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,

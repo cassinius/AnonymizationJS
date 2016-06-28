@@ -216,7 +216,7 @@ describe('SANGREEA TESTS', () => {
     
     it.skip('should write out the cleaned input data source for python', () => {
       var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
-      config.NR_DRAWS = 50000;
+      config.NR_DRAWS = 30169;
       san = new $San.SaNGreeA("adults", adults, config);
       [workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
@@ -226,8 +226,33 @@ describe('SANGREEA TESTS', () => {
       san.readCSV(adults, san._graph);
       var preprocOutfile = "input_for_python";
       san.outputPreprocCSV(preprocOutfile);
-      expect(true).to.be.true;
+      expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
     });
+		
+		
+		[10, 20, 30, 40, 50].forEach(function(prob) {
+			it('should write out the cleaned input data source for python', () => {
+				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
+				config.NR_DRAWS = 30169;
+				san = new $San.SaNGreeA("adults", adults, config);
+				[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+					strgh = new $GH.StringGenHierarchy(file);
+					san.setCatHierarchy(strgh._name, strgh);
+				});
+				
+				var skip = {
+					'prob' : prob / 100,
+					'feat' : 'native-country',
+					'value'  : 'United-States'
+				};
+				// console.dir(skip);
+				
+				san.readCSV(adults, san._graph);
+				var preprocOutfile = "adults_" + skip.feat + "_" + skip.value + "_" + skip.prob;
+				san.outputPreprocCSV(preprocOutfile, skip);
+				expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
+			});
+		});
 		
    
     
