@@ -18,7 +18,7 @@ describe('SANGREEA TESTS', () => {
 	
 	describe('Basic instantiation tests', () => {
     
-    var config;
+    var config : $San.ISaNGreeAConfig;
     
     beforeEach(() => {
       // Copy the JSON from the file, resetting it to defaults...
@@ -130,7 +130,8 @@ describe('SANGREEA TESTS', () => {
 				sex_file = './test/io/test_input/SexGH.json',
 				race_file = './test/io/test_input/RaceGH.json',
 				marital_file = './test/io/test_input/MaritalStatusGH.json',
-				nat_country_file = './test/io/test_input/NativeCountryGH.json';
+				nat_country_file = './test/io/test_input/NativeCountryGH.json',
+				relationship_file = './test/io/test_input/RelationshipGH.json';
 	  var config : $San.ISaNGreeAConfig,
         timestamp;
 				
@@ -138,14 +139,18 @@ describe('SANGREEA TESTS', () => {
       timestamp = +new Date;    
       config = JSON.parse(JSON.stringify($C.CONFIG));
 			san = new $San.SaNGreeA("adults", adults, config);
-			[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+			[workclass_file, nat_country_file, sex_file, race_file, marital_file, relationship_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
 				san.setCatHierarchy(strgh._name, strgh);
 			});
 			expect(san.getCatHierarchy('workclass')).not.to.be.undefined;
 			expect(san.getCatHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
 			expect(san.getCatHierarchy('native-country')).not.to.be.undefined;
+			expect(san.getCatHierarchy('native-country')).to.be.an.instanceof($GH.StringGenHierarchy);
+			expect(san.getCatHierarchy('workclass')).not.to.be.undefined;
 			expect(san.getCatHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
+			expect(san.getCatHierarchy('relationship')).not.to.be.undefined;
+			expect(san.getCatHierarchy('relationship')).to.be.an.instanceof($GH.StringGenHierarchy);
 		});
 		
 		
@@ -180,7 +185,7 @@ describe('SANGREEA TESTS', () => {
       config.VECTOR = 'emph_race';
       
       san = new $San.SaNGreeA("adults", adults, config);
-      [workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file, relationship_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
       });
@@ -199,7 +204,7 @@ describe('SANGREEA TESTS', () => {
       config.VECTOR = 'emph_age';
       
       san = new $San.SaNGreeA("adults", adults, config);
-      [workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file, relationship_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
       });
@@ -214,11 +219,11 @@ describe('SANGREEA TESTS', () => {
     });
     
     
-    it.skip('should write out the cleaned input data source for python', () => {
+    it('should write out the cleaned input data source for python', () => {
       var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
       config.NR_DRAWS = 30169;
       san = new $San.SaNGreeA("adults", adults, config);
-      [workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file, relationship_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
 				san.setCatHierarchy(strgh._name, strgh);
 			});
@@ -235,7 +240,7 @@ describe('SANGREEA TESTS', () => {
 				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
 				config.NR_DRAWS = 30169;
 				san = new $San.SaNGreeA("adults", adults, config);
-				[workclass_file, nat_country_file, sex_file, race_file, marital_file].forEach((file) => {
+				[workclass_file, nat_country_file, sex_file, race_file, marital_file, relationship_file].forEach((file) => {
 					strgh = new $GH.StringGenHierarchy(file);
 					san.setCatHierarchy(strgh._name, strgh);
 				});

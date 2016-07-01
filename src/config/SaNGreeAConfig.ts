@@ -15,7 +15,7 @@ var CONFIG = {
   // Max # of edges per node for graph generation
   'EDGE_MAX' : 10,
   // The k anonymization factor
-  'K_FACTOR' : 25,
+  'K_FACTOR' : 10,
   // Weight of the Generalization Information Loss
   'ALPHA' : 1,
   // Weight of the Structural Information Loss
@@ -24,14 +24,15 @@ var CONFIG = {
   'GEN_WEIGHT_VECTORS' : {
     'equal': {
         'categorical': {
-            'workclass': 1.0/6.0,
-            'native-country': 1.0/6.0,
-            'sex': 1.0/6.0,
-            'race': 1.0/6.0,
-            'marital-status': 1.0/6.0
+            'workclass': 1.0/7.0,
+            'native-country': 1.0/7.0,
+            'sex': 1.0/7.0,
+            'race': 1.0/7.0,
+            'marital-status': 1.0/7.0,
+            'relationship': 1.0/7.0
         },
         'range': {
-            'age': 1.0/6.0
+            'age': 1.0/7.0
         }
     },
     'emph_race': {
@@ -39,8 +40,9 @@ var CONFIG = {
             'workclass': 0.02,
             'native-country': 0.02,
             'sex': 0.02,
-            'race': 0.9,
+            'race': 0.88,
             'marital-status': 0.02,
+            'relationship': 0.02
         },
         'range': {
             'age': 0.02,
@@ -53,9 +55,10 @@ var CONFIG = {
             'sex': 0.02,
             'race': 0.02,
             'marital-status': 0.02,
+            'relationship': 0.02
         },
         'range': {
-            'age': 0.9,
+            'age': 0.88,
         }
     }
   },

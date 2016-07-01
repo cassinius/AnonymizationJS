@@ -125,8 +125,9 @@ var SaNGreeA = (function () {
         var rows_eliminated = 0;
         for (var node_key in this._graph.getNodes()) {
             node = nodes[node_key];
+            skip = skip || {};
             var prob = parseFloat(skip['prob']), feat = skip['feat'], value = skip['value'];
-            if (skip && prob != null && feat != null && value != null) {
+            if (prob != null && feat != null && value != null) {
                 if (Math.random() < prob && node.getFeature(feat) === value) {
                     rows_eliminated++;
                     continue;
@@ -139,10 +140,11 @@ var SaNGreeA = (function () {
             outstring += node.getFeature('sex') + ",";
             outstring += node.getFeature('race') + ",";
             outstring += node.getFeature('marital-status') + ",";
+            outstring += node.getFeature('relationship') + ",";
             outstring += node.getFeature('income');
             outstring += "\n";
         }
-        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, income \n";
+        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, income \n";
         outstring = first_line + outstring;
         console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
@@ -189,7 +191,8 @@ var SaNGreeA = (function () {
                     'native-country': current_node.getFeature('native-country'),
                     'marital-status': current_node.getFeature('marital-status'),
                     'sex': current_node.getFeature('sex'),
-                    'race': current_node.getFeature('race')
+                    'race': current_node.getFeature('race'),
+                    'relationship': current_node.getFeature('relationship')
                 },
                 gen_ranges: {
                     'age': [current_node.getFeature('age'), current_node.getFeature('age')]

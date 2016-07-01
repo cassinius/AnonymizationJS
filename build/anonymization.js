@@ -309,8 +309,9 @@
 	        var rows_eliminated = 0;
 	        for (var node_key in this._graph.getNodes()) {
 	            node = nodes[node_key];
+	            skip = skip || {};
 	            var prob = parseFloat(skip['prob']), feat = skip['feat'], value = skip['value'];
-	            if (skip && prob != null && feat != null && value != null) {
+	            if (prob != null && feat != null && value != null) {
 	                if (Math.random() < prob && node.getFeature(feat) === value) {
 	                    rows_eliminated++;
 	                    continue;
@@ -323,10 +324,11 @@
 	            outstring += node.getFeature('sex') + ",";
 	            outstring += node.getFeature('race') + ",";
 	            outstring += node.getFeature('marital-status') + ",";
+	            outstring += node.getFeature('relationship') + ",";
 	            outstring += node.getFeature('income');
 	            outstring += "\n";
 	        }
-	        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, income \n";
+	        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, income \n";
 	        outstring = first_line + outstring;
 	        console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
 	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
@@ -373,7 +375,8 @@
 	                    'native-country': current_node.getFeature('native-country'),
 	                    'marital-status': current_node.getFeature('marital-status'),
 	                    'sex': current_node.getFeature('sex'),
-	                    'race': current_node.getFeature('race')
+	                    'race': current_node.getFeature('race'),
+	                    'relationship': current_node.getFeature('relationship')
 	                },
 	                gen_ranges: {
 	                    'age': [current_node.getFeature('age'), current_node.getFeature('age')]
@@ -503,20 +506,21 @@
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 25,
+	    'K_FACTOR': 10,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
 	        'equal': {
 	            'categorical': {
-	                'workclass': 1.0 / 6.0,
-	                'native-country': 1.0 / 6.0,
-	                'sex': 1.0 / 6.0,
-	                'race': 1.0 / 6.0,
-	                'marital-status': 1.0 / 6.0
+	                'workclass': 1.0 / 7.0,
+	                'native-country': 1.0 / 7.0,
+	                'sex': 1.0 / 7.0,
+	                'race': 1.0 / 7.0,
+	                'marital-status': 1.0 / 7.0,
+	                'relationship': 1.0 / 7.0
 	            },
 	            'range': {
-	                'age': 1.0 / 6.0
+	                'age': 1.0 / 7.0
 	            }
 	        },
 	        'emph_race': {
@@ -524,8 +528,9 @@
 	                'workclass': 0.02,
 	                'native-country': 0.02,
 	                'sex': 0.02,
-	                'race': 0.9,
+	                'race': 0.88,
 	                'marital-status': 0.02,
+	                'relationship': 0.02
 	            },
 	            'range': {
 	                'age': 0.02,
@@ -538,9 +543,10 @@
 	                'sex': 0.02,
 	                'race': 0.02,
 	                'marital-status': 0.02,
+	                'relationship': 0.02
 	            },
 	            'range': {
-	                'age': 0.9,
+	                'age': 0.88,
 	            }
 	        }
 	    },
