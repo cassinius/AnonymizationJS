@@ -235,7 +235,7 @@ describe('SANGREEA TESTS', () => {
     });
 		
 		
-		[10, 20, 30, 40, 50].forEach(function(prob) {
+		[20, 40, 60, 80, 100].forEach(function(prob) {
 			it('should write out the cleaned input data source for python', () => {
 				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
 				config.NR_DRAWS = 30169;
@@ -247,8 +247,8 @@ describe('SANGREEA TESTS', () => {
 				
 				var skip = {
 					'prob' : prob / 100,
-					'feat' : 'native-country',
-					'value'  : 'United-States'
+					'feat' : 'relationship',
+					'value'  : 'Own-child'
 				};
 				// console.dir(skip);
 				
