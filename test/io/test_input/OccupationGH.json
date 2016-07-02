@@ -1,0 +1,120 @@
+{
+	"name": "occupation",
+	"entries":
+	{
+		"all": 
+		{
+			"name": "*",
+			"gen": "all",
+			"level": 0
+		},
+		"services": 
+		{
+			"name": "services", 
+			"gen": "all",
+			"level": 1
+		},
+		"manual-labor": 
+		{
+			"name": "manual-labor", 
+			"gen": "all",
+			"level": 1
+		},
+		"bureaucracy": 
+		{
+			"name": "bureaucracy", 
+			"gen": "all",
+			"level": 1
+		},
+		"security": 
+		{
+			"name": "security", 
+			"gen": "all",
+			"level": 1
+		},
+		"Tech-support": 
+		{
+			"name": "Tech-support", 
+			"gen": "services",
+			"level": 2
+		},
+		"Other-service": 
+		{
+			"name": "Other-service", 
+			"gen": "services",
+			"level": 2
+		},
+		"Sales": 
+		{
+			"name": "Sales", 
+			"gen": "services",
+			"level": 2
+		},
+		"Prof-specialty": 
+		{
+			"name": "Prof-specialty", 
+			"gen": "services",
+			"level": 2
+		},
+		"Priv-house-serv": 
+		{
+			"name": "Priv-house-serv", 
+			"gen": "services",
+			"level": 2
+		},
+		"Craft-repair": 
+		{
+			"name": "Craft-repair", 
+			"gen": "manual-labor",
+			"level": 2
+		},
+		"Handlers-cleaners": 
+		{
+			"name": "Handlers-cleaners", 
+			"gen": "manual-labor",
+			"level": 2
+		},
+		"Machine-op-inspct": 
+		{
+			"name": "Machine-op-inspct", 
+			"gen": "manual-labor",
+			"level": 2
+		},
+		"Farming-fishing": 
+		{
+			"name": "Farming-fishing", 
+			"gen": "manual-labor",
+			"level": 2
+		},
+		"Transport-moving": 
+		{
+			"name": "Transport-moving", 
+			"gen": "manual-labor",
+			"level": 2
+		},
+		"Exec-managerial": 
+		{
+			"name": "Exec-managerial", 
+			"gen": "bureaucracy",
+			"level": 2
+		},
+		"Adm-clerical": 
+		{
+			"name": "Adm-clerical", 
+			"gen": "bureaucracy",
+			"level": 2
+		},
+		"Protective-serv": 
+		{
+			"name": "Protective-serv", 
+			"gen": "security",
+			"level": 2
+		},
+		"Armed-Forces": 
+		{
+			"name": "Armed-Forces", 
+			"gen": "security",
+			"level": 2
+		}
+	}
+}

@@ -194,7 +194,7 @@ class SaNGreeA implements ISaNGreeA {
 			}
 		});
 		
-		// console.log(cont_feat_idx_select);
+		// console.log(cat_feat_idx_select);
 		
 		// draw sample of size draw_sample from dataset file
 		// var drawn_input = this.drawSample(str_input, feat_idx_select, this._options.nr_draws);
@@ -300,14 +300,15 @@ class SaNGreeA implements ISaNGreeA {
       outstring += node.getFeature('race') + ",";
       outstring += node.getFeature('marital-status') + ",";
 			outstring += node.getFeature('relationship') + ",";
+			outstring += node.getFeature('occupation') + ",";
       outstring += node.getFeature('income');
       outstring += "\n";
     }
     
-    var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, income \n";
+    var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
 		outstring = first_line + outstring;
 		
-		console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
+		// console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
 		
 		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
   }
@@ -400,12 +401,11 @@ class SaNGreeA implements ISaNGreeA {
 		
 		// TODO... here we go again...
 		// var out_arr = outstring.split("\n");
-		var first_line = "age, workclass, native-country, sex, race, marital-status, income \n";
+		var first_line = "age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
 		outstring = first_line + outstring;
 		
 		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
 	}
-
 	
 
 	anonymizeGraph() : void {
@@ -441,7 +441,7 @@ class SaNGreeA implements ISaNGreeA {
        * @TODO look up extendable TS interfaces 
        *       or enums (runtime add / delete)
        */			
-			var Cl : nodeCluster = { 
+			var Cl : nodeCluster = {
 				nodes : {},
 				gen_feat : {
 					'workclass': current_node.getFeature('workclass'),
@@ -449,7 +449,8 @@ class SaNGreeA implements ISaNGreeA {
 					'marital-status': current_node.getFeature('marital-status'),
 					'sex': current_node.getFeature('sex'),
 					'race': current_node.getFeature('race'),
-					'relationship': current_node.getFeature('relationship')
+					'relationship': current_node.getFeature('relationship'),
+          'occupation': current_node.getFeature('occupation')
 				},
 				gen_ranges : {
 					'age': [current_node.getFeature('age'), current_node.getFeature('age')]
@@ -626,7 +627,8 @@ class SaNGreeA implements ISaNGreeA {
 		range[0] < range[0] ? nr : range[0];
 		range[1] = nr > range[1] ? nr : range[1];
 	}
-
+  
+  
 
 }
 

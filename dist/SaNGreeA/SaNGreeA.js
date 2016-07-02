@@ -141,12 +141,12 @@ var SaNGreeA = (function () {
             outstring += node.getFeature('race') + ",";
             outstring += node.getFeature('marital-status') + ",";
             outstring += node.getFeature('relationship') + ",";
+            outstring += node.getFeature('occupation') + ",";
             outstring += node.getFeature('income');
             outstring += "\n";
         }
-        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, income \n";
+        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
         outstring = first_line + outstring;
-        console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };
     SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
@@ -173,7 +173,7 @@ var SaNGreeA = (function () {
                 outstring += "\n";
             }
         }
-        var first_line = "age, workclass, native-country, sex, race, marital-status, income \n";
+        var first_line = "age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
         outstring = first_line + outstring;
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };
@@ -192,7 +192,8 @@ var SaNGreeA = (function () {
                     'marital-status': current_node.getFeature('marital-status'),
                     'sex': current_node.getFeature('sex'),
                     'race': current_node.getFeature('race'),
-                    'relationship': current_node.getFeature('relationship')
+                    'relationship': current_node.getFeature('relationship'),
+                    'occupation': current_node.getFeature('occupation')
                 },
                 gen_ranges: {
                     'age': [current_node.getFeature('age'), current_node.getFeature('age')]

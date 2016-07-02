@@ -325,12 +325,12 @@
 	            outstring += node.getFeature('race') + ",";
 	            outstring += node.getFeature('marital-status') + ",";
 	            outstring += node.getFeature('relationship') + ",";
+	            outstring += node.getFeature('occupation') + ",";
 	            outstring += node.getFeature('income');
 	            outstring += "\n";
 	        }
-	        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, income \n";
+	        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
 	        outstring = first_line + outstring;
-	        console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
 	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
 	    };
 	    SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
@@ -357,7 +357,7 @@
 	                outstring += "\n";
 	            }
 	        }
-	        var first_line = "age, workclass, native-country, sex, race, marital-status, income \n";
+	        var first_line = "age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
 	        outstring = first_line + outstring;
 	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
 	    };
@@ -376,7 +376,8 @@
 	                    'marital-status': current_node.getFeature('marital-status'),
 	                    'sex': current_node.getFeature('sex'),
 	                    'race': current_node.getFeature('race'),
-	                    'relationship': current_node.getFeature('relationship')
+	                    'relationship': current_node.getFeature('relationship'),
+	                    'occupation': current_node.getFeature('occupation')
 	                },
 	                gen_ranges: {
 	                    'age': [current_node.getFeature('age'), current_node.getFeature('age')]
@@ -512,15 +513,16 @@
 	    'GEN_WEIGHT_VECTORS': {
 	        'equal': {
 	            'categorical': {
-	                'workclass': 1.0 / 7.0,
-	                'native-country': 1.0 / 7.0,
-	                'sex': 1.0 / 7.0,
-	                'race': 1.0 / 7.0,
-	                'marital-status': 1.0 / 7.0,
-	                'relationship': 1.0 / 7.0
+	                'workclass': 1.0 / 8.0,
+	                'native-country': 1.0 / 8.0,
+	                'sex': 1.0 / 8.0,
+	                'race': 1.0 / 8.0,
+	                'marital-status': 1.0 / 8.0,
+	                'relationship': 1.0 / 8.0,
+	                'occupation': 1.0 / 8.0
 	            },
 	            'range': {
-	                'age': 1.0 / 7.0
+	                'age': 1.0 / 8.0
 	            }
 	        },
 	        'emph_race': {
@@ -528,9 +530,10 @@
 	                'workclass': 0.02,
 	                'native-country': 0.02,
 	                'sex': 0.02,
-	                'race': 0.88,
+	                'race': 0.86,
 	                'marital-status': 0.02,
-	                'relationship': 0.02
+	                'relationship': 0.02,
+	                'occupation': 0.02
 	            },
 	            'range': {
 	                'age': 0.02,
@@ -543,10 +546,11 @@
 	                'sex': 0.02,
 	                'race': 0.02,
 	                'marital-status': 0.02,
-	                'relationship': 0.02
+	                'relationship': 0.02,
+	                'occupation': 0.02
 	            },
 	            'range': {
-	                'age': 0.88,
+	                'age': 0.86,
 	            }
 	        }
 	    },
