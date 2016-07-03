@@ -27,16 +27,17 @@ describe('SANGREEA TESTS', () => {
     
 		
 		it('should correctly instantiate a Sangreea object with default params', () => {
-			san = new $San.SaNGreeA("test", adults);
+			san = new $San.SaNGreeA();
 			expect(san).not.to.be.undefined;
-			expect(san._name).to.equal("test");
+			expect(san._name).to.equal("default");
 			expect(san.getConfig().NR_DRAWS).to.equal(config.NR_DRAWS);
 		});
 		
 		
 		it('should throw an error if input file is set to empty string', () => {
-			assert.throw(function () {
-				new $San.SaNGreeA("test", "")
+			config.INPUT_FILE = ""
+      assert.throw(function () {
+				new $San.SaNGreeA("test", config)
 			}, 'Input file cannot be an empty string');
 		});
 		
@@ -45,7 +46,7 @@ describe('SANGREEA TESTS', () => {
 			config.NR_DRAWS = -3;
       
 			assert.throw(function () {
-				new $San.SaNGreeA("test", adults, config)
+			san = new $San.SaNGreeA("adults", config);
 			}, 'Options invalid. Nr_draws can not be negative.');
 		});
 		
@@ -54,7 +55,7 @@ describe('SANGREEA TESTS', () => {
 		  config.EDGE_MIN = -1;
       
 			assert.throw(function () {
-				new $San.SaNGreeA("test", adults, config)
+			san = new $San.SaNGreeA("adults", config);
 			}, 'Options invalid. Edge_min can not be negative.');
 		});
 		
@@ -63,7 +64,7 @@ describe('SANGREEA TESTS', () => {
 			config.EDGE_MAX = -1;
       
 			assert.throw(function () {
-				new $San.SaNGreeA("test", adults, config)
+			san = new $San.SaNGreeA("adults", config);
 			}, 'Options invalid. Edge_max can not be negative.');
 		});
 		
@@ -73,7 +74,7 @@ describe('SANGREEA TESTS', () => {
       config.EDGE_MAX = 1;
       
 			assert.throw(function () {
-				new $San.SaNGreeA("test", adults, config)
+			san = new $San.SaNGreeA("adults", config);
 			}, 'Options invalid. Edge_min cannot exceed edge_max.');
 		});
 		
@@ -89,7 +90,7 @@ describe('SANGREEA TESTS', () => {
 	
 	
 		it('should have no gen hierarchies after instantiation', () => {
-			san = new $San.SaNGreeA("test", adults);
+			san = new $San.SaNGreeA();
 			expect(Object.keys(san.getCatHierarchies()).length).to.equal(0);
 			expect(Object.keys(san.getContHierarchies()).length).to.equal(0);
 		});
@@ -97,7 +98,7 @@ describe('SANGREEA TESTS', () => {
 		
 		it('should correctly set a new string hierarchy', () => {
 			strgh = new $GH.StringGenHierarchy(workclass_file);
-			san = new $San.SaNGreeA("test", adults);
+			san = new $San.SaNGreeA();
 			san.setCatHierarchy("workclass", strgh);
 			hierarchy = san.getCatHierarchy("workclass");
 			expect(hierarchy).to.be.an.instanceof($GH.StringGenHierarchy);
@@ -109,7 +110,7 @@ describe('SANGREEA TESTS', () => {
 		
 		it('should correctly set a new continuous hierarchy', () => {
 			contgh = new $GH.ContGenHierarchy("age", 11, 99);
-			san = new $San.SaNGreeA("test", adults);
+			san = new $San.SaNGreeA();
 			san.setContHierarchy("age", contgh);
 			hierarchy = san.getContHierarchy("age");
 			expect(hierarchy).to.be.an.instanceof($GH.ContGenHierarchy);
@@ -139,7 +140,7 @@ describe('SANGREEA TESTS', () => {
 		beforeEach(() => {
       timestamp = +new Date;    
       config = JSON.parse(JSON.stringify($C.CONFIG));
-			san = new $San.SaNGreeA("adults", adults, config);
+			san = new $San.SaNGreeA("adults", config);
       
 			[workclass_file, nat_country_file, sex_file, race_file, 
        marital_file, relationship_file, occupation_file].forEach((file) => {
@@ -158,18 +159,7 @@ describe('SANGREEA TESTS', () => {
 			expect(san.getCatHierarchy('occupation')).not.to.be.undefined;
 			expect(san.getCatHierarchy('occupation')).to.be.an.instanceof($GH.StringGenHierarchy);
 		});
-		
-		
-		it.skip('should produce an adjacency list representing a drawn sample graph', () => {
-			san.instantiateGraph();
-			
-			var outfile = "./test/io/test_output/adult_graph_adj_list.csv";
-			var csvOut = new $G.output.CsvOutput(",", false, false);
-			csvOut.writeToAdjacencyListFile(outfile, san._graph);
-      
-      expect("this test case").not.to.equal("being without pertinent expectation.");
-		});
-		
+				
         
     it('should anonymize a graph with equally distributed weights', () => {
       san.instantiateGraph( false );
@@ -190,7 +180,7 @@ describe('SANGREEA TESTS', () => {
     it('should compute an anonymization with higher weight for race', () => {
       config.VECTOR = 'emph_race';
       
-      san = new $San.SaNGreeA("adults", adults, config);
+      san = new $San.SaNGreeA("adults", config);
       
       [workclass_file, nat_country_file, sex_file, race_file, 
       marital_file, relationship_file, occupation_file].forEach((file) => {
@@ -211,7 +201,7 @@ describe('SANGREEA TESTS', () => {
     it('should compute an anonymization with higher weight for age', () => {
       config.VECTOR = 'emph_age';
       
-      san = new $San.SaNGreeA("adults", adults, config);
+      san = new $San.SaNGreeA("adults", config);
       
       [workclass_file, nat_country_file, sex_file, race_file, 
       marital_file, relationship_file, occupation_file].forEach((file) => {
@@ -232,7 +222,7 @@ describe('SANGREEA TESTS', () => {
     it('should write out the cleaned input data source for python', () => {
       var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
       config.NR_DRAWS = 30162;
-      san = new $San.SaNGreeA("adults", adults, config);
+      san = new $San.SaNGreeA("adults", config);
       
       [workclass_file, nat_country_file, sex_file, race_file, 
       marital_file, relationship_file, occupation_file].forEach((file) => {
@@ -249,20 +239,20 @@ describe('SANGREEA TESTS', () => {
 		
 		[20, 40, 60, 80, 100].forEach(function(prob) {
 			it.skip('should write out the cleaned input data source for python', () => {
-				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
-				config.NR_DRAWS = 30162;
-				san = new $San.SaNGreeA("adults", adults, config);
+				// var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
+				// config.NR_DRAWS = 30162;
+				// san = new $San.SaNGreeA("adults", adults, config);
 				
-        [workclass_file, nat_country_file, sex_file, race_file, 
-        marital_file, relationship_file, occupation_file].forEach((file) => {
-          strgh = new $GH.StringGenHierarchy(file);
-          san.setCatHierarchy(strgh._name, strgh);
-        });
+        // [workclass_file, nat_country_file, sex_file, race_file, 
+        // marital_file, relationship_file, occupation_file].forEach((file) => {
+        //   strgh = new $GH.StringGenHierarchy(file);
+        //   san.setCatHierarchy(strgh._name, strgh);
+        // });
 				
 				var skip = {
-					'prob' : prob / 100,
-					'feat' : 'relationship',
-					'value'  : 'Own-child'
+					'prob'  : prob / 100,
+					'feat'  : 'marital-status',
+					'value' : 'Married-civ-spouse'
 				};
 				// console.dir(skip);
 				
@@ -272,10 +262,23 @@ describe('SANGREEA TESTS', () => {
 				expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
 			});
 		});
-		
-   
     
 	});
+  
+  
+  describe.skip('graph instantiation', () => {    
+		
+		it('should produce an adjacency list representing a drawn sample graph', () => {
+			san.instantiateGraph();
+			
+			var outfile = "./test/io/test_output/adult_graph_adj_list.csv";
+			var csvOut = new $G.output.CsvOutput(",", false, false);
+			csvOut.writeToAdjacencyListFile(outfile, san._graph);
+      
+      expect("this test case").not.to.equal("being without pertinent expectation.");
+		});
+    
+  });
 	
 });
 

@@ -9,15 +9,14 @@ var $G = require('graphinius').$G;
 })(exports.HierarchyType || (exports.HierarchyType = {}));
 var HierarchyType = exports.HierarchyType;
 var SaNGreeA = (function () {
-    function SaNGreeA(_name, _input_file, config) {
+    function SaNGreeA(_name, config) {
         if (_name === void 0) { _name = "default"; }
         this._name = _name;
-        this._input_file = _input_file;
         this.config = config;
         this._cont_hierarchies = {};
         this._cat_hierarchies = {};
         this._config = config || $C.CONFIG;
-        if (_input_file === "") {
+        if (this._config.INPUT_FILE === "") {
             throw new Error('Input file cannot be an empty string');
         }
         if (this._config.NR_DRAWS < 0) {
@@ -57,10 +56,14 @@ var SaNGreeA = (function () {
     };
     SaNGreeA.prototype.instantiateGraph = function (createEdges) {
         if (createEdges === void 0) { createEdges = true; }
-        this.readCSV(this._input_file, this._graph);
+        this.readCSV(this._config.INPUT_FILE, this._graph);
         if (createEdges === true) {
             this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
         }
+    };
+    SaNGreeA.prototype.instantiateCategoricalHierarchies = function () {
+    };
+    SaNGreeA.prototype.instantiateRangeHierarchies = function () {
     };
     SaNGreeA.prototype.readCSV = function (file, graph) {
         var str_input = fs.readFileSync(file).toString().split('\n');
@@ -147,6 +150,7 @@ var SaNGreeA = (function () {
         }
         var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
         outstring = first_line + outstring;
+        console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };
     SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {

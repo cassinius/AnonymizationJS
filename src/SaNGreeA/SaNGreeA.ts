@@ -91,14 +91,13 @@ class SaNGreeA implements ISaNGreeA {
 	private _cat_hierarchies : {[name: string] : $GH.IStringGenHierarchy} = {};
 	
 	
-	constructor( public _name: string = "default", 
-							 private _input_file : string,
+	constructor( public _name: string = "default",
 							 public config? : ISaNGreeAConfig)
 	{		
 		this._config = config || $C.CONFIG;
     
 		
-		if ( _input_file === "" ) {
+		if ( this._config.INPUT_FILE === "" ) {
 			throw new Error('Input file cannot be an empty string');
 		}
 		if ( this._config.NR_DRAWS < 0 ) {
@@ -148,13 +147,31 @@ class SaNGreeA implements ISaNGreeA {
 	
 	
 	instantiateGraph(createEdges = true ) : void {    
-		this.readCSV(this._input_file, this._graph);
+		this.readCSV(this._config.INPUT_FILE, this._graph);
 		
     if( createEdges === true ) {
 		  this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
     }
 	}
 	
+  
+  instantiateCategoricalHierarchies() {
+    
+  }
+  
+  instantiateRangeHierarchies() {
+    
+    // var age = parseInt(line[0]);
+    // min_age = age < min_age ? age : min_age;
+    // max_age = age > max_age ? age : max_age;
+    // node.setFeature('age', parseInt(line[0]));
+  
+		
+		// // instantiate age hierarcy
+		// var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
+		// this.setContHierarchy('age', age_hierarchy);
+  }
+  
 	
 	/**
 	 * @ TODO Outsource to it's own class
@@ -168,6 +185,7 @@ class SaNGreeA implements ISaNGreeA {
 		var cont_hierarchies = Object.keys(this._cont_hierarchies);
 		var cat_hierarchies = Object.keys(this._cat_hierarchies);
 		
+    
 		/**
 		 * @TODO make generic!
 		 */
@@ -194,6 +212,7 @@ class SaNGreeA implements ISaNGreeA {
 			}
 		});
 		
+		// console.log(cont_hierarchies);
 		// console.log(cat_feat_idx_select);
 		
 		// draw sample of size draw_sample from dataset file
@@ -308,7 +327,7 @@ class SaNGreeA implements ISaNGreeA {
     var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
 		outstring = first_line + outstring;
 		
-		// console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
+		console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
 		
 		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
   }

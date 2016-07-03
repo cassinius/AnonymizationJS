@@ -1,6 +1,6 @@
 "use strict";
 var CONFIG = {
-    'INPUT_FILE': '',
+    'INPUT_FILE': './test/io/test_input/adult_data.csv',
     'TARGET_COLUMNS': [
         'income'
     ],
@@ -9,7 +9,7 @@ var CONFIG = {
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
-    'K_FACTOR': 10,
+    'K_FACTOR': 9,
     'ALPHA': 1,
     'BETA': 0,
     'GEN_WEIGHT_VECTORS': {

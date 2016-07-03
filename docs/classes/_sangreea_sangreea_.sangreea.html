@@ -104,7 +104,6 @@
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#_config" class="tsd-kind-icon">_config</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#_cont_hierarchies" class="tsd-kind-icon">_cont_<wbr>hierarchies</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#_graph" class="tsd-kind-icon">_graph</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#_input_file" class="tsd-kind-icon">_input_<wbr>file</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#_k_factor" class="tsd-kind-icon">_k_<wbr>factor</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#_name" class="tsd-kind-icon">_name</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#_weights" class="tsd-kind-icon">_weights</a></li>
@@ -124,7 +123,9 @@
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#getconfig" class="tsd-kind-icon">get<wbr>Config</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#getconthierarchies" class="tsd-kind-icon">get<wbr>Cont<wbr>Hierarchies</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#getconthierarchy" class="tsd-kind-icon">get<wbr>Cont<wbr>Hierarchy</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#instantiatecategoricalhierarchies" class="tsd-kind-icon">instantiate<wbr>Categorical<wbr>Hierarchies</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#instantiategraph" class="tsd-kind-icon">instantiate<wbr>Graph</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#instantiaterangehierarchies" class="tsd-kind-icon">instantiate<wbr>Range<wbr>Hierarchies</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#outputanonymizedcsv" class="tsd-kind-icon">output<wbr>AnonymizedCSV</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#outputpreproccsv" class="tsd-kind-icon">output<wbr>PreprocCSV</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-not-exported"><a href="_sangreea_sangreea_.sangreea.html#readcsv" class="tsd-kind-icon">readCSV</a></li>
@@ -143,7 +144,7 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-not-exported">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>SaNGreeA<span class="tsd-signature-symbol">(</span>_name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, _input_file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_sangreea_sangreea_.isangreeaconfig.html" class="tsd-signature-type">ISaNGreeAConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_sangreea_sangreea_.sangreea.html" class="tsd-signature-type">SaNGreeA</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>SaNGreeA<span class="tsd-signature-symbol">(</span>_name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span>, config<span class="tsd-signature-symbol">?: </span><a href="../interfaces/_sangreea_sangreea_.isangreeaconfig.html" class="tsd-signature-type">ISaNGreeAConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_sangreea_sangreea_.sangreea.html" class="tsd-signature-type">SaNGreeA</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -156,9 +157,6 @@
 							<ul class="tsd-parameters">
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> _name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> =&nbsp;&quot;default&quot;</span></h5>
-								</li>
-								<li>
-									<h5>_input_file: <span class="tsd-signature-type">string</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> config: <a href="../interfaces/_sangreea_sangreea_.isangreeaconfig.html" class="tsd-signature-type">ISaNGreeAConfig</a></h5>
@@ -277,16 +275,6 @@
 						</div>
 					</div>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-					<a name="_input_file" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagPrivate">Private</span> _input_<wbr>file</h3>
-					<div class="tsd-signature tsd-kind-icon">_input_<wbr>file<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L95">SaNGreeA/SaNGreeA.ts:95</a></li>
-						</ul>
-					</aside>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
 					<a name="_k_factor" class="tsd-anchor"></a>
 					<h3>_k_<wbr>factor</h3>
@@ -324,7 +312,7 @@
 					<div class="tsd-signature tsd-kind-icon">config<span class="tsd-signature-symbol">:</span> <a href="../interfaces/_sangreea_sangreea_.isangreeaconfig.html" class="tsd-signature-type">ISaNGreeAConfig</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L96">SaNGreeA/SaNGreeA.ts:96</a></li>
+							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L95">SaNGreeA/SaNGreeA.ts:95</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -342,7 +330,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#anonymizegraph">anonymizeGraph</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L411">SaNGreeA/SaNGreeA.ts:411</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L430">SaNGreeA/SaNGreeA.ts:430</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -359,7 +347,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L573">SaNGreeA/SaNGreeA.ts:573</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L592">SaNGreeA/SaNGreeA.ts:592</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -385,7 +373,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L605">SaNGreeA/SaNGreeA.ts:605</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L624">SaNGreeA/SaNGreeA.ts:624</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -416,7 +404,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L523">SaNGreeA/SaNGreeA.ts:523</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L542">SaNGreeA/SaNGreeA.ts:542</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -442,7 +430,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L619">SaNGreeA/SaNGreeA.ts:619</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L638">SaNGreeA/SaNGreeA.ts:638</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -469,7 +457,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#getcathierarchies">getCatHierarchies</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L128">SaNGreeA/SaNGreeA.ts:128</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L127">SaNGreeA/SaNGreeA.ts:127</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -492,7 +480,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#getcathierarchy">getCatHierarchy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L136">SaNGreeA/SaNGreeA.ts:136</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L135">SaNGreeA/SaNGreeA.ts:135</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -516,7 +504,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#getconfig">getConfig</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L120">SaNGreeA/SaNGreeA.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L119">SaNGreeA/SaNGreeA.ts:119</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_sangreea_sangreea_.isangreeaconfig.html" class="tsd-signature-type">ISaNGreeAConfig</a></h4>
@@ -534,7 +522,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#getconthierarchies">getContHierarchies</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L124">SaNGreeA/SaNGreeA.ts:124</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L123">SaNGreeA/SaNGreeA.ts:123</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">object</span></h4>
@@ -557,7 +545,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#getconthierarchy">getContHierarchy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L132">SaNGreeA/SaNGreeA.ts:132</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L131">SaNGreeA/SaNGreeA.ts:131</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -567,6 +555,23 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="../interfaces/_core_genhierarchies_.icontgenhierarchy.html" class="tsd-signature-type">IContGenHierarchy</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="instantiatecategoricalhierarchies" class="tsd-anchor"></a>
+					<h3>instantiate<wbr>Categorical<wbr>Hierarchies</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">instantiate<wbr>Categorical<wbr>Hierarchies<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L158">SaNGreeA/SaNGreeA.ts:158</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -581,7 +586,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#instantiategraph">instantiateGraph</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L150">SaNGreeA/SaNGreeA.ts:150</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L149">SaNGreeA/SaNGreeA.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -590,6 +595,23 @@
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> createEdges: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> =&nbsp;true</span></h5>
 								</li>
 							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+					<a name="instantiaterangehierarchies" class="tsd-anchor"></a>
+					<h3>instantiate<wbr>Range<wbr>Hierarchies</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+						<li class="tsd-signature tsd-kind-icon">instantiate<wbr>Range<wbr>Hierarchies<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L162">SaNGreeA/SaNGreeA.ts:162</a></li>
+								</ul>
+							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
@@ -605,7 +627,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#outputanonymizedcsv">outputAnonymizedCSV</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L367">SaNGreeA/SaNGreeA.ts:367</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L386">SaNGreeA/SaNGreeA.ts:386</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -634,7 +656,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L266">SaNGreeA/SaNGreeA.ts:266</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L285">SaNGreeA/SaNGreeA.ts:285</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -670,7 +692,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#readcsv">readCSV</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L165">SaNGreeA/SaNGreeA.ts:165</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L182">SaNGreeA/SaNGreeA.ts:182</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -705,7 +727,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#setcathierarchy">setCatHierarchy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L144">SaNGreeA/SaNGreeA.ts:144</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L143">SaNGreeA/SaNGreeA.ts:143</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -732,7 +754,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of <a href="../interfaces/_sangreea_sangreea_.isangreea.html">ISaNGreeA</a>.<a href="../interfaces/_sangreea_sangreea_.isangreea.html#setconthierarchy">setContHierarchy</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L140">SaNGreeA/SaNGreeA.ts:140</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L139">SaNGreeA/SaNGreeA.ts:139</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -758,7 +780,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L547">SaNGreeA/SaNGreeA.ts:547</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L566">SaNGreeA/SaNGreeA.ts:566</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -784,7 +806,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L626">SaNGreeA/SaNGreeA.ts:626</a></li>
+									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/SaNGreeA/SaNGreeA.ts#L645">SaNGreeA/SaNGreeA.ts:645</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -859,9 +881,6 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_sangreea_sangreea_.sangreea.html#_graph" class="tsd-kind-icon">_graph</a>
 							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private tsd-is-not-exported">
-								<a href="_sangreea_sangreea_.sangreea.html#_input_file" class="tsd-kind-icon">_input_<wbr>file</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_sangreea_sangreea_.sangreea.html#_k_factor" class="tsd-kind-icon">_k_<wbr>factor</a>
 							</li>
@@ -905,7 +924,13 @@
 								<a href="_sangreea_sangreea_.sangreea.html#getconthierarchy" class="tsd-kind-icon">get<wbr>Cont<wbr>Hierarchy</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_sangreea_sangreea_.sangreea.html#instantiatecategoricalhierarchies" class="tsd-kind-icon">instantiate<wbr>Categorical<wbr>Hierarchies</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_sangreea_sangreea_.sangreea.html#instantiategraph" class="tsd-kind-icon">instantiate<wbr>Graph</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
+								<a href="_sangreea_sangreea_.sangreea.html#instantiaterangehierarchies" class="tsd-kind-icon">instantiate<wbr>Range<wbr>Hierarchies</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-not-exported">
 								<a href="_sangreea_sangreea_.sangreea.html#outputanonymizedcsv" class="tsd-kind-icon">output<wbr>AnonymizedCSV</a>
