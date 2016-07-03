@@ -1,0 +1,48 @@
+{
+	"name": "relationship",
+	"entries":
+	{
+		"all": 
+		{
+			"name": "*",
+			"gen": "all",
+			"level": 0
+		},
+		"Wife": 
+		{
+			"name": "Wife", 
+			"gen": "all",
+			"level": 1
+		},
+		"Own-child": 
+		{
+			"name": "Own-child", 
+			"gen": "all",
+			"level": 1
+		},
+		"Husband": 
+		{
+			"name": "Husband", 
+			"gen": "all",
+			"level": 1
+		},
+		"Not-in-family": 
+		{
+			"name": "Not-in-family", 
+			"gen": "all",
+			"level": 1
+		},
+		"Other-relative": 
+		{
+			"name": "Other-relative", 
+			"gen": "all",
+			"level": 1
+		},
+		"Unmarried": 
+		{
+			"name": "Unmarried", 
+			"gen": "all",
+			"level": 1
+		}
+	}
+}
