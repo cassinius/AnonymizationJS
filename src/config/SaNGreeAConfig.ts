@@ -24,44 +24,59 @@ var CONFIG = {
   'GEN_WEIGHT_VECTORS' : {
     'equal': {
         'categorical': {
-            'workclass': 1.0/8.0,
-            'native-country': 1.0/8.0,
-            'sex': 1.0/8.0,
-            'race': 1.0/8.0,
-            'marital-status': 1.0/8.0,
-            'relationship': 1.0/8.0,
-            'occupation': 1.0/8.0
+            'workclass': 1.0/13.0,
+            'native-country': 1.0/13.0,
+            'sex': 1.0/13.0,
+            'race': 1.0/13.0,
+            'marital-status': 1.0/13.0,
+            'relationship': 1.0/13.0,
+            'occupation': 1.0/13.0,
         },
         'range': {
-            'age': 1.0/8.0
+            'age': 1.0/13.0,
+            'fnlwgt': 1.0/13.0,
+            'education-num': 1.0/13.0,
+            'capital-gain': 1.0/13.0,
+            'capigal-loss': 1.0/13.0,
+            'hours-per-week': 1.0/13.0
         }
     },
     'emph_race': {
         'categorical': {
-            'workclass': 0.02,
-            'native-country': 0.02,
-            'sex': 0.02,
-            'race': 0.86,
-            'marital-status': 0.02,
-            'relationship': 0.02,
-            'occupation': 0.02
+            'workclass': 0.01,
+            'native-country': 0.01,
+            'sex': 0.01,
+            'race': 0.87,
+            'marital-status': 0.01,
+            'relationship': 0.01,
+            'occupation': 0.01
         },
         'range': {
-            'age': 0.02,
+            'age': 0.01,
+            'fnlwgt': 0.01,
+            'education-num': 0.01,
+            'capital-gain': 0.01,
+            'capigal-loss': 0.01,
+            'hours-per-week': 0.01,
         }
     },
     'emph_age': {
         'categorical': {
-            'workclass': 0.02,
-            'native-country': 0.02,
-            'sex': 0.02,
-            'race': 0.02,
-            'marital-status': 0.02,
-            'relationship': 0.02,
-            'occupation': 0.02
+            'workclass': 0.01,
+            'native-country': 0.01,
+            'sex': 0.01,
+            'race': 0.01,
+            'marital-status': 0.01,
+            'relationship': 0.01,
+            'occupation': 0.01
         },
         'range': {
-            'age': 0.86,
+            'age': 0.87,
+            'fnlwgt': 0.01,
+            'education-num': 0.01,
+            'capital-gain': 0.01,
+            'capigal-loss': 0.01,
+            'hours-per-week': 0.01,
         }
     }
   },

@@ -86,7 +86,7 @@ describe('SANGREEA TESTS', () => {
 		var strgh : $GH.IStringGenHierarchy,
 				contgh : $GH.IContGenHierarchy,
 				hierarchy : $GH.IStringGenHierarchy | $GH.IContGenHierarchy,
-				workclass_file = './test/io/test_input/WorkClassGH.json';
+				workclass_file = './test/io/test_input/workclassGH.json';
 	
 	
 		it('should have no gen hierarchies after instantiation', () => {
@@ -127,13 +127,13 @@ describe('SANGREEA TESTS', () => {
 		var strgh : $GH.IStringGenHierarchy,
 				contgh : $GH.IContGenHierarchy,
 				hierarchy : $GH.IStringGenHierarchy | $GH.IContGenHierarchy,
-				workclass_file = './test/io/test_input/WorkClassGH.json',
-				sex_file = './test/io/test_input/SexGH.json',
-				race_file = './test/io/test_input/RaceGH.json',
-				marital_file = './test/io/test_input/MaritalStatusGH.json',
-				nat_country_file = './test/io/test_input/NativeCountryGH.json',
-				relationship_file = './test/io/test_input/RelationshipGH.json',
-        occupation_file = './test/io/test_input/OccupationGH.json';
+				workclass_file = './test/io/test_input/workclassGH.json',
+				sex_file = './test/io/test_input/sexGH.json',
+				race_file = './test/io/test_input/raceGH.json',
+				marital_file = './test/io/test_input/marital-statusGH.json',
+				nat_country_file = './test/io/test_input/native-countryGH.json',
+				relationship_file = './test/io/test_input/relationshipGH.json',
+        occupation_file = './test/io/test_input/occupationGH.json';
 	  var config : $San.ISaNGreeAConfig,
         timestamp;
 				

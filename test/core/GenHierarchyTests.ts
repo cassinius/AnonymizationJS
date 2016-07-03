@@ -7,10 +7,10 @@ var expect = chai.expect,
 		assert = chai.assert,
 		strgh : $GH.IStringGenHierarchy,
 		contgh : $GH.IContGenHierarchy,
-		zerolevellt1 = './test/io/test_input/InvalidGH0.json',
-		zerolevelgt1 = './test/io/test_input/InvalidGH2.json',
-		workclass_file = './test/io/test_input/WorkClassGH.json',
-		native_country_file = './test/io/test_input/NativeCountryGH.json';
+		zerolevellt1 = './test/io/test_input/invalidGH0.json',
+		zerolevelgt1 = './test/io/test_input/invalidGH2.json',
+		workclass_file = './test/io/test_input/workclassGH.json',
+		native_country_file = './test/io/test_input/native-countryGH.json';
 
 
 describe('String Generalization Hierarchies Tests: ', () => {
