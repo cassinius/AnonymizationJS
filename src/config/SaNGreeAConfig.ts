@@ -7,7 +7,7 @@ var CONFIG = {
   ],
   'AVERAGE_OUTPUT_RANGES' : true,
   // How many data points to fetch
-  'NR_DRAWS' : 300, //162,
+  'NR_DRAWS' : 30162,
   // Do we wnat to sample the dataset randomly?
   'RANDOM_DRAWS': false,
   // Min # of edges per node for graph generation
@@ -15,7 +15,7 @@ var CONFIG = {
   // Max # of edges per node for graph generation
   'EDGE_MAX' : 10,
   // The k anonymization factor
-  'K_FACTOR' : 9,
+  'K_FACTOR' : 7,
   // Weight of the Generalization Information Loss
   'ALPHA' : 1,
   // Weight of the Structural Information Loss
@@ -37,7 +37,7 @@ var CONFIG = {
             'fnlwgt': 1.0/13.0,
             'education-num': 1.0/13.0,
             'capital-gain': 1.0/13.0,
-            'capigal-loss': 1.0/13.0,
+            'capital-loss': 1.0/13.0,
             'hours-per-week': 1.0/13.0
         }
     },
@@ -56,7 +56,7 @@ var CONFIG = {
             'fnlwgt': 0.01,
             'education-num': 0.01,
             'capital-gain': 0.01,
-            'capigal-loss': 0.01,
+            'capital-loss': 0.01,
             'hours-per-week': 0.01,
         }
     },
@@ -75,7 +75,7 @@ var CONFIG = {
             'fnlwgt': 0.01,
             'education-num': 0.01,
             'capital-gain': 0.01,
-            'capigal-loss': 0.01,
+            'capital-loss': 0.01,
             'hours-per-week': 0.01,
         }
     }

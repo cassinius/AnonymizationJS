@@ -134,11 +134,9 @@ describe('SANGREEA TESTS', () => {
 				nat_country_file = './test/io/test_input/native-countryGH.json',
 				relationship_file = './test/io/test_input/relationshipGH.json',
         occupation_file = './test/io/test_input/occupationGH.json';
-	  var config : $San.ISaNGreeAConfig,
-        timestamp;
+	  var config : $San.ISaNGreeAConfig;
 				
 		beforeEach(() => {
-      timestamp = +new Date;    
       config = JSON.parse(JSON.stringify($C.CONFIG));
 			san = new $San.SaNGreeA("adults", config);
       
@@ -170,7 +168,7 @@ describe('SANGREEA TESTS', () => {
       
       san.anonymizeGraph();
       
-      var anonymizedOutfile = "output_normal_weights_" + timestamp;
+      var anonymizedOutfile = "adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
       san.outputAnonymizedCSV(anonymizedOutfile);
       
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
@@ -191,8 +189,8 @@ describe('SANGREEA TESTS', () => {
       san.instantiateGraph( false );
       san.anonymizeGraph();
       
-      var anonymizedOutfileRace = "output_race_weights_" + timestamp;
-      san.outputAnonymizedCSV(anonymizedOutfileRace);
+      var anonymizedOutfile = "adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
+      san.outputAnonymizedCSV(anonymizedOutfile);
       
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
     });
@@ -212,23 +210,23 @@ describe('SANGREEA TESTS', () => {
       san.instantiateGraph( false );
       san.anonymizeGraph();
       
-      var anonymizedOutfileAge = "output_age_weights_" + timestamp;
-      san.outputAnonymizedCSV(anonymizedOutfileAge);
+      var anonymizedOutfile = "adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
+      san.outputAnonymizedCSV(anonymizedOutfile);
       
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
     });
     
     
     it('should write out the cleaned input data source for python', () => {
-      var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
-      config.NR_DRAWS = 30162;
-      san = new $San.SaNGreeA("adults", config);
+      // var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
+      // config.NR_DRAWS = 3000;
+      // san = new $San.SaNGreeA("adults", config);
       
-      [workclass_file, nat_country_file, sex_file, race_file, 
-      marital_file, relationship_file, occupation_file].forEach((file) => {
-        strgh = new $GH.StringGenHierarchy(file);
-        san.setCatHierarchy(strgh._name, strgh);
-      });
+      // [workclass_file, nat_country_file, sex_file, race_file, 
+      // marital_file, relationship_file, occupation_file].forEach((file) => {
+      //   strgh = new $GH.StringGenHierarchy(file);
+      //   san.setCatHierarchy(strgh._name, strgh);
+      // });
       
       san.readCSV(adults, san._graph);
       var preprocOutfile = "input_for_python";
@@ -238,10 +236,10 @@ describe('SANGREEA TESTS', () => {
 		
 		
 		[20, 40, 60, 80, 100].forEach(function(prob) {
-			it.skip('should write out the cleaned input data source for python', () => {
+			it('should write out the cleaned input data source for python', () => {
 				// var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
-				// config.NR_DRAWS = 30162;
-				// san = new $San.SaNGreeA("adults", adults, config);
+				// config.NR_DRAWS = 3000;
+				// san = new $San.SaNGreeA("adults", config);
 				
         // [workclass_file, nat_country_file, sex_file, race_file, 
         // marital_file, relationship_file, occupation_file].forEach((file) => {

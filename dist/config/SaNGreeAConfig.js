@@ -5,11 +5,11 @@ var CONFIG = {
         'income'
     ],
     'AVERAGE_OUTPUT_RANGES': true,
-    'NR_DRAWS': 300,
+    'NR_DRAWS': 3000,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
-    'K_FACTOR': 9,
+    'K_FACTOR': 5,
     'ALPHA': 1,
     'BETA': 0,
     'GEN_WEIGHT_VECTORS': {
@@ -28,7 +28,7 @@ var CONFIG = {
                 'fnlwgt': 1.0 / 13.0,
                 'education-num': 1.0 / 13.0,
                 'capital-gain': 1.0 / 13.0,
-                'capigal-loss': 1.0 / 13.0,
+                'capital-loss': 1.0 / 13.0,
                 'hours-per-week': 1.0 / 13.0
             }
         },
@@ -47,7 +47,7 @@ var CONFIG = {
                 'fnlwgt': 0.01,
                 'education-num': 0.01,
                 'capital-gain': 0.01,
-                'capigal-loss': 0.01,
+                'capital-loss': 0.01,
                 'hours-per-week': 0.01,
             }
         },
@@ -66,7 +66,7 @@ var CONFIG = {
                 'fnlwgt': 0.01,
                 'education-num': 0.01,
                 'capital-gain': 0.01,
-                'capigal-loss': 0.01,
+                'capital-loss': 0.01,
                 'hours-per-week': 0.01,
             }
         }

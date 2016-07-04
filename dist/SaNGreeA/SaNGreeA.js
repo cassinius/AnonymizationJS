@@ -15,6 +15,8 @@ var SaNGreeA = (function () {
         this.config = config;
         this._cont_hierarchies = {};
         this._cat_hierarchies = {};
+        this._range_hierarchy_indices = {};
+        this._categorical_hierarchy_indices = {};
         this._config = config || $C.CONFIG;
         if (this._config.INPUT_FILE === "") {
             throw new Error('Input file cannot be an empty string');
@@ -56,6 +58,7 @@ var SaNGreeA = (function () {
     };
     SaNGreeA.prototype.instantiateGraph = function (createEdges) {
         if (createEdges === void 0) { createEdges = true; }
+        this.instantiateRangeHierarchies(this._config.INPUT_FILE);
         this.readCSV(this._config.INPUT_FILE, this._graph);
         if (createEdges === true) {
             this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
@@ -63,15 +66,51 @@ var SaNGreeA = (function () {
     };
     SaNGreeA.prototype.instantiateCategoricalHierarchies = function () {
     };
-    SaNGreeA.prototype.instantiateRangeHierarchies = function () {
+    SaNGreeA.prototype.instantiateRangeHierarchies = function (file) {
+        var _this = this;
+        var cont_hierarchies = Object.keys(this._cont_hierarchies);
+        var ranges = Object.keys(this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['range']);
+        if (ranges.length < 1) {
+            return;
+        }
+        var str_input = fs.readFileSync(file).toString().split('\n');
+        var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
+        str_cols.forEach(function (col, idx) {
+            if (ranges.indexOf(col) !== -1) {
+                _this._range_hierarchy_indices[col] = idx;
+            }
+        });
+        var min_max_struct = {};
+        ranges.forEach(function (range) {
+            min_max_struct[range] = {
+                'min': Number.POSITIVE_INFINITY,
+                'max': Number.NEGATIVE_INFINITY
+            };
+        });
+        var current_value = NaN;
+        str_input.forEach(function (line_string, idx) {
+            var line = line_string.replace(/\s+/g, '').split(',');
+            ranges.forEach(function (range) {
+                current_value = parseFloat(line[_this._range_hierarchy_indices[range]]);
+                if (current_value < min_max_struct[range]['min']) {
+                    min_max_struct[range]['min'] = current_value;
+                }
+                if (current_value > min_max_struct[range]['max']) {
+                    min_max_struct[range]['max'] = current_value;
+                }
+            });
+        });
+        ranges.forEach(function (range) {
+            var range_hierarchy = new $GH.ContGenHierarchy(range, min_max_struct[range]['min'], min_max_struct[range]['max']);
+            _this.setContHierarchy(range_hierarchy._name, range_hierarchy);
+        });
     };
     SaNGreeA.prototype.readCSV = function (file, graph) {
+        this.instantiateRangeHierarchies(file);
         var str_input = fs.readFileSync(file).toString().split('\n');
         var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
         var cont_hierarchies = Object.keys(this._cont_hierarchies);
         var cat_hierarchies = Object.keys(this._cat_hierarchies);
-        var min_age = Number.POSITIVE_INFINITY;
-        var max_age = Number.NEGATIVE_INFINITY;
         var cont_feat_idx_select = {};
         str_cols.forEach(function (col, idx) {
             if (cont_hierarchies.indexOf(col) !== -1) {
@@ -115,17 +154,18 @@ var SaNGreeA = (function () {
                 node.setFeature(cont_feat_idx_select[idx], +line[idx]);
             }
             node.setFeature("income", line[line.length - 1]);
-            var age = parseInt(line[0]);
-            min_age = age < min_age ? age : min_age;
-            max_age = age > max_age ? age : max_age;
-            node.setFeature('age', parseInt(line[0]));
         }
-        var age_hierarchy = new $GH.ContGenHierarchy('age', min_age, max_age);
-        this.setContHierarchy('age', age_hierarchy);
     };
     SaNGreeA.prototype.outputPreprocCSV = function (outfile, skip) {
         var outstring = "", nodes = this._graph.getNodes(), node = null, feature = null;
         var rows_eliminated = 0;
+        Object.keys(this._cont_hierarchies).forEach(function (range_hierarchy) {
+            outstring += range_hierarchy + ", ";
+        });
+        Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
+            outstring += cat_hierarchy + ", ";
+        });
+        outstring += "income \n";
         for (var node_key in this._graph.getNodes()) {
             node = nodes[node_key];
             skip = skip || {};
@@ -136,52 +176,56 @@ var SaNGreeA = (function () {
                     continue;
                 }
             }
-            outstring += node.getID() + ",";
-            outstring += node.getFeature('age') + ",";
-            outstring += node.getFeature('workclass') + ",";
-            outstring += node.getFeature('native-country') + ",";
-            outstring += node.getFeature('sex') + ",";
-            outstring += node.getFeature('race') + ",";
-            outstring += node.getFeature('marital-status') + ",";
-            outstring += node.getFeature('relationship') + ",";
-            outstring += node.getFeature('occupation') + ",";
+            Object.keys(this._cont_hierarchies).forEach(function (range_hierarchy) {
+                outstring += node.getFeature(range_hierarchy) + ', ';
+            });
+            Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
+                outstring += node.getFeature(cat_hierarchy) + ', ';
+            });
             outstring += node.getFeature('income');
-            outstring += "\n";
+            outstring += '\n';
         }
-        var first_line = "nodeID, age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
-        outstring = first_line + outstring;
         console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };
     SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
+        var _this = this;
         var outstring = "";
+        Object.keys(this._cont_hierarchies).forEach(function (range_hierarchy) {
+            outstring += range_hierarchy + ", ";
+        });
+        Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
+            outstring += cat_hierarchy + ", ";
+        });
+        outstring += "income \n";
         for (var cl_idx in this._clusters) {
             var cluster = this._clusters[cl_idx], nodes = cluster.nodes;
             for (var node_id in nodes) {
-                var age_range = cluster.gen_ranges['age'];
-                if (age_range[0] === age_range[1]) {
-                    outstring += age_range[0] + ", ";
-                }
-                else if (this._config.AVERAGE_OUTPUT_RANGES) {
-                    var avg_age = (age_range[0] + age_range[1]) / 2.0;
-                    outstring += avg_age + ", ";
-                }
-                else {
-                    outstring += "[" + age_range[0] + " - " + age_range[1] + "], ";
-                }
-                for (var hi in this._cat_hierarchies) {
-                    var h = this._cat_hierarchies[hi];
-                    outstring += h.getName(cluster.gen_feat[hi]) + ", ";
-                }
+                Object.keys(this._cont_hierarchies).forEach(function (range_hierarchy) {
+                    var range = cluster.gen_ranges[range_hierarchy];
+                    if (range[0] === range[1]) {
+                        outstring += range[0] + ", ";
+                    }
+                    else if (_this._config.AVERAGE_OUTPUT_RANGES) {
+                        var avg_age = (range[0] + range[1]) / 2.0;
+                        outstring += avg_age + ", ";
+                    }
+                    else {
+                        outstring += "[" + range[0] + " - " + range[1] + "], ";
+                    }
+                });
+                Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
+                    var gen_Hierarchy = _this._cat_hierarchies[cat_hierarchy];
+                    outstring += gen_Hierarchy.getName(cluster.gen_feat[cat_hierarchy]) + ", ";
+                });
                 outstring += nodes[node_id].getFeature('income');
                 outstring += "\n";
             }
         }
-        var first_line = "age, workclass, native-country, sex, race, marital-status, relationship, occupation, income \n";
-        outstring = first_line + outstring;
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
     };
     SaNGreeA.prototype.anonymizeGraph = function () {
+        var _this = this;
         var S = [], nodes = this._graph.getNodes(), keys = Object.keys(nodes), current_node, candidate, current_best, added = {}, nr_open = Object.keys(nodes).length, cont_costs, cat_costs, GIL, SIL, total_costs, best_costs, i, j;
         for (i = 0; i < keys.length; i++) {
             current_node = nodes[keys[i]];
@@ -190,19 +234,15 @@ var SaNGreeA = (function () {
             }
             var Cl = {
                 nodes: {},
-                gen_feat: {
-                    'workclass': current_node.getFeature('workclass'),
-                    'native-country': current_node.getFeature('native-country'),
-                    'marital-status': current_node.getFeature('marital-status'),
-                    'sex': current_node.getFeature('sex'),
-                    'race': current_node.getFeature('race'),
-                    'relationship': current_node.getFeature('relationship'),
-                    'occupation': current_node.getFeature('occupation')
-                },
-                gen_ranges: {
-                    'age': [current_node.getFeature('age'), current_node.getFeature('age')]
-                }
+                gen_feat: {},
+                gen_ranges: {}
             };
+            Object.keys(this._cat_hierarchies).forEach(function (cat) {
+                Cl.gen_feat[cat] = current_node.getFeature(cat);
+            });
+            Object.keys(this._cont_hierarchies).forEach(function (range) {
+                Cl.gen_ranges[range] = [current_node.getFeature(range), current_node.getFeature(range)];
+            });
             Cl.nodes[current_node.getID()] = current_node;
             added[current_node.getID()] = true;
             nr_open--;
@@ -224,8 +264,10 @@ var SaNGreeA = (function () {
                     }
                 }
                 Cl.nodes[current_best.getID()] = current_best;
-                this.updateRange(Cl.gen_ranges['age'], current_best.getFeature('age'));
                 this.updateLevels(Cl, current_best);
+                Object.keys(this._cont_hierarchies).forEach(function (range) {
+                    _this.updateRange(Cl.gen_ranges[range], current_best.getFeature(range));
+                });
                 added[current_best.getID()] = true;
                 nr_open--;
             }
@@ -291,12 +333,17 @@ var SaNGreeA = (function () {
         return costs / Object.keys(this._cat_hierarchies).length;
     };
     SaNGreeA.prototype.calculateContCosts = function (Cl, Y) {
-        var age_range = Cl.gen_ranges['age'];
-        var new_range = this.expandRange(age_range, Y.getFeature('age'));
-        var age_hierarchy = this.getContHierarchy('age');
-        var cost = age_hierarchy instanceof $GH.ContGenHierarchy ? age_hierarchy.genCostOfRange(new_range[0], new_range[1]) : 0;
+        var _this = this;
+        var range_costs = 0;
         var range_weights = this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['range'];
-        return range_weights['age'] * cost;
+        Object.keys(this._cont_hierarchies).forEach(function (range) {
+            var range_hierarchy = _this.getContHierarchy(range);
+            var current_range = Cl.gen_ranges[range];
+            var extended_range = _this.expandRange(current_range, Y.getFeature(range));
+            var extension_cost = range_hierarchy instanceof $GH.ContGenHierarchy ? range_hierarchy.genCostOfRange(extended_range[0], extended_range[1]) : 0;
+            range_costs += range_weights[range] + extension_cost;
+        });
+        return range_costs;
     };
     SaNGreeA.prototype.expandRange = function (range, nr) {
         var min = nr < range[0] ? nr : range[0];
