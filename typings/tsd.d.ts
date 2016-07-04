@@ -6,3 +6,5 @@
 /// <reference path="orchestrator/orchestrator.d.ts" />
 /// <reference path="q/Q.d.ts" />
 /// <reference path="lodash/lodash.d.ts" />
+
+/// <reference path="../node_modules/graphinius/graphinius.d.ts" />

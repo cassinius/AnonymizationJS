@@ -58,7 +58,7 @@
 			Category	: $GH.ContGenHierarchy
 		},
 		Input: {
-			Csv			 		: $CSV.CSV
+			CSV			 		: $CSV.CSV
 		},
 		Algorithms: {
 			Sangreea		: $Sangreea.SaNGreeA
@@ -186,7 +186,7 @@
 	var fs = __webpack_require__(2);
 	var $GH = __webpack_require__(1);
 	var $C = __webpack_require__(5);
-	var $G = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"graphinius\""); e.code = 'MODULE_NOT_FOUND'; throw e; }())).$G;
+	var $G = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"graphinius\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
 	(function (HierarchyType) {
 	    HierarchyType[HierarchyType["CONTINUOUS"] = 0] = "CONTINUOUS";
 	    HierarchyType[HierarchyType["CATEGORICAL"] = 1] = "CATEGORICAL";
@@ -217,7 +217,7 @@
 	        if (this._config.EDGE_MAX < this._config.EDGE_MIN) {
 	            throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
 	        }
-	        this._graph = new $G.core.Graph(this._name);
+	        this._graph = new $G.core.BaseGraph(this._name);
 	    }
 	    SaNGreeA.prototype.getConfig = function () {
 	        return this._config;
@@ -330,7 +330,7 @@
 	                draw++;
 	                continue;
 	            }
-	            var node = this._graph.addNode(i);
+	            var node = this._graph.addNode("" + i);
 	            for (var idx in cat_feat_idx_select) {
 	                node.setFeature(cat_feat_idx_select[idx], line[idx]);
 	            }
@@ -355,7 +355,13 @@
 	            skip = skip || {};
 	            var prob = parseFloat(skip['prob']), feat = skip['feat'], value = skip['value'];
 	            if (prob != null && feat != null && value != null) {
-	                if (Math.random() < prob && node.getFeature(feat) === value) {
+	                if (parseFloat(value) !== parseFloat(value)) {
+	                    if (Math.random() < prob && node.getFeature(feat) === value) {
+	                        rows_eliminated++;
+	                        continue;
+	                    }
+	                }
+	                else if (Math.random() < prob && node.getFeature(feat) > value) {
 	                    rows_eliminated++;
 	                    continue;
 	                }
@@ -554,11 +560,11 @@
 	        'income'
 	    ],
 	    'AVERAGE_OUTPUT_RANGES': true,
-	    'NR_DRAWS': 3000,
+	    'NR_DRAWS': 300,
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 5,
+	    'K_FACTOR': 19,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
@@ -586,7 +592,7 @@
 	                'workclass': 0.01,
 	                'native-country': 0.01,
 	                'sex': 0.01,
-	                'race': 0.87,
+	                'race': 0.88,
 	                'marital-status': 0.01,
 	                'relationship': 0.01,
 	                'occupation': 0.01
@@ -611,7 +617,7 @@
 	                'occupation': 0.01
 	            },
 	            'range': {
-	                'age': 0.87,
+	                'age': 0.88,
 	                'fnlwgt': 0.01,
 	                'education-num': 0.01,
 	                'capital-gain': 0.01,

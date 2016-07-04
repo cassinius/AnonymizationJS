@@ -4,8 +4,8 @@ import fs 	= require('fs');
 import path = require('path');
 import * as $GH from '../core/GenHierarchies';
 import * as $C from '../config/SaNGreeAConfig';
+import * as $G from 'graphinius';
 
-var $G = require('graphinius').$G;
 
 export interface ISaNGreeAConfig {
   INPUT_FILE            : string;
@@ -70,7 +70,7 @@ class SaNGreeA implements ISaNGreeA {
 	 * TODO resolve ts files from graphinius in proper way
 	 * - NO TYPE RESOLUTION YET -
 	 */
-	public _graph;
+	public _graph : $G.core.IGraph;
 	public _clusters : Array<nodeCluster>;
 	public _weights;
   public _alpha : number;
@@ -115,7 +115,7 @@ class SaNGreeA implements ISaNGreeA {
 			throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
 		}
         
-		this._graph = new $G.core.Graph(this._name);
+		this._graph = new $G.core.BaseGraph(this._name);
 	}
   
   getConfig(): ISaNGreeAConfig {
@@ -205,10 +205,10 @@ class SaNGreeA implements ISaNGreeA {
     
     ranges.forEach( (range) => {
       var range_hierarchy = new $GH.ContGenHierarchy(range, min_max_struct[range]['min'], min_max_struct[range]['max']);
-      this.setContHierarchy(range_hierarchy._name, range_hierarchy);
+      this.setContHierarchy(range_hierarchy._name, range_hierarchy);      
     });
     
-    
+    // console.log(this.getContHierarchies());
   }
   
 	
@@ -280,7 +280,7 @@ class SaNGreeA implements ISaNGreeA {
 			}
 			
 			// add a node to the graph
-			var node = this._graph.addNode(i);
+			var node = this._graph.addNode(""+i);
 			
 			// add features (columns in the dataset) 
 			for (var idx in cat_feat_idx_select) {
@@ -334,7 +334,14 @@ class SaNGreeA implements ISaNGreeA {
 					value = skip['value'];
 					
 			if (prob != null && feat != null && value != null ) {
-				if ( Math.random() < prob && node.getFeature(feat) === value ) {
+        
+        if (parseFloat(value) !== parseFloat(value) ) {
+          if ( Math.random() < prob && node.getFeature(feat) === value ) {
+            rows_eliminated++;
+            continue;
+          }
+        } 
+        else if ( Math.random() < prob && node.getFeature(feat) > value ) {
 					rows_eliminated++;
 					continue;
 				}

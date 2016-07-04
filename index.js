@@ -12,7 +12,7 @@ out.Anonymity = {
 		Category	: $GH.ContGenHierarchy
 	},
 	Input: {
-		Csv			 		: $CSV.CSV
+		CSV			 		: $CSV.CSV
 	},
 	Algorithms: {
 		Sangreea		: $Sangreea.SaNGreeA

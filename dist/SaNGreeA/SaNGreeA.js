@@ -2,7 +2,7 @@
 var fs = require('fs');
 var $GH = require('../core/GenHierarchies');
 var $C = require('../config/SaNGreeAConfig');
-var $G = require('graphinius').$G;
+var $G = require('graphinius');
 (function (HierarchyType) {
     HierarchyType[HierarchyType["CONTINUOUS"] = 0] = "CONTINUOUS";
     HierarchyType[HierarchyType["CATEGORICAL"] = 1] = "CATEGORICAL";
@@ -33,7 +33,7 @@ var SaNGreeA = (function () {
         if (this._config.EDGE_MAX < this._config.EDGE_MIN) {
             throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
         }
-        this._graph = new $G.core.Graph(this._name);
+        this._graph = new $G.core.BaseGraph(this._name);
     }
     SaNGreeA.prototype.getConfig = function () {
         return this._config;
@@ -146,7 +146,7 @@ var SaNGreeA = (function () {
                 draw++;
                 continue;
             }
-            var node = this._graph.addNode(i);
+            var node = this._graph.addNode("" + i);
             for (var idx in cat_feat_idx_select) {
                 node.setFeature(cat_feat_idx_select[idx], line[idx]);
             }
@@ -171,7 +171,13 @@ var SaNGreeA = (function () {
             skip = skip || {};
             var prob = parseFloat(skip['prob']), feat = skip['feat'], value = skip['value'];
             if (prob != null && feat != null && value != null) {
-                if (Math.random() < prob && node.getFeature(feat) === value) {
+                if (parseFloat(value) !== parseFloat(value)) {
+                    if (Math.random() < prob && node.getFeature(feat) === value) {
+                        rows_eliminated++;
+                        continue;
+                    }
+                }
+                else if (Math.random() < prob && node.getFeature(feat) > value) {
                     rows_eliminated++;
                     continue;
                 }

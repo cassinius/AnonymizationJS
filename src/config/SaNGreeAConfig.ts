@@ -1,13 +1,14 @@
 var CONFIG = {
-  // Which file to read
+  // The path to the input dataset
   'INPUT_FILE' : './test/io/test_input/adult_data.csv',
   // columns to preserve for later processing of anonymized dataset
   'TARGET_COLUMNS' : [
     'income'
   ],
+  // Shall we write out a range or an average value?
   'AVERAGE_OUTPUT_RANGES' : true,
   // How many data points to fetch
-  'NR_DRAWS' : 30162,
+  'NR_DRAWS' : 300, //162,
   // Do we wnat to sample the dataset randomly?
   'RANDOM_DRAWS': false,
   // Min # of edges per node for graph generation
@@ -15,12 +16,12 @@ var CONFIG = {
   // Max # of edges per node for graph generation
   'EDGE_MAX' : 10,
   // The k anonymization factor
-  'K_FACTOR' : 7,
+  'K_FACTOR' : 19,
   // Weight of the Generalization Information Loss
   'ALPHA' : 1,
   // Weight of the Structural Information Loss
   'BETA' : 0,
-  // Weight vector for generalization categories
+  // Weight vector for generalization hierarchies
   'GEN_WEIGHT_VECTORS' : {
     'equal': {
         'categorical': {
@@ -46,7 +47,7 @@ var CONFIG = {
             'workclass': 0.01,
             'native-country': 0.01,
             'sex': 0.01,
-            'race': 0.87,
+            'race': 0.88,
             'marital-status': 0.01,
             'relationship': 0.01,
             'occupation': 0.01
@@ -71,7 +72,7 @@ var CONFIG = {
             'occupation': 0.01
         },
         'range': {
-            'age': 0.87,
+            'age': 0.88,
             'fnlwgt': 0.01,
             'education-num': 0.01,
             'capital-gain': 0.01,

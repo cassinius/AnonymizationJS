@@ -5,11 +5,11 @@ var CONFIG = {
         'income'
     ],
     'AVERAGE_OUTPUT_RANGES': true,
-    'NR_DRAWS': 3000,
+    'NR_DRAWS': 300,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
-    'K_FACTOR': 5,
+    'K_FACTOR': 19,
     'ALPHA': 1,
     'BETA': 0,
     'GEN_WEIGHT_VECTORS': {
@@ -37,7 +37,7 @@ var CONFIG = {
                 'workclass': 0.01,
                 'native-country': 0.01,
                 'sex': 0.01,
-                'race': 0.87,
+                'race': 0.88,
                 'marital-status': 0.01,
                 'relationship': 0.01,
                 'occupation': 0.01
@@ -62,7 +62,7 @@ var CONFIG = {
                 'occupation': 0.01
             },
             'range': {
-                'age': 0.87,
+                'age': 0.88,
                 'fnlwgt': 0.01,
                 'education-num': 0.01,
                 'capital-gain': 0.01,

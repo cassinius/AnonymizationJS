@@ -1,18 +1,18 @@
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/tsd.d.ts" /><
 
 import * as chai from 'chai';
 import * as $GH from '../../src/core/GenHierarchies';
 import * as $San from '../../src/SaNGreeA/SaNGreeA';
-
-var $G = require('graphinius').$G;
-// console.dir($G);
 import * as $C from '../../src/config/SaNGreeAConfig';
+
+import * as $G from 'graphinius';
+// console.dir($G);
 
 var expect = chai.expect,
 		assert = chai.assert,
 		adults = './test/io/test_input/adult_data.csv',
 		san : $San.ISaNGreeA;
-    	
+    
 		
 describe('SANGREEA TESTS', () => {
 	
@@ -237,22 +237,21 @@ describe('SANGREEA TESTS', () => {
 		
 		[20, 40, 60, 80, 100].forEach(function(prob) {
 			it('should write out the cleaned input data source for python', () => {
-				// var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
-				// config.NR_DRAWS = 3000;
-				// san = new $San.SaNGreeA("adults", config);
+				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
+				config.NR_DRAWS = 30162;
+				san = new $San.SaNGreeA("adults", config);
 				
-        // [workclass_file, nat_country_file, sex_file, race_file, 
-        // marital_file, relationship_file, occupation_file].forEach((file) => {
-        //   strgh = new $GH.StringGenHierarchy(file);
-        //   san.setCatHierarchy(strgh._name, strgh);
-        // });
+        [workclass_file, nat_country_file, sex_file, race_file, 
+        marital_file, relationship_file, occupation_file].forEach((file) => {
+          strgh = new $GH.StringGenHierarchy(file);
+          san.setCatHierarchy(strgh._name, strgh);
+        });
 				
 				var skip = {
 					'prob'  : prob / 100,
-					'feat'  : 'marital-status',
-					'value' : 'Married-civ-spouse'
+					'feat'  : 'education-num',
+					'value' : 10
 				};
-				// console.dir(skip);
 				
 				san.readCSV(adults, san._graph);
 				var preprocOutfile = "adults_" + skip.feat + "_" + skip.value + "_" + skip.prob;
@@ -270,7 +269,7 @@ describe('SANGREEA TESTS', () => {
 			san.instantiateGraph();
 			
 			var outfile = "./test/io/test_output/adult_graph_adj_list.csv";
-			var csvOut = new $G.output.CsvOutput(",", false, false);
+			var csvOut = new $G.output.CSVOutput(",", false, false);
 			csvOut.writeToAdjacencyListFile(outfile, san._graph);
       
       expect("this test case").not.to.equal("being without pertinent expectation.");
