@@ -1,15 +1,13 @@
 "use strict";
 var CONFIG = {
     'INPUT_FILE': './test/io/test_input/adult_data.csv',
-    'TARGET_COLUMNS': [
-        'income'
-    ],
+    'TARGET_COLUMN': 'education-num',
     'AVERAGE_OUTPUT_RANGES': true,
     'NR_DRAWS': 300,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
-    'K_FACTOR': 19,
+    'K_FACTOR': 3,
     'ALPHA': 1,
     'BETA': 0,
     'GEN_WEIGHT_VECTORS': {
@@ -22,11 +20,11 @@ var CONFIG = {
                 'marital-status': 1.0 / 13.0,
                 'relationship': 1.0 / 13.0,
                 'occupation': 1.0 / 13.0,
+                'income': 1.0 / 13.0
             },
             'range': {
                 'age': 1.0 / 13.0,
                 'fnlwgt': 1.0 / 13.0,
-                'education-num': 1.0 / 13.0,
                 'capital-gain': 1.0 / 13.0,
                 'capital-loss': 1.0 / 13.0,
                 'hours-per-week': 1.0 / 13.0
@@ -40,15 +38,15 @@ var CONFIG = {
                 'race': 0.88,
                 'marital-status': 0.01,
                 'relationship': 0.01,
-                'occupation': 0.01
+                'occupation': 0.01,
+                'income': 0.01
             },
             'range': {
                 'age': 0.01,
                 'fnlwgt': 0.01,
-                'education-num': 0.01,
                 'capital-gain': 0.01,
                 'capital-loss': 0.01,
-                'hours-per-week': 0.01,
+                'hours-per-week': 0.01
             }
         },
         'emph_age': {
@@ -59,12 +57,12 @@ var CONFIG = {
                 'race': 0.01,
                 'marital-status': 0.01,
                 'relationship': 0.01,
-                'occupation': 0.01
+                'occupation': 0.01,
+                'income': 0.01
             },
             'range': {
                 'age': 0.88,
                 'fnlwgt': 0.01,
-                'education-num': 0.01,
                 'capital-gain': 0.01,
                 'capital-loss': 0.01,
                 'hours-per-week': 0.01,

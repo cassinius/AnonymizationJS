@@ -8,7 +8,7 @@ import * as $G from 'graphinius';
 
 export interface ISaNGreeAConfig {
   INPUT_FILE            : string;
-  TARGET_COLUMNS        : Array<string>;
+  TARGET_COLUMN         : string;
   AVERAGE_OUTPUT_RANGES : boolean;
 	NR_DRAWS              : number;
 	EDGE_MIN              :	number;
@@ -165,6 +165,7 @@ class SaNGreeA implements ISaNGreeA {
   instantiateCategoricalHierarchies() {
     
   }
+
   
   instantiateRangeHierarchies(file: string) {
     var cont_hierarchies = Object.keys(this._cont_hierarchies);
@@ -241,6 +242,11 @@ class SaNGreeA implements ISaNGreeA {
 				cat_feat_idx_select[idx] = col;
 			}
 		});
+		
+		let target_idx = str_cols.indexOf(this._config.TARGET_COLUMN);
+		if (target_idx < 0) {
+			throw new Error("Target column does not exist... aborting.");
+		}
    
 
 		/**
@@ -291,8 +297,9 @@ class SaNGreeA implements ISaNGreeA {
 			for (var idx in cont_feat_idx_select) {
 				node.setFeature(cont_feat_idx_select[idx], +line[idx]);
 			}
-      
-      node.setFeature("income", line[line.length-1]);
+
+			// set target feature value (just as string)
+			node.setFeature(this._config.TARGET_COLUMN, line[target_idx]);
     }
 	}
   
@@ -318,7 +325,8 @@ class SaNGreeA implements ISaNGreeA {
     Object.keys(this._cat_hierarchies).forEach( (cat_hierarchy) => {
       outstring += cat_hierarchy + ", ";
     });
-    outstring += "income \n";
+		// Write out original target column
+		outstring += this._config.TARGET_COLUMN + "\n";
     
     
     for ( var node_key in this._graph.getNodes() ) {
@@ -356,8 +364,8 @@ class SaNGreeA implements ISaNGreeA {
         outstring += node.getFeature(cat_hierarchy) + ', ';
       });
       
-      outstring += node.getFeature('income');
-      outstring += '\n';
+			// Write out original target column
+			outstring += node.getFeature(this._config.TARGET_COLUMN) + "\n";
     }
 
 		console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
@@ -425,14 +433,14 @@ class SaNGreeA implements ISaNGreeA {
     Object.keys(this._cat_hierarchies).forEach( (cat_hierarchy) => {
       outstring += cat_hierarchy + ", ";
     });
-    outstring += "income \n";
+		// Write out original target column
+		outstring += this._config.TARGET_COLUMN + "\n";		
 		
 		for ( var cl_idx in this._clusters ) {
 			var cluster = this._clusters[cl_idx],
           nodes = cluster.nodes;
 			
 			for ( var node_id in nodes ) {
-        
         Object.keys(this._cont_hierarchies).forEach( (range_hierarchy) => {
           var range = cluster.gen_ranges[range_hierarchy];
           if ( range[0] === range[1] ) {
@@ -449,11 +457,10 @@ class SaNGreeA implements ISaNGreeA {
         Object.keys(this._cat_hierarchies).forEach( (cat_hierarchy) => {
           var gen_Hierarchy = this._cat_hierarchies[cat_hierarchy];
 					outstring += gen_Hierarchy.getName(cluster.gen_feat[cat_hierarchy]) + ", ";
-        });  
-        
-        // again, generalize for all target columns
-        outstring += nodes[node_id].getFeature('income');        
-				outstring += "\n";
+        });
+
+				// Write out original target column
+				outstring += nodes[node_id].getFeature(this._config.TARGET_COLUMN) + "\n";
 			}
 		}
 		

@@ -133,7 +133,8 @@ describe('SANGREEA TESTS', () => {
 				marital_file = './test/io/test_input/marital-statusGH.json',
 				nat_country_file = './test/io/test_input/native-countryGH.json',
 				relationship_file = './test/io/test_input/relationshipGH.json',
-        occupation_file = './test/io/test_input/occupationGH.json';
+        occupation_file = './test/io/test_input/occupationGH.json',
+				income_file = './test/io/test_input/incomeGH.json';
 	  var config : $San.ISaNGreeAConfig;
 				
 		beforeEach(() => {
@@ -141,7 +142,7 @@ describe('SANGREEA TESTS', () => {
 			san = new $San.SaNGreeA("adults", config);
       
 			[workclass_file, nat_country_file, sex_file, race_file, 
-       marital_file, relationship_file, occupation_file].forEach((file) => {
+       marital_file, relationship_file, occupation_file, income_file].forEach((file) => {
 				strgh = new $GH.StringGenHierarchy(file);
 				san.setCatHierarchy(strgh._name, strgh);
 			});
@@ -156,9 +157,11 @@ describe('SANGREEA TESTS', () => {
 			expect(san.getCatHierarchy('relationship')).to.be.an.instanceof($GH.StringGenHierarchy);
 			expect(san.getCatHierarchy('occupation')).not.to.be.undefined;
 			expect(san.getCatHierarchy('occupation')).to.be.an.instanceof($GH.StringGenHierarchy);
+			expect(san.getCatHierarchy('income')).not.to.be.undefined;
+			expect(san.getCatHierarchy('income')).to.be.an.instanceof($GH.StringGenHierarchy);
 		});
 				
-        
+    
     it('should anonymize a graph with equally distributed weights', () => {
       san.instantiateGraph( false );
       
@@ -170,6 +173,8 @@ describe('SANGREEA TESTS', () => {
       
       var anonymizedOutfile = "adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
       san.outputAnonymizedCSV(anonymizedOutfile);
+
+			console.log(san._graph.nrNodes());
       
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
     });
@@ -181,7 +186,7 @@ describe('SANGREEA TESTS', () => {
       san = new $San.SaNGreeA("adults", config);
       
       [workclass_file, nat_country_file, sex_file, race_file, 
-      marital_file, relationship_file, occupation_file].forEach((file) => {
+      marital_file, relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
       });
@@ -202,7 +207,7 @@ describe('SANGREEA TESTS', () => {
       san = new $San.SaNGreeA("adults", config);
       
       [workclass_file, nat_country_file, sex_file, race_file, 
-      marital_file, relationship_file, occupation_file].forEach((file) => {
+      marital_file, relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
       });
@@ -236,16 +241,16 @@ describe('SANGREEA TESTS', () => {
 		
 		
 		[20, 40, 60, 80, 100].forEach(function(prob) {
-			it('should write out the cleaned input data source for python', () => {
+			it.skip('should write out the cleaned input data source for python', () => {
 				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
 				config.NR_DRAWS = 30162;
 				san = new $San.SaNGreeA("adults", config);
 				
-        [workclass_file, nat_country_file, sex_file, race_file, 
-        marital_file, relationship_file, occupation_file].forEach((file) => {
-          strgh = new $GH.StringGenHierarchy(file);
-          san.setCatHierarchy(strgh._name, strgh);
-        });
+        // [workclass_file, nat_country_file, sex_file, race_file, 
+        // marital_file, relationship_file, occupation_file, income_file].forEach((file) => {
+        //   strgh = new $GH.StringGenHierarchy(file);
+        //   san.setCatHierarchy(strgh._name, strgh);
+        // });
 				
 				var skip = {
 					'prob'  : prob / 100,
@@ -278,4 +283,3 @@ describe('SANGREEA TESTS', () => {
   });
 	
 });
-

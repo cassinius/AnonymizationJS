@@ -1,0 +1,24 @@
+{
+	"name": "income",
+	"entries":
+	{
+		"all": 
+		{
+			"name": "*",
+			"gen": "all",
+			"level": 0
+		},
+		"<=50K": 
+		{
+			"name": "<=50K", 
+			"gen": "all",
+			"level": 1
+		},
+		">50K": 
+		{
+			"name": ">50K", 
+			"gen": "all",
+			"level": 1
+		}
+	}
+}

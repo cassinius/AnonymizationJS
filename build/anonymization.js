@@ -308,6 +308,10 @@
 	                cat_feat_idx_select[idx] = col;
 	            }
 	        });
+	        var target_idx = str_cols.indexOf(this._config.TARGET_COLUMN);
+	        if (target_idx < 0) {
+	            throw new Error("Target column does not exist... aborting.");
+	        }
 	        var draw = this._config.NR_DRAWS;
 	        for (var i = 0; i < draw; i++) {
 	            if (!str_input[i]) {
@@ -338,7 +342,7 @@
 	            for (var idx in cont_feat_idx_select) {
 	                node.setFeature(cont_feat_idx_select[idx], +line[idx]);
 	            }
-	            node.setFeature("income", line[line.length - 1]);
+	            node.setFeature(this._config.TARGET_COLUMN, line[target_idx]);
 	        }
 	    };
 	    SaNGreeA.prototype.outputPreprocCSV = function (outfile, skip) {
@@ -350,7 +354,7 @@
 	        Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
 	            outstring += cat_hierarchy + ", ";
 	        });
-	        outstring += "income \n";
+	        outstring += this._config.TARGET_COLUMN + "\n";
 	        for (var node_key in this._graph.getNodes()) {
 	            node = nodes[node_key];
 	            skip = skip || {};
@@ -373,8 +377,7 @@
 	            Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
 	                outstring += node.getFeature(cat_hierarchy) + ', ';
 	            });
-	            outstring += node.getFeature('income');
-	            outstring += '\n';
+	            outstring += node.getFeature(this._config.TARGET_COLUMN) + "\n";
 	        }
 	        console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
 	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
@@ -388,7 +391,7 @@
 	        Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
 	            outstring += cat_hierarchy + ", ";
 	        });
-	        outstring += "income \n";
+	        outstring += this._config.TARGET_COLUMN + "\n";
 	        for (var cl_idx in this._clusters) {
 	            var cluster = this._clusters[cl_idx], nodes = cluster.nodes;
 	            for (var node_id in nodes) {
@@ -409,8 +412,7 @@
 	                    var gen_Hierarchy = _this._cat_hierarchies[cat_hierarchy];
 	                    outstring += gen_Hierarchy.getName(cluster.gen_feat[cat_hierarchy]) + ", ";
 	                });
-	                outstring += nodes[node_id].getFeature('income');
-	                outstring += "\n";
+	                outstring += nodes[node_id].getFeature(this._config.TARGET_COLUMN) + "\n";
 	            }
 	        }
 	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
@@ -557,15 +559,13 @@
 	"use strict";
 	var CONFIG = {
 	    'INPUT_FILE': './test/io/test_input/adult_data.csv',
-	    'TARGET_COLUMNS': [
-	        'income'
-	    ],
+	    'TARGET_COLUMN': 'education-num',
 	    'AVERAGE_OUTPUT_RANGES': true,
 	    'NR_DRAWS': 300,
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 19,
+	    'K_FACTOR': 3,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
@@ -578,11 +578,11 @@
 	                'marital-status': 1.0 / 13.0,
 	                'relationship': 1.0 / 13.0,
 	                'occupation': 1.0 / 13.0,
+	                'income': 1.0 / 13.0
 	            },
 	            'range': {
 	                'age': 1.0 / 13.0,
 	                'fnlwgt': 1.0 / 13.0,
-	                'education-num': 1.0 / 13.0,
 	                'capital-gain': 1.0 / 13.0,
 	                'capital-loss': 1.0 / 13.0,
 	                'hours-per-week': 1.0 / 13.0
@@ -596,15 +596,15 @@
 	                'race': 0.88,
 	                'marital-status': 0.01,
 	                'relationship': 0.01,
-	                'occupation': 0.01
+	                'occupation': 0.01,
+	                'income': 0.01
 	            },
 	            'range': {
 	                'age': 0.01,
 	                'fnlwgt': 0.01,
-	                'education-num': 0.01,
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
-	                'hours-per-week': 0.01,
+	                'hours-per-week': 0.01
 	            }
 	        },
 	        'emph_age': {
@@ -615,12 +615,12 @@
 	                'race': 0.01,
 	                'marital-status': 0.01,
 	                'relationship': 0.01,
-	                'occupation': 0.01
+	                'occupation': 0.01,
+	                'income': 0.01
 	            },
 	            'range': {
 	                'age': 0.88,
 	                'fnlwgt': 0.01,
-	                'education-num': 0.01,
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
 	                'hours-per-week': 0.01,

@@ -124,6 +124,10 @@ var SaNGreeA = (function () {
                 cat_feat_idx_select[idx] = col;
             }
         });
+        var target_idx = str_cols.indexOf(this._config.TARGET_COLUMN);
+        if (target_idx < 0) {
+            throw new Error("Target column does not exist... aborting.");
+        }
         var draw = this._config.NR_DRAWS;
         for (var i = 0; i < draw; i++) {
             if (!str_input[i]) {
@@ -154,7 +158,7 @@ var SaNGreeA = (function () {
             for (var idx in cont_feat_idx_select) {
                 node.setFeature(cont_feat_idx_select[idx], +line[idx]);
             }
-            node.setFeature("income", line[line.length - 1]);
+            node.setFeature(this._config.TARGET_COLUMN, line[target_idx]);
         }
     };
     SaNGreeA.prototype.outputPreprocCSV = function (outfile, skip) {
@@ -166,7 +170,7 @@ var SaNGreeA = (function () {
         Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
             outstring += cat_hierarchy + ", ";
         });
-        outstring += "income \n";
+        outstring += this._config.TARGET_COLUMN + "\n";
         for (var node_key in this._graph.getNodes()) {
             node = nodes[node_key];
             skip = skip || {};
@@ -189,8 +193,7 @@ var SaNGreeA = (function () {
             Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
                 outstring += node.getFeature(cat_hierarchy) + ', ';
             });
-            outstring += node.getFeature('income');
-            outstring += '\n';
+            outstring += node.getFeature(this._config.TARGET_COLUMN) + "\n";
         }
         console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
@@ -204,7 +207,7 @@ var SaNGreeA = (function () {
         Object.keys(this._cat_hierarchies).forEach(function (cat_hierarchy) {
             outstring += cat_hierarchy + ", ";
         });
-        outstring += "income \n";
+        outstring += this._config.TARGET_COLUMN + "\n";
         for (var cl_idx in this._clusters) {
             var cluster = this._clusters[cl_idx], nodes = cluster.nodes;
             for (var node_id in nodes) {
@@ -225,8 +228,7 @@ var SaNGreeA = (function () {
                     var gen_Hierarchy = _this._cat_hierarchies[cat_hierarchy];
                     outstring += gen_Hierarchy.getName(cluster.gen_feat[cat_hierarchy]) + ", ";
                 });
-                outstring += nodes[node_id].getFeature('income');
-                outstring += "\n";
+                outstring += nodes[node_id].getFeature(this._config.TARGET_COLUMN) + "\n";
             }
         }
         fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
