@@ -151,6 +151,8 @@ describe('SANGREEA TESTS', () => {
 			expect(san.getCatHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
 			expect(san.getCatHierarchy('native-country')).not.to.be.undefined;
 			expect(san.getCatHierarchy('native-country')).to.be.an.instanceof($GH.StringGenHierarchy);
+			expect(san.getCatHierarchy('marital-status')).not.to.be.undefined;
+			expect(san.getCatHierarchy('marital-status')).to.be.an.instanceof($GH.StringGenHierarchy);
 			expect(san.getCatHierarchy('workclass')).not.to.be.undefined;
 			expect(san.getCatHierarchy('workclass')).to.be.an.instanceof($GH.StringGenHierarchy);
 			expect(san.getCatHierarchy('relationship')).not.to.be.undefined;
@@ -241,7 +243,7 @@ describe('SANGREEA TESTS', () => {
 		
 		
 		[20, 40, 60, 80, 100].forEach(function(prob) {
-			it.skip('should write out the cleaned input data source for python', () => {
+			it('should write out the cleaned input data source for python', () => {
 				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
 				config.NR_DRAWS = 30162;
 				san = new $San.SaNGreeA("adults", config);
