@@ -30,7 +30,8 @@ node_modules
 npm-debug.log
 
 # VS Code local files
-.vscode/**
+.vscode
+.vs
 
 # All Javascript files under src, test and test_async_nomock
 src/**/*.js
@@ -39,3 +40,6 @@ test_async_nomock/**/*.js
 
 # Test Output
 test/io/test_output/**/*
+
+#Yarn
+yarn.lock

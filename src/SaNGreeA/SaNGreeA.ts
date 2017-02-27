@@ -6,7 +6,6 @@ import * as $GH from '../core/GenHierarchies';
 import * as $C from '../config/SaNGreeAConfig';
 import * as $G from 'graphinius';
 
-
 export interface ISaNGreeAConfig {
   INPUT_FILE            : string;
   TARGET_COLUMNS        : Array<string>;
@@ -42,8 +41,9 @@ export interface nodeCluster {
 
 export interface ISaNGreeA {
 	_name: string;
-	_graph;
+	_graph : $G.core.IGraph;
 	_clusters : Array<nodeCluster>;
+	_perturber : $G.perturbation.SimplePerturber;
 	
   getConfig(): ISaNGreeAConfig;
   
@@ -71,6 +71,7 @@ class SaNGreeA implements ISaNGreeA {
 	 * - NO TYPE RESOLUTION YET -
 	 */
 	public _graph : $G.core.IGraph;
+	public _perturber : $G.perturbation.SimplePerturber;
 	public _clusters : Array<nodeCluster>;
 	public _weights;
   public _alpha : number;
@@ -115,7 +116,8 @@ class SaNGreeA implements ISaNGreeA {
 			throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
 		}
         
-		this._graph = new $G.core.BaseGraph(this._name);
+		this._graph = new $G.core.BaseGraph(this._name);		
+		this._perturber = new $G.perturbation.SimplePerturber(this._graph);
 	}
   
   getConfig(): ISaNGreeAConfig {
@@ -155,7 +157,7 @@ class SaNGreeA implements ISaNGreeA {
 		this.readCSV(this._config.INPUT_FILE, this._graph);
 		
     if( createEdges === true ) {
-		  this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
+			this._perturber.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
     }
 	}
 	
@@ -280,7 +282,7 @@ class SaNGreeA implements ISaNGreeA {
 			}
 			
 			// add a node to the graph
-			var node = this._graph.addNode(""+i);
+			var node = this._graph.addNodeByID(""+i);
 			
 			// add features (columns in the dataset) 
 			for (var idx in cat_feat_idx_select) {

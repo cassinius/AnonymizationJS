@@ -34,6 +34,7 @@ var SaNGreeA = (function () {
             throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
         }
         this._graph = new $G.core.BaseGraph(this._name);
+        this._perturber = new $G.perturbation.SimplePerturber(this._graph);
     }
     SaNGreeA.prototype.getConfig = function () {
         return this._config;
@@ -61,7 +62,7 @@ var SaNGreeA = (function () {
         this.instantiateRangeHierarchies(this._config.INPUT_FILE);
         this.readCSV(this._config.INPUT_FILE, this._graph);
         if (createEdges === true) {
-            this._graph.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
+            this._perturber.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
         }
     };
     SaNGreeA.prototype.instantiateCategoricalHierarchies = function () {
@@ -146,7 +147,7 @@ var SaNGreeA = (function () {
                 draw++;
                 continue;
             }
-            var node = this._graph.addNode("" + i);
+            var node = this._graph.addNodeByID("" + i);
             for (var idx in cat_feat_idx_select) {
                 node.setFeature(cat_feat_idx_select[idx], line[idx]);
             }
