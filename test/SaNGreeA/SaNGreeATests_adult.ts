@@ -168,7 +168,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       san = new $San.SaNGreeA("adults", config);
       
       // marital_file,
-      [workclass_file, nat_country_file, sex_file, race_file, 
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
@@ -182,7 +182,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       
       san.anonymizeGraph();
       
-      var anonymizedOutfile = "adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
+      var anonymizedOutfile = "./" + config.TARGET_COLUMN + "/adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
       san.outputAnonymizedCSV(anonymizedOutfile);
 
 			console.log(san._graph.nrNodes());
@@ -197,7 +197,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       san = new $San.SaNGreeA("adults", config);
       
       // marital_file,
-      [workclass_file, nat_country_file, sex_file, race_file, 
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
@@ -206,7 +206,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       san.instantiateGraph( false );
       san.anonymizeGraph();
       
-      var anonymizedOutfile = "adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
+      var anonymizedOutfile = "./" + config.TARGET_COLUMN + "/adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
       san.outputAnonymizedCSV(anonymizedOutfile);
       
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
@@ -219,7 +219,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       san = new $San.SaNGreeA("adults", config);
       
 			// marital_file,
-      [workclass_file, nat_country_file, sex_file, race_file, 
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
@@ -228,14 +228,14 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       san.instantiateGraph( false );
       san.anonymizeGraph();
       
-      var anonymizedOutfile = "adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
+      var anonymizedOutfile = "./" + config.TARGET_COLUMN + "/adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
       san.outputAnonymizedCSV(anonymizedOutfile);
       
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
     });
     
     
-    it('should write out the cleaned input data source for python', () => {
+    it.skip('should write out the cleaned input data source for python', () => {
       // var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
       // config.NR_DRAWS = 3000;
       san = new $San.SaNGreeA("adults", config);
@@ -247,7 +247,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       });
       
       san.readCSV(adults, san._graph);
-      var preprocOutfile = "input_for_python";
+      var preprocOutfile = "./" + config.TARGET_COLUMN + "/input_for_python";
       san.outputPreprocCSV(preprocOutfile);
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
     });
