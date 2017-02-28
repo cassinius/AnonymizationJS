@@ -109,7 +109,7 @@ var SaNGreeA = (function () {
     SaNGreeA.prototype.readCSV = function (file, graph) {
         this.instantiateRangeHierarchies(file);
         var str_input = fs.readFileSync(file).toString().split('\n');
-        var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
+        var str_cols = str_input.shift().replace(/\s+/g, '').split(this._config.SEPARATOR);
         var cont_hierarchies = Object.keys(this._cont_hierarchies);
         var cat_hierarchies = Object.keys(this._cat_hierarchies);
         var cont_feat_idx_select = {};

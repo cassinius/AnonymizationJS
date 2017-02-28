@@ -8,6 +8,7 @@ import * as $G from 'graphinius';
 
 export interface ISaNGreeAConfig {
   INPUT_FILE            : string;
+	SEPARATOR							: string;
   TARGET_COLUMN         : string;
   AVERAGE_OUTPUT_RANGES : boolean;
 	NR_DRAWS              : number;
@@ -222,7 +223,7 @@ class SaNGreeA implements ISaNGreeA {
     this.instantiateRangeHierarchies(file);
     
 		var str_input = fs.readFileSync(file).toString().split('\n');
-		var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
+		var str_cols = str_input.shift().replace(/\s+/g, '').split(this._config.SEPARATOR);
 		var cont_hierarchies = Object.keys(this._cont_hierarchies);
 		var cat_hierarchies = Object.keys(this._cat_hierarchies);
     

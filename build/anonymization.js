@@ -293,7 +293,7 @@
 	    SaNGreeA.prototype.readCSV = function (file, graph) {
 	        this.instantiateRangeHierarchies(file);
 	        var str_input = fs.readFileSync(file).toString().split('\n');
-	        var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
+	        var str_cols = str_input.shift().replace(/\s+/g, '').split(this._config.SEPARATOR);
 	        var cont_hierarchies = Object.keys(this._cont_hierarchies);
 	        var cat_hierarchies = Object.keys(this._cat_hierarchies);
 	        var cont_feat_idx_select = {};
@@ -559,13 +559,14 @@
 	"use strict";
 	var CONFIG = {
 	    'INPUT_FILE': './test/io/test_input/adult_data.csv',
-	    'TARGET_COLUMN': 'education-num',
+	    'SEPARATOR': ',',
+	    'TARGET_COLUMN': 'marital-status',
 	    'AVERAGE_OUTPUT_RANGES': true,
-	    'NR_DRAWS': 300,
+	    'NR_DRAWS': 30162,
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 3,
+	    'K_FACTOR': 19,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
@@ -575,7 +576,6 @@
 	                'native-country': 1.0 / 13.0,
 	                'sex': 1.0 / 13.0,
 	                'race': 1.0 / 13.0,
-	                'marital-status': 1.0 / 13.0,
 	                'relationship': 1.0 / 13.0,
 	                'occupation': 1.0 / 13.0,
 	                'income': 1.0 / 13.0
@@ -583,6 +583,7 @@
 	            'range': {
 	                'age': 1.0 / 13.0,
 	                'fnlwgt': 1.0 / 13.0,
+	                'education-num': 1.0 / 13.0,
 	                'capital-gain': 1.0 / 13.0,
 	                'capital-loss': 1.0 / 13.0,
 	                'hours-per-week': 1.0 / 13.0
@@ -594,7 +595,6 @@
 	                'native-country': 0.01,
 	                'sex': 0.01,
 	                'race': 0.88,
-	                'marital-status': 0.01,
 	                'relationship': 0.01,
 	                'occupation': 0.01,
 	                'income': 0.01
@@ -602,6 +602,7 @@
 	            'range': {
 	                'age': 0.01,
 	                'fnlwgt': 0.01,
+	                'education-num': 0.01,
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
 	                'hours-per-week': 0.01
@@ -613,7 +614,6 @@
 	                'native-country': 0.01,
 	                'sex': 0.01,
 	                'race': 0.01,
-	                'marital-status': 0.01,
 	                'relationship': 0.01,
 	                'occupation': 0.01,
 	                'income': 0.01
@@ -621,6 +621,7 @@
 	            'range': {
 	                'age': 0.88,
 	                'fnlwgt': 0.01,
+	                'education-num': 0.01,
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
 	                'hours-per-week': 0.01,

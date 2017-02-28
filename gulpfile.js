@@ -26,7 +26,7 @@ var paths = {
 //----------------------------
 // TASKS
 //----------------------------
-gulp.task('build', ['clean'], function () {
+gulp.task('build', function () { // ['clean'],
 	return gulp.src(paths.typescripts, {base: "."})
 						 .pipe(ts({
 							 target: "ES5",

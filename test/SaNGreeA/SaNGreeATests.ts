@@ -164,7 +164,16 @@ describe('SANGREEA TESTS', () => {
 		});
 				
     
-    it('should anonymize a graph with equally distributed weights', () => {
+    it.skip('should anonymize a graph with equally distributed weights', () => {
+      san = new $San.SaNGreeA("adults", config);
+      
+      // marital_file,
+      [workclass_file, nat_country_file, sex_file, race_file, 
+      relationship_file, occupation_file, income_file].forEach((file) => {
+        strgh = new $GH.StringGenHierarchy(file);
+        san.setCatHierarchy(strgh._name, strgh);
+      });
+      
       san.instantiateGraph( false );
       
       // TODO MAKE IT AN OWN TEST CASE
@@ -182,13 +191,14 @@ describe('SANGREEA TESTS', () => {
     });
     
     
-    it('should compute an anonymization with higher weight for race', () => {
+    it.skip('should compute an anonymization with higher weight for race', () => {
       config.VECTOR = 'emph_race';
       
       san = new $San.SaNGreeA("adults", config);
       
+      // marital_file,
       [workclass_file, nat_country_file, sex_file, race_file, 
-      marital_file, relationship_file, occupation_file, income_file].forEach((file) => {
+      relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
       });
@@ -203,13 +213,14 @@ describe('SANGREEA TESTS', () => {
     });
     
     
-    it('should compute an anonymization with higher weight for age', () => {
+    it.skip('should compute an anonymization with higher weight for age', () => {
       config.VECTOR = 'emph_age';
       
       san = new $San.SaNGreeA("adults", config);
       
+			// marital_file,
       [workclass_file, nat_country_file, sex_file, race_file, 
-      marital_file, relationship_file, occupation_file, income_file].forEach((file) => {
+      relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
       });
@@ -227,13 +238,13 @@ describe('SANGREEA TESTS', () => {
     it('should write out the cleaned input data source for python', () => {
       // var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
       // config.NR_DRAWS = 3000;
-      // san = new $San.SaNGreeA("adults", config);
+      san = new $San.SaNGreeA("adults", config);
       
-      // [workclass_file, nat_country_file, sex_file, race_file, 
-      // marital_file, relationship_file, occupation_file].forEach((file) => {
-      //   strgh = new $GH.StringGenHierarchy(file);
-      //   san.setCatHierarchy(strgh._name, strgh);
-      // });
+      [workclass_file, nat_country_file, sex_file, race_file, 
+      relationship_file, occupation_file, income_file].forEach((file) => {
+        strgh = new $GH.StringGenHierarchy(file);
+        san.setCatHierarchy(strgh._name, strgh);
+      });
       
       san.readCSV(adults, san._graph);
       var preprocOutfile = "input_for_python";
@@ -243,7 +254,7 @@ describe('SANGREEA TESTS', () => {
 		
 		
 		[20, 40, 60, 80, 100].forEach(function(prob) {
-			it('should write out the cleaned input data source for python', () => {
+			it.skip('should write out the cleaned input data source for python', () => {
 				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
 				config.NR_DRAWS = 30162;
 				san = new $San.SaNGreeA("adults", config);
