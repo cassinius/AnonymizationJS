@@ -1,10 +1,13 @@
 "use strict";
 var CONFIG = {
     'INPUT_FILE': './test/io/test_input/adult_data.csv',
+    'TRIM': '\\s+',
+    'TRIM_MOD': 'g',
     'SEPARATOR': ',',
+    'SEP_MOD': '',
     'TARGET_COLUMN': 'marital-status',
     'AVERAGE_OUTPUT_RANGES': true,
-    'NR_DRAWS': 30162,
+    'NR_DRAWS': 300,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,

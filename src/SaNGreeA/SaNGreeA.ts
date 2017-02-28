@@ -3,12 +3,15 @@
 import fs 	= require('fs');
 import path = require('path');
 import * as $GH from '../core/GenHierarchies';
-import * as $C from '../config/SaNGreeAConfig';
+import * as $C from '../config/SaNGreeAConfig_adult';
 import * as $G from 'graphinius';
 
 export interface ISaNGreeAConfig {
   INPUT_FILE            : string;
+	TRIM									: string;
+	TRIM_MOD							: string;
 	SEPARATOR							: string;
+	SEP_MOD								: string;
   TARGET_COLUMN         : string;
   AVERAGE_OUTPUT_RANGES : boolean;
 	NR_DRAWS              : number;
@@ -94,12 +97,14 @@ class SaNGreeA implements ISaNGreeA {
 	
   private _range_hierarchy_indices : {[name: string] : number} = {};
   private _categorical_hierarchy_indices : {[name: string] : number} = {};
+
+	private _SEP : RegExp;
+	private _TRIM : RegExp;
 	
 	constructor( public _name: string = "default",
 							 public config? : ISaNGreeAConfig)
 	{		
-		this._config = config || $C.CONFIG;
-    
+		this._config = config || $C.CONFIG;    
 		
 		if ( this._config.INPUT_FILE === "" ) {
 			throw new Error('Input file cannot be an empty string');
@@ -119,6 +124,9 @@ class SaNGreeA implements ISaNGreeA {
         
 		this._graph = new $G.core.BaseGraph(this._name);		
 		this._perturber = new $G.perturbation.SimplePerturber(this._graph);
+
+		this._SEP = new RegExp(this._config.SEPARATOR, this._config.SEP_MOD);
+		this._TRIM = new RegExp(this._config.TRIM, this._config.TRIM_MOD);
 	}
   
   getConfig(): ISaNGreeAConfig {
@@ -147,8 +155,7 @@ class SaNGreeA implements ISaNGreeA {
 	
 	setCatHierarchy(name: string, genh: $GH.IStringGenHierarchy) {
 		this._cat_hierarchies[name] = genh;
-	}	
-	
+	}
 	
 	
 	instantiateGraph(createEdges = true ) : void {
@@ -169,6 +176,10 @@ class SaNGreeA implements ISaNGreeA {
 
   
   instantiateRangeHierarchies(file: string) {
+		// console.log("SEPARATOR: " + this._config.SEPARATOR);
+		// console.log("TRIM by: ");
+		// console.log(this._config.TRIM);
+
     var cont_hierarchies = Object.keys(this._cont_hierarchies);
     var ranges = Object.keys(this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['range']);
     
@@ -177,7 +188,10 @@ class SaNGreeA implements ISaNGreeA {
     }
         
 		var str_input = fs.readFileSync(file).toString().split('\n');
-		var str_cols = str_input.shift().replace(/\s+/g, '').split(',');    
+		var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
+
+		// console.log(str_cols);
+
 		str_cols.forEach((col, idx) => {
 			if ( ranges.indexOf(col) !== -1 ) {
 				this._range_hierarchy_indices[col] = idx;
@@ -195,7 +209,7 @@ class SaNGreeA implements ISaNGreeA {
     
     var current_value = NaN;
     str_input.forEach( (line_string, idx) => {
-      var line = line_string.replace(/\s+/g, '').split(',');      
+      var line = line_string.trim().replace(this._TRIM, '').split(this._SEP);    
       ranges.forEach( (range) => {
         current_value = parseFloat( line[ this._range_hierarchy_indices[range] ] );
         if ( current_value < min_max_struct[range]['min'] ) {
@@ -206,6 +220,9 @@ class SaNGreeA implements ISaNGreeA {
         }
       });
     });
+
+		// console.log("RANGES: ");
+		// console.dir(min_max_struct);
     
     ranges.forEach( (range) => {
       var range_hierarchy = new $GH.ContGenHierarchy(range, min_max_struct[range]['min'], min_max_struct[range]['max']);
@@ -223,11 +240,11 @@ class SaNGreeA implements ISaNGreeA {
     this.instantiateRangeHierarchies(file);
     
 		var str_input = fs.readFileSync(file).toString().split('\n');
-		var str_cols = str_input.shift().replace(/\s+/g, '').split(this._config.SEPARATOR);
+		var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
+
 		var cont_hierarchies = Object.keys(this._cont_hierarchies);
 		var cat_hierarchies = Object.keys(this._cat_hierarchies);
-    
-		
+    		
 		/**
 		 * Construct the index array for feature selection
 		 */
@@ -265,8 +282,8 @@ class SaNGreeA implements ISaNGreeA {
 			if ( !str_input[i] ) {
 				continue;
 			}
-			var line = str_input[i].replace(/\s+/g, '').split(',');
-			      
+			var line = str_input[i].trim().replace(this._TRIM, '').split(this._SEP);
+
 			var line_valid = true;
 			for (var idx in cat_feat_idx_select) {
 				// console.log(line[idx]);
@@ -448,8 +465,8 @@ class SaNGreeA implements ISaNGreeA {
             outstring += range[0] + ", ";
           }
           else if ( this._config.AVERAGE_OUTPUT_RANGES ) {
-            var avg_age = ( range[0] + range[1] ) / 2.0;
-            outstring += avg_age + ", ";
+            var range_average = ( range[0] + range[1] ) / 2.0;
+            outstring += range_average + ", ";
           }
           else {
             outstring += "[" + range[0] + " - " + range[1] + "], ";
@@ -629,7 +646,7 @@ class SaNGreeA implements ISaNGreeA {
 	
 	
 	private calculateCatCosts(Cl: nodeCluster, Y) {
-		var costs = 0;
+		var gen_costs = 0;
 		
 		for (var feat in this._cat_hierarchies) {	
 			var cat_gh = this.getCatHierarchy(feat);
@@ -652,9 +669,11 @@ class SaNGreeA implements ISaNGreeA {
 				}
 			}
       var cat_weights = this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['categorical'];
-			costs += cat_weights[feat] * ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );			
+			gen_costs += cat_weights[feat] * ( ( cat_gh.nrLevels() - Cl_level ) / cat_gh.nrLevels() );			
 		}
-		return costs / Object.keys(this._cat_hierarchies).length;
+
+		let nr_cat_hierarchies = Object.keys(this._cat_hierarchies).length;
+		return nr_cat_hierarchies > 1 ? gen_costs / nr_cat_hierarchies : gen_costs;
 	}
 	
 	
@@ -673,7 +692,8 @@ class SaNGreeA implements ISaNGreeA {
       range_costs += range_weights[range] + extension_cost;
     })
     
-		return range_costs;
+		let nr_cont_hierarchies = Object.keys(this._cont_hierarchies).length;
+		return nr_cont_hierarchies > 1 ? range_costs / nr_cont_hierarchies : range_costs;
 	}
   
 	

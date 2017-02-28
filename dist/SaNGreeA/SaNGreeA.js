@@ -1,7 +1,7 @@
 "use strict";
 var fs = require('fs');
 var $GH = require('../core/GenHierarchies');
-var $C = require('../config/SaNGreeAConfig');
+var $C = require('../config/SaNGreeAConfig_adult');
 var $G = require('graphinius');
 (function (HierarchyType) {
     HierarchyType[HierarchyType["CONTINUOUS"] = 0] = "CONTINUOUS";
@@ -35,6 +35,8 @@ var SaNGreeA = (function () {
         }
         this._graph = new $G.core.BaseGraph(this._name);
         this._perturber = new $G.perturbation.SimplePerturber(this._graph);
+        this._SEP = new RegExp(this._config.SEPARATOR, this._config.SEP_MOD);
+        this._TRIM = new RegExp(this._config.TRIM, this._config.TRIM_MOD);
     }
     SaNGreeA.prototype.getConfig = function () {
         return this._config;
@@ -75,7 +77,7 @@ var SaNGreeA = (function () {
             return;
         }
         var str_input = fs.readFileSync(file).toString().split('\n');
-        var str_cols = str_input.shift().replace(/\s+/g, '').split(',');
+        var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
         str_cols.forEach(function (col, idx) {
             if (ranges.indexOf(col) !== -1) {
                 _this._range_hierarchy_indices[col] = idx;
@@ -90,7 +92,7 @@ var SaNGreeA = (function () {
         });
         var current_value = NaN;
         str_input.forEach(function (line_string, idx) {
-            var line = line_string.replace(/\s+/g, '').split(',');
+            var line = line_string.trim().replace(_this._TRIM, '').split(_this._SEP);
             ranges.forEach(function (range) {
                 current_value = parseFloat(line[_this._range_hierarchy_indices[range]]);
                 if (current_value < min_max_struct[range]['min']) {
@@ -109,7 +111,7 @@ var SaNGreeA = (function () {
     SaNGreeA.prototype.readCSV = function (file, graph) {
         this.instantiateRangeHierarchies(file);
         var str_input = fs.readFileSync(file).toString().split('\n');
-        var str_cols = str_input.shift().replace(/\s+/g, '').split(this._config.SEPARATOR);
+        var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
         var cont_hierarchies = Object.keys(this._cont_hierarchies);
         var cat_hierarchies = Object.keys(this._cat_hierarchies);
         var cont_feat_idx_select = {};
@@ -133,7 +135,7 @@ var SaNGreeA = (function () {
             if (!str_input[i]) {
                 continue;
             }
-            var line = str_input[i].replace(/\s+/g, '').split(',');
+            var line = str_input[i].trim().replace(this._TRIM, '').split(this._SEP);
             var line_valid = true;
             for (var idx in cat_feat_idx_select) {
                 var cat_hierarchy = this.getCatHierarchy(cat_feat_idx_select[idx]);
@@ -217,8 +219,8 @@ var SaNGreeA = (function () {
                         outstring += range[0] + ", ";
                     }
                     else if (_this._config.AVERAGE_OUTPUT_RANGES) {
-                        var avg_age = (range[0] + range[1]) / 2.0;
-                        outstring += avg_age + ", ";
+                        var range_average = (range[0] + range[1]) / 2.0;
+                        outstring += range_average + ", ";
                     }
                     else {
                         outstring += "[" + range[0] + " - " + range[1] + "], ";
@@ -321,7 +323,7 @@ var SaNGreeA = (function () {
         }
     };
     SaNGreeA.prototype.calculateCatCosts = function (Cl, Y) {
-        var costs = 0;
+        var gen_costs = 0;
         for (var feat in this._cat_hierarchies) {
             var cat_gh = this.getCatHierarchy(feat);
             var Cl_feat = Cl.gen_feat[feat];
@@ -337,9 +339,10 @@ var SaNGreeA = (function () {
                 }
             }
             var cat_weights = this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['categorical'];
-            costs += cat_weights[feat] * ((cat_gh.nrLevels() - Cl_level) / cat_gh.nrLevels());
+            gen_costs += cat_weights[feat] * ((cat_gh.nrLevels() - Cl_level) / cat_gh.nrLevels());
         }
-        return costs / Object.keys(this._cat_hierarchies).length;
+        var nr_cat_hierarchies = Object.keys(this._cat_hierarchies).length;
+        return nr_cat_hierarchies > 1 ? gen_costs / nr_cat_hierarchies : gen_costs;
     };
     SaNGreeA.prototype.calculateContCosts = function (Cl, Y) {
         var _this = this;
@@ -352,7 +355,8 @@ var SaNGreeA = (function () {
             var extension_cost = range_hierarchy instanceof $GH.ContGenHierarchy ? range_hierarchy.genCostOfRange(extended_range[0], extended_range[1]) : 0;
             range_costs += range_weights[range] + extension_cost;
         });
-        return range_costs;
+        var nr_cont_hierarchies = Object.keys(this._cont_hierarchies).length;
+        return nr_cont_hierarchies > 1 ? range_costs / nr_cont_hierarchies : range_costs;
     };
     SaNGreeA.prototype.expandRange = function (range, nr) {
         var min = nr < range[0] ? nr : range[0];

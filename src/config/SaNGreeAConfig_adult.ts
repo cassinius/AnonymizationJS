@@ -1,14 +1,18 @@
 var CONFIG = {
   // The path to the input dataset
   'INPUT_FILE' : './test/io/test_input/adult_data.csv',
+  // CSV TRIM RegExp, if necessary
+  'TRIM': '\\s+',
+  'TRIM_MOD': 'g',
   // CSV Separator char
   'SEPARATOR' : ',',
+  'SEP_MOD': '',
   // columns to preserve for later processing of anonymized dataset
   'TARGET_COLUMN' : 'marital-status',
   // Shall we write out a range or an average value?
   'AVERAGE_OUTPUT_RANGES' : true,
   // How many data points to fetch
-  'NR_DRAWS' : 30162,
+  'NR_DRAWS' : 300, //162,
   // Do we wnat to sample the dataset randomly?
   'RANDOM_DRAWS': false,
   // Min # of edges per node for graph generation

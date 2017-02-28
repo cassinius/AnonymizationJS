@@ -3,7 +3,7 @@
 import * as chai from 'chai';
 import * as $GH from '../../src/core/GenHierarchies';
 import * as $San from '../../src/SaNGreeA/SaNGreeA';
-import * as $C from '../../src/config/SaNGreeAConfig';
+import * as $C from '../../src/config/SaNGreeAConfig_adult';
 
 import * as $G from 'graphinius';
 // console.dir($G);
@@ -14,7 +14,7 @@ var expect = chai.expect,
 		san : $San.ISaNGreeA;
     
 		
-describe('SANGREEA TESTS', () => {
+describe('SANGREEA TESTS, ADULT DATASET', () => {
 	
 	describe('Basic instantiation tests', () => {
     
@@ -164,7 +164,7 @@ describe('SANGREEA TESTS', () => {
 		});
 				
     
-    it.skip('should anonymize a graph with equally distributed weights', () => {
+    it('should anonymize a graph with equally distributed weights', () => {
       san = new $San.SaNGreeA("adults", config);
       
       // marital_file,
@@ -191,7 +191,7 @@ describe('SANGREEA TESTS', () => {
     });
     
     
-    it.skip('should compute an anonymization with higher weight for race', () => {
+    it('should compute an anonymization with higher weight for race', () => {
       config.VECTOR = 'emph_race';
       
       san = new $San.SaNGreeA("adults", config);
@@ -213,7 +213,7 @@ describe('SANGREEA TESTS', () => {
     });
     
     
-    it.skip('should compute an anonymization with higher weight for age', () => {
+    it('should compute an anonymization with higher weight for age', () => {
       config.VECTOR = 'emph_age';
       
       san = new $San.SaNGreeA("adults", config);

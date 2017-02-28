@@ -19,7 +19,9 @@ var paths = {
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'test/**/*.js', 'test/io/test_output/*', 'build', 'dist', 'docs', 'build'],
-	tests: ['test/**/*.js']
+	tests: ['test/**/*.js'],
+	tests_adult: ['test/SaNGreeA/SaNGreeATests_adult.js'],
+	tests_house: ['test/SaNGreeA/SaNGreeATests_house.js']
 };
 
 
@@ -80,9 +82,16 @@ gulp.task("tdoc", ['clean'], function() {
 });
 
 
-gulp.task('test', ['build'], function () {
-	return gulp.src(paths.tests, {read: false})
-						 .pipe(mocha({reporter: 'dot',
+gulp.task('test-adult', ['build'], function () {
+	return gulp.src(paths.tests_adult, {read: false})
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: Number.POSITIVE_INFINITY}));
+});
+
+
+gulp.task('test-house', ['build'], function () {
+	return gulp.src(paths.tests_house, {read: false})
+						 .pipe(mocha({reporter: 'spec',
 						 							timeout: Number.POSITIVE_INFINITY}));
 });
 
