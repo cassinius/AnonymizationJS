@@ -235,12 +235,12 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
     });
     
     
-    it.skip('should write out the cleaned input data source for python', () => {
+    it.only('should write out the cleaned input data source for python', () => {
       // var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
       // config.NR_DRAWS = 3000;
       san = new $San.SaNGreeA("adults", config);
       
-      [workclass_file, nat_country_file, sex_file, race_file, 
+      [workclass_file, nat_country_file, sex_file, race_file, // marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
