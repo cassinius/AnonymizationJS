@@ -162,13 +162,13 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 			expect(san.getCatHierarchy('income')).not.to.be.undefined;
 			expect(san.getCatHierarchy('income')).to.be.an.instanceof($GH.StringGenHierarchy);
 		});
-				
+		
     
     it('should anonymize a graph with equally distributed weights', () => {
       san = new $San.SaNGreeA("adults", config);
       
       // marital_file,
-      [workclass_file, nat_country_file, sex_file, race_file, marital_file,
+      [workclass_file, nat_country_file, sex_file, race_file, //marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
@@ -197,7 +197,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       san = new $San.SaNGreeA("adults", config);
       
       // marital_file,
-      [workclass_file, nat_country_file, sex_file, race_file, marital_file,
+      [workclass_file, nat_country_file, sex_file, race_file, //marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
@@ -219,7 +219,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       san = new $San.SaNGreeA("adults", config);
       
 			// marital_file,
-      [workclass_file, nat_country_file, sex_file, race_file, marital_file,
+      [workclass_file, nat_country_file, sex_file, race_file, //marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
@@ -235,7 +235,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
     });
     
     
-    it.only('should write out the cleaned input data source for python', () => {
+    it.skip('should write out the cleaned input data source for python', () => {
       // var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
       // config.NR_DRAWS = 3000;
       san = new $San.SaNGreeA("adults", config);
