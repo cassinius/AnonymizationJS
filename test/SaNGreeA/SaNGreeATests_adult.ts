@@ -164,11 +164,10 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 		});
 		
     
-    it('should anonymize a graph with equally distributed weights', () => {
+    it.skip('should anonymize a graph with equally distributed weights', () => {
       san = new $San.SaNGreeA("adults", config);
       
-      // marital_file,
-      [workclass_file, nat_country_file, sex_file, race_file, //marital_file,
+      [workclass_file, nat_country_file, sex_file, race_file, // marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
@@ -191,12 +190,11 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
     });
     
     
-    it('should compute an anonymization with higher weight for race', () => {
+    it.skip('should compute an anonymization with higher weight for race', () => {
       config.VECTOR = 'emph_race';
       
       san = new $San.SaNGreeA("adults", config);
       
-      // marital_file,
       [workclass_file, nat_country_file, sex_file, race_file, //marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
@@ -213,12 +211,11 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
     });
     
     
-    it('should compute an anonymization with higher weight for age', () => {
+    it.skip('should compute an anonymization with higher weight for age', () => {
       config.VECTOR = 'emph_age';
       
       san = new $San.SaNGreeA("adults", config);
       
-			// marital_file,
       [workclass_file, nat_country_file, sex_file, race_file, //marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
@@ -254,25 +251,25 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 		
 		
 		[20, 40, 60, 80, 100].forEach(function(prob) {
-			it.skip('should write out the cleaned input data source for python', () => {
+			it('should write out the cleaned input data source for python', () => {
 				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
 				config.NR_DRAWS = 30162;
 				san = new $San.SaNGreeA("adults", config);
 				
-        // [workclass_file, nat_country_file, sex_file, race_file, 
-        // marital_file, relationship_file, occupation_file, income_file].forEach((file) => {
-        //   strgh = new $GH.StringGenHierarchy(file);
-        //   san.setCatHierarchy(strgh._name, strgh);
-        // });
+        [workclass_file, nat_country_file, sex_file, race_file, // marital_file, 
+        relationship_file, occupation_file, income_file].forEach((file) => {
+          strgh = new $GH.StringGenHierarchy(file);
+          san.setCatHierarchy(strgh._name, strgh);
+        });
 				
 				var skip = {
 					'prob'  : prob / 100,
-					'feat'  : 'education-num',
-					'value' : 10
+					'feat'  : 'relationship',
+					'value' : 'Not-in-family'
 				};
 				
 				san.readCSV(adults, san._graph);
-				var preprocOutfile = "adults_" + skip.feat + "_" + skip.value + "_" + skip.prob;
+				var preprocOutfile = "./" + config.TARGET_COLUMN + "/adults_" + skip.feat + "_" + skip.value + "_" + skip.prob;
 				san.outputPreprocCSV(preprocOutfile, skip);
 				expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
 			});
