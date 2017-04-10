@@ -3,6 +3,7 @@ var $CSVIN 			= require("./dist/io/CSVInput.js");
 var $CSVOUT			= require("./dist/io/CSVOutput.js");
 var $Sangreea 	= require("./dist/SaNGreeA/SaNGreeA.js");
 var $C_ADULT		= require("./dist/config/SaNGreeAConfig_adult.js");
+var $C_HOUSES		= require("./dist/config/SaNGreeAConfig_house.js");
 
 
 var out = typeof window !== 'undefined' ? window : global;
@@ -10,7 +11,8 @@ var out = typeof window !== 'undefined' ? window : global;
 
 out.$A = {
 	config: {
-		adults: $C_ADULT.CONFIG
+		adults: $C_ADULT.CONFIG,
+		houses: $C_HOUSES.CONFIG
 	},
 	genHierarchy:	{
 		Category		: $GH.StringGenHierarchy,
@@ -18,12 +20,15 @@ out.$A = {
 	},
 	IO: {
 		CSVIN			 		: $CSVIN.CSVInput,
-		CSVOUT		 		: $CSVOUT.CSVOutput,
+		CSVOUT		 		: $CSVOUT.CSVOutput
 	},
 	algorithms: {
 		Sangreea		: $Sangreea.SaNGreeA
 	}
 };
+
+
+window.bla = "hoo";
 
 
 /**

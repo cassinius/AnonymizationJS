@@ -35,5 +35,8 @@ module.exports = {
     ],
     extensions: [ '', '.js', 'json']
   },
-  plugins: [ignore]
+  // plugins: [ignore],
+  externals: {
+    'graphinius': '$G'
+  }
 };

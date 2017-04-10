@@ -49,6 +49,7 @@
 	var $CSVOUT			= __webpack_require__(4);
 	var $Sangreea 	= __webpack_require__(5);
 	var $C_ADULT		= __webpack_require__(6);
+	var $C_HOUSES		= __webpack_require__(8);
 
 
 	var out = typeof window !== 'undefined' ? window : global;
@@ -56,7 +57,8 @@
 
 	out.$A = {
 		config: {
-			adults: $C_ADULT.CONFIG
+			adults: $C_ADULT.CONFIG,
+			houses: $C_HOUSES.CONFIG
 		},
 		genHierarchy:	{
 			Category		: $GH.StringGenHierarchy,
@@ -64,12 +66,15 @@
 		},
 		IO: {
 			CSVIN			 		: $CSVIN.CSVInput,
-			CSVOUT		 		: $CSVOUT.CSVOutput,
+			CSVOUT		 		: $CSVOUT.CSVOutput
 		},
 		algorithms: {
 			Sangreea		: $Sangreea.SaNGreeA
 		}
 	};
+
+
+	window.bla = "hoo";
 
 
 	/**
@@ -175,6 +180,7 @@
 
 	"use strict";
 	var fs = __webpack_require__(2);
+	var http = __webpack_require__(2);
 	var CSVInput = (function () {
 	    function CSVInput(config) {
 	        this._SEP = new RegExp(config.SEPARATOR, config.SEP_MOD);
@@ -183,8 +189,36 @@
 	    CSVInput.prototype.readCSVFromFile = function (file) {
 	        return fs.readFileSync(file).toString().split('\n');
 	    };
-	    CSVInput.prototype.readCSVFromURL = function (url) {
-	        return "test";
+	    CSVInput.prototype.readCSVFromURL = function (fileurl, cb) {
+	        var self = this, request;
+	        if (typeof window !== 'undefined') {
+	            request = new XMLHttpRequest();
+	            request.onreadystatechange = function () {
+	                if (request.readyState == 4 && request.status == 200) {
+	                    cb(request.responseText.split('\n'));
+	                }
+	            };
+	            request.open("GET", fileurl, true);
+	            request.setRequestHeader('Content-Type', 'text/csv; charset=UTF-8');
+	            request.send();
+	        }
+	        else {
+	            this.retrieveRemoteFile(fileurl, cb);
+	        }
+	    };
+	    CSVInput.prototype.retrieveRemoteFile = function (url, cb) {
+	        if (typeof cb !== 'function') {
+	            throw new Error('Provided callback is not a function.');
+	        }
+	        return http.get(url, function (response) {
+	            var body = '';
+	            response.on('data', function (d) {
+	                body += d;
+	            });
+	            response.on('end', function () {
+	                cb(body.toString().split('\n'));
+	            });
+	        });
 	    };
 	    return CSVInput;
 	}());
@@ -217,7 +251,7 @@
 	"use strict";
 	var $GH = __webpack_require__(1);
 	var $C = __webpack_require__(6);
-	var $G = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"graphinius\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var $G = __webpack_require__(7);
 	var $CSVIN = __webpack_require__(3);
 	var $CSVOUT = __webpack_require__(4);
 	(function (HierarchyType) {
@@ -669,6 +703,56 @@
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
 	                'hours-per-week': 0.01,
+	            }
+	        }
+	    },
+	    'VECTOR': 'equal'
+	};
+	exports.CONFIG = CONFIG;
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	module.exports = $G;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	"use strict";
+	var CONFIG = {
+	    'INPUT_FILE': './test/io/test_input/housing_data.csv',
+	    'TRIM': '',
+	    'TRIM_MOD': '',
+	    'SEPARATOR': '\\s+',
+	    'SEP_MOD': 'g',
+	    'TARGET_COLUMN': 'MEDV',
+	    'AVERAGE_OUTPUT_RANGES': true,
+	    'NR_DRAWS': 506,
+	    'RANDOM_DRAWS': false,
+	    'EDGE_MIN': 3,
+	    'EDGE_MAX': 10,
+	    'K_FACTOR': 19,
+	    'ALPHA': 1,
+	    'BETA': 0,
+	    'GEN_WEIGHT_VECTORS': {
+	        'equal': {
+	            'range': {
+	                'CRIM': 1.0 / 13.0,
+	                'ZN': 1.0 / 13.0,
+	                'INDUS': 1.0 / 13.0,
+	                'CHAS': 1.0 / 13.0,
+	                'NOX': 1.0 / 13.0,
+	                'RM': 1.0 / 13.0,
+	                'AGE': 1.0 / 13.0,
+	                'DIS': 1.0 / 13.0,
+	                'RAD': 1.0 / 13.0,
+	                'TAX': 1.0 / 13.0,
+	                'PTRATIO': 1.0 / 13.0,
+	                'B': 1.0 / 13.0,
+	                'LSTAT': 1.0 / 13.0
 	            }
 	        }
 	    },

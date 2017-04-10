@@ -53,7 +53,7 @@ class CSVInput implements ICSVInput {
         }
 			};
 			request.open("GET", fileurl, true);
-			request.setRequestHeader('Content-Type', 'text/csv; charset=ISO-8859-1');
+			request.setRequestHeader('Content-Type', 'text/csv; charset=UTF-8');
 			request.send();
 		}
 		else {

@@ -18,7 +18,7 @@ var paths = {
 	testsources: ['src/**/*.js'],
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
-	clean: ['src/**/*.js', 'test/**/*.js', 'test/io/test_output/*', 'build', 'dist', 'docs', 'build'],
+	clean: ['src/**/*.js', 'test/**/*.js', 'test/io/test_output/**/*.csv', 'build', 'dist', 'docs', 'build'],
 	tests: ['test/**/*.js'],
 	tests_adult: ['test/SaNGreeA/SaNGreeATests_adult.js'],
 	tests_house: ['test/SaNGreeA/SaNGreeATests_house.js']
