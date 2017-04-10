@@ -45,29 +45,37 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var $GH					= __webpack_require__(1);
-	var $CSV	 			= __webpack_require__(3);
-	var $Sangreea 	= __webpack_require__(4);
+	var $CSVIN 			= __webpack_require__(3);
+	var $CSVOUT			= __webpack_require__(4);
+	var $Sangreea 	= __webpack_require__(5);
+	var $C_ADULT		= __webpack_require__(6);
 
 
 	var out = typeof window !== 'undefined' ? window : global;
 
 
-	out.Anonymity = {
-		GenHierarchy:	{
-			String		: $GH.StringGenHierarchy,
-			Category	: $GH.ContGenHierarchy
+	out.$A = {
+		config: {
+			adults: $C_ADULT.CONFIG
 		},
-		Input: {
-			CSV			 		: $CSV.CSV
+		genHierarchy:	{
+			Category		: $GH.StringGenHierarchy,
+			Range	: $GH.ContGenHierarchy
 		},
-		Algorithms: {
+		IO: {
+			CSVIN			 		: $CSVIN.CSVInput,
+			CSVOUT		 		: $CSVOUT.CSVOutput,
+		},
+		algorithms: {
 			Sangreea		: $Sangreea.SaNGreeA
 		}
 	};
 
-	module.exports = {
-		$G : out.$G
-	};
+
+	/**
+	 * For NodeJS / CommonJS global object
+	 */
+	module.exports = out.$A;
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
@@ -163,19 +171,24 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var CSV = (function () {
-	    function CSV(_sep) {
-	        if (_sep === void 0) { _sep = ","; }
-	        this._sep = _sep;
+	var fs = __webpack_require__(2);
+	var CSVInput = (function () {
+	    function CSVInput(config) {
+	        this._SEP = new RegExp(config.SEPARATOR, config.SEP_MOD);
+	        this._TRIM = new RegExp(config.TRIM, config.TRIM_MOD);
 	    }
-	    CSV.prototype.readCSV = function () {
+	    CSVInput.prototype.readCSVFromFile = function (file) {
+	        return fs.readFileSync(file).toString().split('\n');
 	    };
-	    return CSV;
+	    CSVInput.prototype.readCSVFromURL = function (url) {
+	        return "test";
+	    };
+	    return CSVInput;
 	}());
-	exports.CSV = CSV;
+	exports.CSVInput = CSVInput;
 
 
 /***/ },
@@ -184,9 +197,29 @@
 
 	"use strict";
 	var fs = __webpack_require__(2);
+	var CSVOutput = (function () {
+	    function CSVOutput(config) {
+	        this._SEP = new RegExp(config.SEPARATOR, config.SEP_MOD);
+	        this._TRIM = new RegExp(config.TRIM, config.TRIM_MOD);
+	    }
+	    CSVOutput.prototype.outputCSVToFile = function (file, csv) {
+	        fs.writeFileSync("./test/io/test_output/" + file + ".csv", csv);
+	    };
+	    return CSVOutput;
+	}());
+	exports.CSVOutput = CSVOutput;
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
 	var $GH = __webpack_require__(1);
-	var $C = __webpack_require__(5);
+	var $C = __webpack_require__(6);
 	var $G = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"graphinius\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var $CSVIN = __webpack_require__(3);
+	var $CSVOUT = __webpack_require__(4);
 	(function (HierarchyType) {
 	    HierarchyType[HierarchyType["CONTINUOUS"] = 0] = "CONTINUOUS";
 	    HierarchyType[HierarchyType["CATEGORICAL"] = 1] = "CATEGORICAL";
@@ -221,6 +254,8 @@
 	        this._perturber = new $G.perturbation.SimplePerturber(this._graph);
 	        this._SEP = new RegExp(this._config.SEPARATOR, this._config.SEP_MOD);
 	        this._TRIM = new RegExp(this._config.TRIM, this._config.TRIM_MOD);
+	        this._csvIN = new $CSVIN.CSVInput(this._config);
+	        this._csvOUT = new $CSVOUT.CSVOutput(this._config);
 	    }
 	    SaNGreeA.prototype.getConfig = function () {
 	        return this._config;
@@ -260,7 +295,7 @@
 	        if (ranges.length < 1) {
 	            return;
 	        }
-	        var str_input = fs.readFileSync(file).toString().split('\n');
+	        var str_input = this._csvIN.readCSVFromFile(file);
 	        var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
 	        str_cols.forEach(function (col, idx) {
 	            if (ranges.indexOf(col) !== -1) {
@@ -294,7 +329,7 @@
 	    };
 	    SaNGreeA.prototype.readCSV = function (file, graph) {
 	        this.instantiateRangeHierarchies(file);
-	        var str_input = fs.readFileSync(file).toString().split('\n');
+	        var str_input = this._csvIN.readCSVFromFile(file);
 	        var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
 	        var cont_hierarchies = Object.keys(this._cont_hierarchies);
 	        var cat_hierarchies = Object.keys(this._cat_hierarchies);
@@ -382,7 +417,7 @@
 	            outstring += node.getFeature(this._config.TARGET_COLUMN) + "\n";
 	        }
 	        console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
-	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+	        this._csvOUT.outputCSVToFile(outfile, outstring);
 	    };
 	    SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
 	        var _this = this;
@@ -417,7 +452,7 @@
 	                outstring += nodes[node_id].getFeature(this._config.TARGET_COLUMN) + "\n";
 	            }
 	        }
-	        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+	        this._csvOUT.outputCSVToFile(outfile, outstring);
 	    };
 	    SaNGreeA.prototype.anonymizeGraph = function () {
 	        var _this = this;
@@ -557,23 +592,25 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	"use strict";
 	var CONFIG = {
+	    'REMOTE_URL': 'http://berndmalle.com/anonymization/adults',
+	    'REMOTE_TARGET': 'education',
 	    'INPUT_FILE': './test/io/test_input/adult_data.csv',
 	    'TRIM': '\\s+',
 	    'TRIM_MOD': 'g',
 	    'SEPARATOR': ',',
 	    'SEP_MOD': '',
-	    'TARGET_COLUMN': 'marital-status',
+	    'TARGET_COLUMN': 'education-num',
 	    'AVERAGE_OUTPUT_RANGES': false,
-	    'NR_DRAWS': 500,
+	    'NR_DRAWS': 300,
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 2,
+	    'K_FACTOR': 5,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
@@ -583,6 +620,7 @@
 	                'native-country': 1.0 / 13.0,
 	                'sex': 1.0 / 13.0,
 	                'race': 1.0 / 13.0,
+	                'marital-status': 1.0 / 13.0,
 	                'relationship': 1.0 / 13.0,
 	                'occupation': 1.0 / 13.0,
 	                'income': 1.0 / 13.0
@@ -590,7 +628,6 @@
 	            'range': {
 	                'age': 1.0 / 13.0,
 	                'fnlwgt': 1.0 / 13.0,
-	                'education-num': 1.0 / 13.0,
 	                'capital-gain': 1.0 / 13.0,
 	                'capital-loss': 1.0 / 13.0,
 	                'hours-per-week': 1.0 / 13.0

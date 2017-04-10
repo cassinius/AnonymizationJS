@@ -1,17 +1,19 @@
 "use strict";
 var CONFIG = {
+    'REMOTE_URL': 'http://berndmalle.com/anonymization/adults',
+    'REMOTE_TARGET': 'education',
     'INPUT_FILE': './test/io/test_input/adult_data.csv',
     'TRIM': '\\s+',
     'TRIM_MOD': 'g',
     'SEPARATOR': ',',
     'SEP_MOD': '',
-    'TARGET_COLUMN': 'marital-status',
+    'TARGET_COLUMN': 'education-num',
     'AVERAGE_OUTPUT_RANGES': false,
-    'NR_DRAWS': 500,
+    'NR_DRAWS': 300,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
-    'K_FACTOR': 2,
+    'K_FACTOR': 5,
     'ALPHA': 1,
     'BETA': 0,
     'GEN_WEIGHT_VECTORS': {
@@ -21,6 +23,7 @@ var CONFIG = {
                 'native-country': 1.0 / 13.0,
                 'sex': 1.0 / 13.0,
                 'race': 1.0 / 13.0,
+                'marital-status': 1.0 / 13.0,
                 'relationship': 1.0 / 13.0,
                 'occupation': 1.0 / 13.0,
                 'income': 1.0 / 13.0
@@ -28,7 +31,6 @@ var CONFIG = {
             'range': {
                 'age': 1.0 / 13.0,
                 'fnlwgt': 1.0 / 13.0,
-                'education-num': 1.0 / 13.0,
                 'capital-gain': 1.0 / 13.0,
                 'capital-loss': 1.0 / 13.0,
                 'hours-per-week': 1.0 / 13.0

@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>ICSV | Graphinius</title>
+	<title>ICSVOutput | Graphinius</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -57,13 +57,13 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_io_csv_.html">&quot;io/csv&quot;</a>
+					<a href="../modules/_io_csvoutput_.html">&quot;io/CSVOutput&quot;</a>
 				</li>
 				<li>
-					<a href="_io_csv_.icsv.html">ICSV</a>
+					<a href="_io_csvoutput_.icsvoutput.html">ICSVOutput</a>
 				</li>
 			</ul>
-			<h1>Interface ICSV</h1>
+			<h1>Interface ICSVOutput</h1>
 		</div>
 	</div>
 </header>
@@ -74,14 +74,14 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">ICSV</span>
+						<span class="target">ICSVOutput</span>
 					</li>
 				</ul>
 			</section>
 			<section class="tsd-panel">
 				<h3>Implemented by</h3>
 				<ul class="tsd-hierarchy">
-					<li><a href="../classes/_io_csv_.csv.html" class="tsd-signature-type">CSV</a></li>
+					<li><a href="../classes/_io_csvoutput_.csvoutput.html" class="tsd-signature-type">CSVOutput</a></li>
 				</ul>
 			</section>
 			<section class="tsd-panel-group tsd-index-group">
@@ -91,13 +91,14 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_io_csv_.icsv.html#_sep" class="tsd-kind-icon">_sep</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_io_csvoutput_.icsvoutput.html#_sep" class="tsd-kind-icon">_SEP</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="_io_csvoutput_.icsvoutput.html#_trim" class="tsd-kind-icon">_TRIM</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_io_csv_.icsv.html#readcsv" class="tsd-kind-icon">readCSV</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface"><a href="_io_csvoutput_.icsvoutput.html#outputcsvtofile" class="tsd-kind-icon">outputCSVTo<wbr>File</a></li>
 							</ul>
 						</section>
 					</div>
@@ -107,11 +108,21 @@
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="_sep" class="tsd-anchor"></a>
-					<h3>_sep</h3>
-					<div class="tsd-signature tsd-kind-icon">_sep<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<h3>_SEP</h3>
+					<div class="tsd-signature tsd-kind-icon">_SEP<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/io/csv.ts#L13">io/csv.ts:13</a></li>
+							<li>Defined in io/CSVOutput.ts:10</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="_trim" class="tsd-anchor"></a>
+					<h3>_TRIM</h3>
+					<div class="tsd-signature tsd-kind-icon">_TRIM<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">RegExp</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in io/CSVOutput.ts:11</li>
 						</ul>
 					</aside>
 				</section>
@@ -119,19 +130,28 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface">
-					<a name="readcsv" class="tsd-anchor"></a>
-					<h3>readCSV</h3>
+					<a name="outputcsvtofile" class="tsd-anchor"></a>
+					<h3>outputCSVTo<wbr>File</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface">
-						<li class="tsd-signature tsd-kind-icon">readCSV<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span></li>
+						<li class="tsd-signature tsd-kind-icon">outputCSVTo<wbr>File<span class="tsd-signature-symbol">(</span>file<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, csv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/cassinius/AnonymizationJS/blob/master/src/io/csv.ts#L15">io/csv.ts:15</a></li>
+									<li>Defined in io/CSVOutput.ts:12</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">any</span></h4>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>file: <span class="tsd-signature-type">string</span></h5>
+								</li>
+								<li>
+									<h5>csv: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -156,28 +176,37 @@
 						<a href="../modules/_config_sangreeaconfig_house_.html">"config/<wbr>SaNGreeAConfig_<wbr>house"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="../modules/_core_equivalenceclass_.html">"core/<wbr>Equivalence<wbr>Class"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="../modules/_core_genhierarchies_.html">"core/<wbr>Gen<wbr>Hierarchies"</a>
 					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="../modules/_io_csvinput_.html">"io/CSVInput"</a>
+					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_io_csv_.html">"io/csv"</a>
+						<a href="../modules/_io_csvoutput_.html">"io/CSVOutput"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
 					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-is-not-exported">
-						<a href="../classes/_io_csv_.csv.html" class="tsd-kind-icon">CSV</a>
+						<a href="../classes/_io_csvoutput_.csvoutput.html" class="tsd-kind-icon">CSVOutput</a>
 					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-interface tsd-parent-kind-external-module">
-						<a href="_io_csv_.icsv.html" class="tsd-kind-icon">ICSV</a>
+						<a href="_io_csvoutput_.icsvoutput.html" class="tsd-kind-icon">ICSVOutput</a>
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="_io_csv_.icsv.html#_sep" class="tsd-kind-icon">_sep</a>
+								<a href="_io_csvoutput_.icsvoutput.html#_sep" class="tsd-kind-icon">_SEP</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="_io_csvoutput_.icsvoutput.html#_trim" class="tsd-kind-icon">_TRIM</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface">
-								<a href="_io_csv_.icsv.html#readcsv" class="tsd-kind-icon">readCSV</a>
+								<a href="_io_csvoutput_.icsvoutput.html#outputcsvtofile" class="tsd-kind-icon">outputCSVTo<wbr>File</a>
 							</li>
 						</ul>
 					</li>

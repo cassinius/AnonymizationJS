@@ -82,6 +82,13 @@ gulp.task("tdoc", ['clean'], function() {
 });
 
 
+gulp.task('tests', ['build'], function () {
+	return gulp.src(paths.tests, {read: false})
+						 .pipe(mocha({reporter: 'spec',
+						 							timeout: Number.POSITIVE_INFINITY}));
+});
+
+
 gulp.task('test-adult', ['build'], function () {
 	return gulp.src(paths.tests_adult, {read: false})
 						 .pipe(mocha({reporter: 'spec',
@@ -123,7 +130,7 @@ gulp.task('clean', function () {
 
 
 gulp.task('watch', function () {
-	gulp.watch(paths.typescripts, ['test']);
+	gulp.watch(paths.typescripts, ['tests']);
 });
 
 

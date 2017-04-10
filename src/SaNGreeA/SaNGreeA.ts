@@ -1,10 +1,12 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-import fs 	= require('fs');
-import path = require('path');
+// import fs 	= require('fs');
 import * as $GH from '../core/GenHierarchies';
 import * as $C from '../config/SaNGreeAConfig_adult';
 import * as $G from 'graphinius';
+import * as $CSVIN from '../io/CSVInput';
+import * as $CSVOUT from '../io/CSVOutput';
+
 
 export interface ISaNGreeAConfig {
   INPUT_FILE            : string;
@@ -89,8 +91,8 @@ class SaNGreeA implements ISaNGreeA {
 	 * the data file (as long as they exist) which are specified in a
 	 * hierarchy given to the algorithm
 	 * 
-	 * This also means that any range-based hierarchies must be updated
-   * on the fly with min/max range
+	 * This also means that any range-based hierarchies must be initiated
+	 * with min/max range
 	 */
 	private _cont_hierarchies : {[name: string] : $GH.IContGenHierarchy} = {};
 	private _cat_hierarchies : {[name: string] : $GH.IStringGenHierarchy} = {};
@@ -100,7 +102,15 @@ class SaNGreeA implements ISaNGreeA {
 
 	private _SEP : RegExp;
 	private _TRIM : RegExp;
+	private _csvIN : $CSVIN.ICSVInput;
+	private _csvOUT : $CSVOUT.ICSVOutput;
+
 	
+	/**
+	 * 
+	 * @param _name 
+	 * @param config 
+	 */
 	constructor( public _name: string = "default",
 							 public config? : ISaNGreeAConfig)
 	{		
@@ -127,6 +137,8 @@ class SaNGreeA implements ISaNGreeA {
 
 		this._SEP = new RegExp(this._config.SEPARATOR, this._config.SEP_MOD);
 		this._TRIM = new RegExp(this._config.TRIM, this._config.TRIM_MOD);
+		this._csvIN = new $CSVIN.CSVInput(this._config);
+		this._csvOUT = new $CSVOUT.CSVOutput(this._config);
 	}
   
   getConfig(): ISaNGreeAConfig {
@@ -175,6 +187,7 @@ class SaNGreeA implements ISaNGreeA {
   }
 
   
+
   instantiateRangeHierarchies(file: string) {
 		// console.log("SEPARATOR: " + this._config.SEPARATOR);
 		// console.log("TRIM by: ");
@@ -187,7 +200,7 @@ class SaNGreeA implements ISaNGreeA {
       return;
     }
         
-		var str_input = fs.readFileSync(file).toString().split('\n');
+		var str_input = this._csvIN.readCSVFromFile(file);
 		var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
 
 		// console.log(str_cols);
@@ -239,8 +252,8 @@ class SaNGreeA implements ISaNGreeA {
 	readCSV(file: string, graph) {
     this.instantiateRangeHierarchies(file);
     
-		var str_input = fs.readFileSync(file).toString().split('\n');
-		var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
+		let str_input = this._csvIN.readCSVFromFile(file);
+		let str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
 
 		var cont_hierarchies = Object.keys(this._cont_hierarchies);
 		var cat_hierarchies = Object.keys(this._cat_hierarchies);
@@ -273,9 +286,6 @@ class SaNGreeA implements ISaNGreeA {
 		// var drawn_input = this.drawSample(str_input, feat_idx_select, this._options.nr_draws);
     
     
-		/**
-		 * FOR COMPARISON REASONS, we're just going through the first 300 entries
-		 */
     var draw = this._config.NR_DRAWS;
 		for ( var i = 0; i < draw; i++ ) { // drawn_input.length
 			// check for empty lines at the end
@@ -388,7 +398,7 @@ class SaNGreeA implements ISaNGreeA {
 
 		console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
 		
-		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+		this._csvOUT.outputCSVToFile(outfile, outstring);
   }
   
 	
@@ -482,7 +492,7 @@ class SaNGreeA implements ISaNGreeA {
 			}
 		}
 		
-		fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+		this._csvOUT.outputCSVToFile(outfile, outstring);
 	}
 	
 

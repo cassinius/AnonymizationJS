@@ -1,24 +1,32 @@
 var $GH					= require("./dist/core/GenHierarchies.js");
-var $CSV	 			= require("./dist/io/csv.js");
+var $CSVIN 			= require("./dist/io/CSVInput.js");
+var $CSVOUT			= require("./dist/io/CSVOutput.js");
 var $Sangreea 	= require("./dist/SaNGreeA/SaNGreeA.js");
+var $C_ADULT		= require("./dist/config/SaNGreeAConfig_adult.js");
 
 
 var out = typeof window !== 'undefined' ? window : global;
 
 
-out.Anonymity = {
-	GenHierarchy:	{
-		String		: $GH.StringGenHierarchy,
-		Category	: $GH.ContGenHierarchy
+out.$A = {
+	config: {
+		adults: $C_ADULT.CONFIG
 	},
-	Input: {
-		CSV			 		: $CSV.CSV
+	genHierarchy:	{
+		Category		: $GH.StringGenHierarchy,
+		Range	: $GH.ContGenHierarchy
 	},
-	Algorithms: {
+	IO: {
+		CSVIN			 		: $CSVIN.CSVInput,
+		CSVOUT		 		: $CSVOUT.CSVOutput,
+	},
+	algorithms: {
 		Sangreea		: $Sangreea.SaNGreeA
 	}
 };
 
-module.exports = {
-	$G : out.$G
-};
+
+/**
+ * For NodeJS / CommonJS global object
+ */
+module.exports = out.$A;

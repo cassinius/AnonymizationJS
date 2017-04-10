@@ -1,8 +1,9 @@
 "use strict";
-var fs = require('fs');
 var $GH = require('../core/GenHierarchies');
 var $C = require('../config/SaNGreeAConfig_adult');
 var $G = require('graphinius');
+var $CSVIN = require('../io/CSVInput');
+var $CSVOUT = require('../io/CSVOutput');
 (function (HierarchyType) {
     HierarchyType[HierarchyType["CONTINUOUS"] = 0] = "CONTINUOUS";
     HierarchyType[HierarchyType["CATEGORICAL"] = 1] = "CATEGORICAL";
@@ -37,6 +38,8 @@ var SaNGreeA = (function () {
         this._perturber = new $G.perturbation.SimplePerturber(this._graph);
         this._SEP = new RegExp(this._config.SEPARATOR, this._config.SEP_MOD);
         this._TRIM = new RegExp(this._config.TRIM, this._config.TRIM_MOD);
+        this._csvIN = new $CSVIN.CSVInput(this._config);
+        this._csvOUT = new $CSVOUT.CSVOutput(this._config);
     }
     SaNGreeA.prototype.getConfig = function () {
         return this._config;
@@ -76,7 +79,7 @@ var SaNGreeA = (function () {
         if (ranges.length < 1) {
             return;
         }
-        var str_input = fs.readFileSync(file).toString().split('\n');
+        var str_input = this._csvIN.readCSVFromFile(file);
         var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
         str_cols.forEach(function (col, idx) {
             if (ranges.indexOf(col) !== -1) {
@@ -110,7 +113,7 @@ var SaNGreeA = (function () {
     };
     SaNGreeA.prototype.readCSV = function (file, graph) {
         this.instantiateRangeHierarchies(file);
-        var str_input = fs.readFileSync(file).toString().split('\n');
+        var str_input = this._csvIN.readCSVFromFile(file);
         var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
         var cont_hierarchies = Object.keys(this._cont_hierarchies);
         var cat_hierarchies = Object.keys(this._cat_hierarchies);
@@ -198,7 +201,7 @@ var SaNGreeA = (function () {
             outstring += node.getFeature(this._config.TARGET_COLUMN) + "\n";
         }
         console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
-        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+        this._csvOUT.outputCSVToFile(outfile, outstring);
     };
     SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
         var _this = this;
@@ -233,7 +236,7 @@ var SaNGreeA = (function () {
                 outstring += nodes[node_id].getFeature(this._config.TARGET_COLUMN) + "\n";
             }
         }
-        fs.writeFileSync("./test/io/test_output/" + outfile + ".csv", outstring);
+        this._csvOUT.outputCSVToFile(outfile, outstring);
     };
     SaNGreeA.prototype.anonymizeGraph = function () {
         var _this = this;
