@@ -6,8 +6,9 @@ import * as $San from '../../src/SaNGreeA/SaNGreeA';
 import * as $CSV from '../../src/io/CSVInput';
 import * as $C from '../../src/config/SaNGreeAConfig_adult';
 
-
+const CSV_500_LENGTH : number = 502;
 let expect = chai.expect;
+let remote_file = "http://berndmalle.com/anonymization/adults/education/original_data_500_rows.csv";
 
 describe('CSV TESTS', () => {
 
@@ -62,6 +63,27 @@ describe('CSV TESTS', () => {
       expect(csvInput.readCSVFromURL).not.to.be.undefined;
     });
     
+  });
+
+
+  describe('- ASYNC Input Tests', () => {
+
+    csvInput = new $CSV.CSVInput(config);
+    let csv_result = "";
+
+    it('should remotely load a CSV file from a test server (berndmalle.com) via NodeJS', (done) => {
+      csvInput.readCSVFromURL(remote_file, function(csv) {
+        csv_result = csv;
+        expect(Array.isArray(csv_result)).to.be.true;
+        expect(csv_result.length).to.equal(CSV_500_LENGTH);
+        done();
+      });
+    });
+
+    it.skip('should successfully load the same CSV via a mock XHR object', (done) => {
+      done();
+    });
+
   });
   
 });

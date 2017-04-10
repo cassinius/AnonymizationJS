@@ -11,7 +11,7 @@ export interface ICSVInput {
   _SEP: RegExp;
   _TRIM: RegExp;
   readCSVFromFile(file: string) : Array<string>;
-  readCSVFromURL(url: string) : any;
+  readCSVFromURL(url: string, cb: Function) : void;
 }
 
 
@@ -40,7 +40,7 @@ class CSVInput implements ICSVInput {
   /**
    * 
    */
-  readCSVFromURL(fileurl: string) {
+  readCSVFromURL(fileurl: string, cb: Function) {
     var self = this,
 				request;
 		// Node or browser ??
@@ -49,7 +49,7 @@ class CSVInput implements ICSVInput {
 			request = new XMLHttpRequest();			
 			request.onreadystatechange = function() {
         if (request.readyState == 4 && request.status == 200) {
-          return request.responseText.split('\n');
+          cb(request.responseText.split('\n'));
         }
 			};
 			request.open("GET", fileurl, true);
@@ -58,9 +58,7 @@ class CSVInput implements ICSVInput {
 		}
 		else {
 			// Node.js
-			this.retrieveRemoteFile(fileurl, function(csv) {
-				return csv.toString().split('\n');
-			});
+			this.retrieveRemoteFile(fileurl, cb);
 		}
   }
 
@@ -83,7 +81,7 @@ class CSVInput implements ICSVInput {
       });
       response.on('end', function() {
         // Received data in body...
-        cb(body);
+        cb(body.toString().split('\n'));
       });
     });
   }
