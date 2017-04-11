@@ -72,8 +72,16 @@ class StringGenHierarchy implements IStringGenHierarchy {
 	public _name : string;
 	
 	// Read from JSON file per default
-	constructor(public filePath: string) {
-		var json : StringGenJSON = JSON.parse(fs.readFileSync(filePath).toString());
+	constructor(public file: string) {
+		let json : StringGenJSON;
+
+		if ( typeof window === 'undefined' ) {
+			json = JSON.parse(fs.readFileSync(file).toString());
+		}
+		else {
+			json = JSON.parse(file);
+		}
+
 		this._name = json.name;
 		this.readFromJson(json);
 	}

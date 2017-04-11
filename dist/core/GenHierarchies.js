@@ -1,11 +1,17 @@
 "use strict";
 var fs = require('fs');
 var StringGenHierarchy = (function () {
-    function StringGenHierarchy(filePath) {
-        this.filePath = filePath;
+    function StringGenHierarchy(file) {
+        this.file = file;
         this._entries = {};
         this._nr_levels = 0;
-        var json = JSON.parse(fs.readFileSync(filePath).toString());
+        var json;
+        if (typeof window === 'undefined') {
+            json = JSON.parse(fs.readFileSync(file).toString());
+        }
+        else {
+            json = JSON.parse(file);
+        }
         this._name = json.name;
         this.readFromJson(json);
     }

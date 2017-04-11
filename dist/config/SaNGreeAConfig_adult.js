@@ -9,7 +9,7 @@ var CONFIG = {
     'SEP_MOD': '',
     'TARGET_COLUMN': 'education-num',
     'AVERAGE_OUTPUT_RANGES': false,
-    'NR_DRAWS': 300,
+    'NR_DRAWS': 500,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 3,
     'EDGE_MAX': 10,
