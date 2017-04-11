@@ -4,21 +4,34 @@ import * as chai from 'chai';
 import * as $GH from '../../src/core/GenHierarchies';
 import * as $San from '../../src/SaNGreeA/SaNGreeA';
 import * as $C from '../../src/config/SaNGreeAConfig_adult';
+import * as $CSVIN from '../../src/io/CSVInput';
 
 import * as $G from 'graphinius';
 // console.dir($G);
 
-var expect = chai.expect,
+let expect = chai.expect,
 		assert = chai.assert,
 		adults = './test/io/test_input/adult_data.csv',
-		san : $San.ISaNGreeA;
+		san : $San.ISaNGreeA,
+		csvIN : $CSVIN.ICSVInput = new $CSVIN.CSVInput($C.CONFIG);
+
+let strgh : $GH.IStringGenHierarchy,
+		contgh : $GH.IContGenHierarchy,
+		hierarchy : $GH.IStringGenHierarchy | $GH.IContGenHierarchy,
+		workclass_file = './test/io/test_input/workclassGH.json',
+		sex_file = './test/io/test_input/sexGH.json',
+		race_file = './test/io/test_input/raceGH.json',
+		marital_file = './test/io/test_input/marital-statusGH.json',
+		nat_country_file = './test/io/test_input/native-countryGH.json',
+		relationship_file = './test/io/test_input/relationshipGH.json',
+		occupation_file = './test/io/test_input/occupationGH.json',
+		income_file = './test/io/test_input/incomeGH.json',
+		config : $San.ISaNGreeAConfig;
     
 		
 describe('SANGREEA TESTS, ADULT DATASET', () => {
 	
 	describe('Basic instantiation tests', () => {
-    
-    var config : $San.ISaNGreeAConfig;
     
     beforeEach(() => {
       // Copy the JSON from the file, resetting it to defaults...
@@ -123,19 +136,6 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 	
 	
 	describe('Read CSV and instantiate graph - ', () => {
-		
-		var strgh : $GH.IStringGenHierarchy,
-				contgh : $GH.IContGenHierarchy,
-				hierarchy : $GH.IStringGenHierarchy | $GH.IContGenHierarchy,
-				workclass_file = './test/io/test_input/workclassGH.json',
-				sex_file = './test/io/test_input/sexGH.json',
-				race_file = './test/io/test_input/raceGH.json',
-				marital_file = './test/io/test_input/marital-statusGH.json',
-				nat_country_file = './test/io/test_input/native-countryGH.json',
-				relationship_file = './test/io/test_input/relationshipGH.json',
-        occupation_file = './test/io/test_input/occupationGH.json',
-				income_file = './test/io/test_input/incomeGH.json';
-	  var config : $San.ISaNGreeAConfig;
 				
 		beforeEach(() => {
       config = JSON.parse(JSON.stringify($C.CONFIG));
@@ -169,13 +169,15 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
     it('should anonymize a graph with equally distributed weights', () => {
       san = new $San.SaNGreeA("adults", config);
       
-      [workclass_file, nat_country_file, sex_file, race_file, // marital_file,
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file,
       relationship_file, occupation_file, income_file].forEach((file) => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
       });
+
+			let csv = csvIN.readCSVFromFile(config.INPUT_FILE);
       
-      san.instantiateGraph( false );
+      san.instantiateGraph(csv, false );
       
       // TODO MAKE IT AN OWN TEST CASE
       // var preprocOutfile = "input_sanitized";
@@ -203,7 +205,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
         san.setCatHierarchy(strgh._name, strgh);
       });
       
-      san.instantiateGraph( false );
+      san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), false );
       san.anonymizeGraph();
       
       var anonymizedOutfile = "./" + config.TARGET_COLUMN + "/adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
@@ -224,7 +226,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
         san.setCatHierarchy(strgh._name, strgh);
       });
       
-      san.instantiateGraph( false );
+      san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), false );
       san.anonymizeGraph();
       
       var anonymizedOutfile = "./" + config.TARGET_COLUMN + "/adults_anonymized_k" + config.K_FACTOR + "_" + config.VECTOR;
@@ -244,8 +246,10 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
         strgh = new $GH.StringGenHierarchy(file);
         san.setCatHierarchy(strgh._name, strgh);
       });
+
+
       
-      san.readCSV(adults, san._graph);
+      san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), true);
       var preprocOutfile = "./" + config.TARGET_COLUMN + "/input_for_python";
       san.outputPreprocCSV(preprocOutfile);
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
@@ -270,7 +274,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 					'value' : '>50K'
 				};
 				
-				san.readCSV(adults, san._graph);
+				san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), true);
 				var preprocOutfile = "./" + config.TARGET_COLUMN + "/adults_" + skip.feat + "_" + skip.value + "_" + skip.prob;
 				san.outputPreprocCSV(preprocOutfile, skip);
 				expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
@@ -283,7 +287,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
   describe.skip('graph instantiation', () => {    
 		
 		it('should produce an adjacency list representing a drawn sample graph', () => {
-			san.instantiateGraph();
+			san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), true);
 			
 			var outfile = "./test/io/test_output/adult_graph_adj_list.csv";
 			var csvOut = new $G.output.CSVOutput(",", false, false);
@@ -293,5 +297,35 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 		});
     
   });
+
+
+	describe('graph anonymization with asynchronous file loading', () => {
+
+		let config = $C.CONFIG;
+		let file_url = config.REMOTE_URL + "/" + config.REMOTE_TARGET + "/original_data_500_rows.csv";
+
+		it('should asynchronously anonymize a graph with equally distributed weights', (done) => {
+      san = new $San.SaNGreeA("adults", config);
+      
+      [workclass_file, nat_country_file, sex_file, race_file, marital_file,
+      relationship_file, occupation_file, income_file].forEach((file) => {
+        strgh = new $GH.StringGenHierarchy(file);
+        san.setCatHierarchy(strgh._name, strgh);
+      });
+
+			csvIN.readCSVFromURL(file_url, function(csv) {
+				// console.log(csv);
+
+				san.instantiateGraph(csv, false );
+				san.anonymizeGraph();
+				console.log(san._graph.nrNodes());      
+				expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
+
+				done();
+			});      
+      
+    });
+
+	});
 	
 });

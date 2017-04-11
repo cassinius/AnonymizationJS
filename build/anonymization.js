@@ -74,9 +74,6 @@
 	};
 
 
-	window.bla = "hoo";
-
-
 	/**
 	 * For NodeJS / CommonJS global object
 	 */
@@ -252,7 +249,6 @@
 	var $GH = __webpack_require__(1);
 	var $C = __webpack_require__(6);
 	var $G = __webpack_require__(7);
-	var $CSVIN = __webpack_require__(3);
 	var $CSVOUT = __webpack_require__(4);
 	(function (HierarchyType) {
 	    HierarchyType[HierarchyType["CONTINUOUS"] = 0] = "CONTINUOUS";
@@ -288,7 +284,6 @@
 	        this._perturber = new $G.perturbation.SimplePerturber(this._graph);
 	        this._SEP = new RegExp(this._config.SEPARATOR, this._config.SEP_MOD);
 	        this._TRIM = new RegExp(this._config.TRIM, this._config.TRIM_MOD);
-	        this._csvIN = new $CSVIN.CSVInput(this._config);
 	        this._csvOUT = new $CSVOUT.CSVOutput(this._config);
 	    }
 	    SaNGreeA.prototype.getConfig = function () {
@@ -312,25 +307,22 @@
 	    SaNGreeA.prototype.setCatHierarchy = function (name, genh) {
 	        this._cat_hierarchies[name] = genh;
 	    };
-	    SaNGreeA.prototype.instantiateGraph = function (createEdges) {
+	    SaNGreeA.prototype.instantiateGraph = function (csv_arr, createEdges) {
 	        if (createEdges === void 0) { createEdges = true; }
-	        this.instantiateRangeHierarchies(this._config.INPUT_FILE);
-	        this.readCSV(this._config.INPUT_FILE, this._graph);
-	        if (createEdges === true) {
+	        var str_cols = csv_arr.shift().trim().replace(this._TRIM, '').split(this._SEP);
+	        this.instantiateRangeHierarchies(csv_arr, str_cols);
+	        this.readCSV(csv_arr, str_cols, this._graph);
+	        if (createEdges) {
 	            this._perturber.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
 	        }
 	    };
-	    SaNGreeA.prototype.instantiateCategoricalHierarchies = function () {
-	    };
-	    SaNGreeA.prototype.instantiateRangeHierarchies = function (file) {
+	    SaNGreeA.prototype.instantiateRangeHierarchies = function (str_input, str_cols) {
 	        var _this = this;
 	        var cont_hierarchies = Object.keys(this._cont_hierarchies);
 	        var ranges = Object.keys(this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['range']);
 	        if (ranges.length < 1) {
 	            return;
 	        }
-	        var str_input = this._csvIN.readCSVFromFile(file);
-	        var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
 	        str_cols.forEach(function (col, idx) {
 	            if (ranges.indexOf(col) !== -1) {
 	                _this._range_hierarchy_indices[col] = idx;
@@ -344,8 +336,11 @@
 	            };
 	        });
 	        var current_value = NaN;
-	        str_input.forEach(function (line_string, idx) {
-	            var line = line_string.trim().replace(_this._TRIM, '').split(_this._SEP);
+	        for (var i = 0; i < str_input.length; i++) {
+	            if (!str_input[i]) {
+	                continue;
+	            }
+	            var line = str_input[i].trim().replace(this._TRIM, '').split(this._SEP);
 	            ranges.forEach(function (range) {
 	                current_value = parseFloat(line[_this._range_hierarchy_indices[range]]);
 	                if (current_value < min_max_struct[range]['min']) {
@@ -355,16 +350,13 @@
 	                    min_max_struct[range]['max'] = current_value;
 	                }
 	            });
-	        });
+	        }
 	        ranges.forEach(function (range) {
 	            var range_hierarchy = new $GH.ContGenHierarchy(range, min_max_struct[range]['min'], min_max_struct[range]['max']);
 	            _this.setContHierarchy(range_hierarchy._name, range_hierarchy);
 	        });
 	    };
-	    SaNGreeA.prototype.readCSV = function (file, graph) {
-	        this.instantiateRangeHierarchies(file);
-	        var str_input = this._csvIN.readCSVFromFile(file);
-	        var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
+	    SaNGreeA.prototype.readCSV = function (str_input, str_cols, graph) {
 	        var cont_hierarchies = Object.keys(this._cont_hierarchies);
 	        var cat_hierarchies = Object.keys(this._cat_hierarchies);
 	        var cont_feat_idx_select = {};
@@ -517,9 +509,7 @@
 	                    if (added[candidate.getID()]) {
 	                        continue;
 	                    }
-	                    cat_costs = this.calculateCatCosts(Cl, candidate);
-	                    cont_costs = this.calculateContCosts(Cl, candidate);
-	                    GIL = cat_costs + cont_costs;
+	                    GIL = this.calculateGIL(Cl, candidate);
 	                    SIL = this._config.BETA > 0 ? this.calculateSIL(Cl, candidate) : 0;
 	                    total_costs = this._config.ALPHA * GIL + this._config.BETA * SIL;
 	                    if (total_costs < best_costs) {
@@ -540,6 +530,9 @@
 	        console.log("Built " + S.length + " clusters.");
 	        this._clusters = S;
 	    };
+	    SaNGreeA.prototype.calculateGIL = function (Cl, candidate) {
+	        return this.calculateCatCosts(Cl, candidate) + this.calculateContCosts(Cl, candidate);
+	    };
 	    SaNGreeA.prototype.calculateSIL = function (Cl, candidate) {
 	        var population_size = this._graph.nrNodes() - 2;
 	        var dists = [];
@@ -556,24 +549,6 @@
 	            dists.push(dist / population_size);
 	        }
 	        return dists.reduce(function (a, b) { return a + b; }, 0) / dists.length;
-	    };
-	    SaNGreeA.prototype.updateLevels = function (Cl, Y) {
-	        for (var feat in this._cat_hierarchies) {
-	            var cat_gh = this.getCatHierarchy(feat);
-	            var Cl_feat = Cl.gen_feat[feat];
-	            var Y_feat = Y.getFeature(feat);
-	            var Cl_level = cat_gh.getLevelEntry(Cl_feat);
-	            var Y_level = cat_gh.getLevelEntry(Y_feat);
-	            while (Cl_feat !== Y_feat) {
-	                Y_feat = cat_gh.getGeneralizationOf(Y_feat);
-	                Y_level = cat_gh.getLevelEntry(Y_feat);
-	                if (Cl_level > Y_level) {
-	                    Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
-	                    Cl_level = cat_gh.getLevelEntry(Cl_feat);
-	                }
-	            }
-	            Cl.gen_feat[feat] = Cl_feat;
-	        }
 	    };
 	    SaNGreeA.prototype.calculateCatCosts = function (Cl, Y) {
 	        var gen_costs = 0;
@@ -611,6 +586,24 @@
 	        var nr_cont_hierarchies = Object.keys(this._cont_hierarchies).length;
 	        return nr_cont_hierarchies > 1 ? range_costs / nr_cont_hierarchies : range_costs;
 	    };
+	    SaNGreeA.prototype.updateLevels = function (Cl, Y) {
+	        for (var feat in this._cat_hierarchies) {
+	            var cat_gh = this.getCatHierarchy(feat);
+	            var Cl_feat = Cl.gen_feat[feat];
+	            var Y_feat = Y.getFeature(feat);
+	            var Cl_level = cat_gh.getLevelEntry(Cl_feat);
+	            var Y_level = cat_gh.getLevelEntry(Y_feat);
+	            while (Cl_feat !== Y_feat) {
+	                Y_feat = cat_gh.getGeneralizationOf(Y_feat);
+	                Y_level = cat_gh.getLevelEntry(Y_feat);
+	                if (Cl_level > Y_level) {
+	                    Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
+	                    Cl_level = cat_gh.getLevelEntry(Cl_feat);
+	                }
+	            }
+	            Cl.gen_feat[feat] = Cl_feat;
+	        }
+	    };
 	    SaNGreeA.prototype.expandRange = function (range, nr) {
 	        var min = nr < range[0] ? nr : range[0];
 	        var max = nr > range[1] ? nr : range[1];
@@ -644,7 +637,7 @@
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 3,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 5,
+	    'K_FACTOR': 3,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
@@ -661,9 +654,6 @@
 	            },
 	            'range': {
 	                'age': 1.0 / 13.0,
-	                'fnlwgt': 1.0 / 13.0,
-	                'capital-gain': 1.0 / 13.0,
-	                'capital-loss': 1.0 / 13.0,
 	                'hours-per-week': 1.0 / 13.0
 	            }
 	        },
@@ -673,6 +663,7 @@
 	                'native-country': 0.01,
 	                'sex': 0.01,
 	                'race': 0.88,
+	                'marital-status': 0.01,
 	                'relationship': 0.01,
 	                'occupation': 0.01,
 	                'income': 0.01
@@ -680,7 +671,6 @@
 	            'range': {
 	                'age': 0.01,
 	                'fnlwgt': 0.01,
-	                'education-num': 0.01,
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
 	                'hours-per-week': 0.01
@@ -692,6 +682,7 @@
 	                'native-country': 0.01,
 	                'sex': 0.01,
 	                'race': 0.01,
+	                'marital-status': 0.01,
 	                'relationship': 0.01,
 	                'occupation': 0.01,
 	                'income': 0.01
@@ -699,7 +690,6 @@
 	            'range': {
 	                'age': 0.88,
 	                'fnlwgt': 0.01,
-	                'education-num': 0.01,
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
 	                'hours-per-week': 0.01,
@@ -723,7 +713,9 @@
 
 	"use strict";
 	var CONFIG = {
-	    'INPUT_FILE': './test/io/test_input/housing_data.csv',
+	    'REMOTE_URL': 'http://berndmalle.com/anonymization/adults',
+	    'REMOTE_TARGET': 'education',
+	    'INPUT_FILE': './test/io/test_input/house_data.csv',
 	    'TRIM': '',
 	    'TRIM_MOD': '',
 	    'SEPARATOR': '\\s+',

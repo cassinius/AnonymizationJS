@@ -4,11 +4,12 @@
 import * as $GH from '../core/GenHierarchies';
 import * as $C from '../config/SaNGreeAConfig_adult';
 import * as $G from 'graphinius';
-import * as $CSVIN from '../io/CSVInput';
 import * as $CSVOUT from '../io/CSVOutput';
 
 
 export interface ISaNGreeAConfig {
+	REMOTE_URL						: string;
+	REMOTE_TARGET					: string;
   INPUT_FILE            : string;
 	TRIM									: string;
 	TRIM_MOD							: string;
@@ -62,12 +63,21 @@ export interface ISaNGreeA {
 	setContHierarchy(name: string, genh: $GH.IContGenHierarchy);
 	setCatHierarchy(name: string, genh: $GH.IStringGenHierarchy);
 	
-  readCSV(file: string, graph) : void;
-	instantiateGraph(createEdges?: boolean) : void;
+  readCSV(str_input: Array<string>, str_cols: Array<string>, graph);
+	instantiateRangeHierarchies(str_input: Array<string>, str_cols: Array<string>);
+	instantiateGraph(csv_arr: Array<string>, createEdges: boolean ) : void
 	anonymizeGraph() : void;
   
   outputPreprocCSV(outfile: string, skip?: {}) : void;
 	outputAnonymizedCSV(outfile: string) : void;
+
+
+	// this will be outsourced into the NodeCluster class
+	calculateGIL(Cl: nodeCluster, candidate) : number;
+	calculateSIL(Cl: nodeCluster, candidate) : number;
+	updateLevels(Cl: nodeCluster, Y) : void;
+	expandRange(range: number[], nr: number) : number[];
+	updateRange(range: number[], nr: number) : void;
 }
 
 
@@ -102,7 +112,6 @@ class SaNGreeA implements ISaNGreeA {
 
 	private _SEP : RegExp;
 	private _TRIM : RegExp;
-	private _csvIN : $CSVIN.ICSVInput;
 	private _csvOUT : $CSVOUT.ICSVOutput;
 
 	
@@ -132,12 +141,12 @@ class SaNGreeA implements ISaNGreeA {
 			throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
 		}
         
-		this._graph = new $G.core.BaseGraph(this._name);		
+		this._graph = new $G.core.BaseGraph(this._name);
 		this._perturber = new $G.perturbation.SimplePerturber(this._graph);
 
 		this._SEP = new RegExp(this._config.SEPARATOR, this._config.SEP_MOD);
 		this._TRIM = new RegExp(this._config.TRIM, this._config.TRIM_MOD);
-		this._csvIN = new $CSVIN.CSVInput(this._config);
+	
 		this._csvOUT = new $CSVOUT.CSVOutput(this._config);
 	}
   
@@ -170,38 +179,28 @@ class SaNGreeA implements ISaNGreeA {
 	}
 	
 	
-	instantiateGraph(createEdges = true ) : void {
+	instantiateGraph(csv_arr: Array<string>, createEdges = true ) : void {
+
+		let str_cols = csv_arr.shift().trim().replace(this._TRIM, '').split(this._SEP);
     
-    this.instantiateRangeHierarchies(this._config.INPUT_FILE);
+    this.instantiateRangeHierarchies(csv_arr, str_cols);
       
-		this.readCSV(this._config.INPUT_FILE, this._graph);
+		this.readCSV(csv_arr, str_cols, this._graph);
 		
-    if( createEdges === true ) {
+    if( createEdges ) {
 			this._perturber.createRandomEdgesSpan(this._config.EDGE_MIN, this._config.EDGE_MAX, false);
     }
 	}
-	
-  
-  instantiateCategoricalHierarchies() {
-    
-  }
 
   
 
-  instantiateRangeHierarchies(file: string) {
-		// console.log("SEPARATOR: " + this._config.SEPARATOR);
-		// console.log("TRIM by: ");
-		// console.log(this._config.TRIM);
-
+  instantiateRangeHierarchies(str_input: Array<string>, str_cols: Array<string>) {
     var cont_hierarchies = Object.keys(this._cont_hierarchies);
     var ranges = Object.keys(this._config.GEN_WEIGHT_VECTORS[this._config.VECTOR]['range']);
     
     if ( ranges.length < 1 ) {
       return;
-    }
-        
-		var str_input = this._csvIN.readCSVFromFile(file);
-		var str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
+    }		
 
 		// console.log(str_cols);
 
@@ -221,8 +220,15 @@ class SaNGreeA implements ISaNGreeA {
     });
     
     var current_value = NaN;
-    str_input.forEach( (line_string, idx) => {
-      var line = line_string.trim().replace(this._TRIM, '').split(this._SEP);    
+
+		for ( let i = 0; i < str_input.length; i++ ) {
+			// check for empty line and break
+			if ( !str_input[i] ) {
+				continue;
+			}
+
+      var line = str_input[i].trim().replace(this._TRIM, '').split(this._SEP);
+
       ranges.forEach( (range) => {
         current_value = parseFloat( line[ this._range_hierarchy_indices[range] ] );
         if ( current_value < min_max_struct[range]['min'] ) {
@@ -232,7 +238,7 @@ class SaNGreeA implements ISaNGreeA {
           min_max_struct[range]['max'] = current_value;
         }
       });
-    });
+    }
 
 		// console.log("RANGES: ");
 		// console.dir(min_max_struct);
@@ -249,12 +255,7 @@ class SaNGreeA implements ISaNGreeA {
 	/**
 	 * @ TODO Outsource to it's own class
 	 */
-	readCSV(file: string, graph) {
-    this.instantiateRangeHierarchies(file);
-    
-		let str_input = this._csvIN.readCSVFromFile(file);
-		let str_cols = str_input.shift().trim().replace(this._TRIM, '').split(this._SEP);
-
+	readCSV(str_input: Array<string>, str_cols: Array<string>, graph) {
 		var cont_hierarchies = Object.keys(this._cont_hierarchies);
 		var cat_hierarchies = Object.keys(this._cat_hierarchies);
     		
@@ -462,7 +463,7 @@ class SaNGreeA implements ISaNGreeA {
       outstring += cat_hierarchy + ", ";
     });
 		// Write out original target column
-		outstring += this._config.TARGET_COLUMN + "\n";		
+		outstring += this._config.TARGET_COLUMN + "\n";
 		
 		for ( var cl_idx in this._clusters ) {
 			var cluster = this._clusters[cl_idx],
@@ -546,7 +547,7 @@ class SaNGreeA implements ISaNGreeA {
 			nr_open--;
 			
 			/**
-			 * SANGREEA INNER LOOP - GET NODE THAT MINIMIZES GIL
+			 * SANGREEA INNER LOOP - GET NODE THAT MINIMIZES GIL (SIL)
 			 * and add node to this cluster;
 			 */
 			while ( Object.keys(Cl.nodes).length < this._config.K_FACTOR && nr_open ) {
@@ -561,9 +562,7 @@ class SaNGreeA implements ISaNGreeA {
 					}
 					
 					// now calculate costs
-					cat_costs = this.calculateCatCosts(Cl, candidate);
-					cont_costs = this.calculateContCosts(Cl, candidate);
-          GIL = cat_costs + cont_costs;
+          GIL = this.calculateGIL(Cl, candidate);
           
           // only compute SIL if we need to
           SIL = this._config.BETA > 0 ? this.calculateSIL(Cl, candidate) : 0;
@@ -606,10 +605,14 @@ class SaNGreeA implements ISaNGreeA {
 		console.log("Built " + S.length + " clusters.");
 		this._clusters = S;
 	}
+
+
+	calculateGIL(Cl: nodeCluster, candidate) : number {
+		return this.calculateCatCosts(Cl, candidate) + this.calculateContCosts(Cl, candidate);
+	}
   
   
-  private calculateSIL(Cl: nodeCluster, candidate) : number {
-        
+  calculateSIL(Cl: nodeCluster, candidate) : number {        
     var population_size = this._graph.nrNodes() - 2; // subtract the two involved nodes
         var dists = [];
 
@@ -630,30 +633,7 @@ class SaNGreeA implements ISaNGreeA {
     
     return dists.reduce((a, b) => a + b, 0) / dists.length;
   }
-  
 
-	private updateLevels(Cl: nodeCluster, Y) : void {		
-		for (var feat in this._cat_hierarchies) {
-			var cat_gh = this.getCatHierarchy(feat);
-			
-			var Cl_feat = Cl.gen_feat[feat];
-			var Y_feat = Y.getFeature(feat);
-			var Cl_level = cat_gh.getLevelEntry(Cl_feat);
-			var Y_level = cat_gh.getLevelEntry(Y_feat);
-      
-			while( Cl_feat !== Y_feat ) {				
-				Y_feat = cat_gh.getGeneralizationOf(Y_feat);
-				Y_level = cat_gh.getLevelEntry(Y_feat);
-				if ( Cl_level > Y_level ) {
-					Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
-					Cl_level = cat_gh.getLevelEntry(Cl_feat);
-				}
-			}
-      
-			Cl.gen_feat[feat] = Cl_feat;			
-		}
-	}
-	
 	
 	private calculateCatCosts(Cl: nodeCluster, Y) {
 		var gen_costs = 0;
@@ -705,17 +685,39 @@ class SaNGreeA implements ISaNGreeA {
 		let nr_cont_hierarchies = Object.keys(this._cont_hierarchies).length;
 		return nr_cont_hierarchies > 1 ? range_costs / nr_cont_hierarchies : range_costs;
 	}
+
+
+	updateLevels(Cl: nodeCluster, Y) : void {		
+		for (var feat in this._cat_hierarchies) {
+			var cat_gh = this.getCatHierarchy(feat);
+			
+			var Cl_feat = Cl.gen_feat[feat];
+			var Y_feat = Y.getFeature(feat);
+			var Cl_level = cat_gh.getLevelEntry(Cl_feat);
+			var Y_level = cat_gh.getLevelEntry(Y_feat);
+      
+			while( Cl_feat !== Y_feat ) {				
+				Y_feat = cat_gh.getGeneralizationOf(Y_feat);
+				Y_level = cat_gh.getLevelEntry(Y_feat);
+				if ( Cl_level > Y_level ) {
+					Cl_feat = cat_gh.getGeneralizationOf(Cl_feat);
+					Cl_level = cat_gh.getLevelEntry(Cl_feat);
+				}
+			}
+      
+			Cl.gen_feat[feat] = Cl_feat;			
+		}
+	}
   
 	
-	private expandRange(range: number[], nr: number) : number[] {
+	expandRange(range: number[], nr: number) : number[] {
 		var min = nr < range[0] ? nr : range[0];
 		var max = nr > range[1] ? nr : range[1];
-		// console.log([min, max]);
 		return [min, max];
 	}
 	
   
-	private updateRange(range: number[], nr: number) : void {
+	updateRange(range: number[], nr: number) : void {
 		range[0] < range[0] ? nr : range[0];
 		range[1] = nr > range[1] ? nr : range[1];
 	}

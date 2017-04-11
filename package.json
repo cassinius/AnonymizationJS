@@ -19,13 +19,9 @@
     "network",
     "de-identification",
     "graph",
-    "based",
-    "anonymization",
     "interactive",
     "machine",
-    "learning",
-    "based",
-    "anonymization"
+    "learning"
   ],
   "author": "Bernd Malle",
   "license": "Apache-2.0",
@@ -50,6 +46,6 @@
     "webpack-stream": "^3.1.0"
   },
   "dependencies": {
-    "graphinius": "^0.5.0"
+    "graphinius": "^0.5.3"
   }
 }

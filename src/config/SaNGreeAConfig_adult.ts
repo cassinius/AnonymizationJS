@@ -24,7 +24,7 @@ var CONFIG = {
   // Max # of edges per node for graph generation
   'EDGE_MAX' : 10,
   // The k anonymization factor
-  'K_FACTOR' : 5,
+  'K_FACTOR' : 3,
   // Weight of the Generalization Information Loss
   'ALPHA' : 1,
   // Weight of the Structural Information Loss
@@ -44,10 +44,10 @@ var CONFIG = {
         },
         'range': {
             'age': 1.0/13.0,
-            'fnlwgt': 1.0/13.0,
+            // 'fnlwgt': 1.0/13.0,
             // 'education-num': 1.0/13.0,
-            'capital-gain': 1.0/13.0,
-            'capital-loss': 1.0/13.0,
+            // 'capital-gain': 1.0/13.0,
+            // 'capital-loss': 1.0/13.0,
             'hours-per-week': 1.0/13.0
         }
     },
@@ -57,7 +57,7 @@ var CONFIG = {
             'native-country': 0.01,
             'sex': 0.01,
             'race': 0.88,
-            // 'marital-status': 0.01,
+            'marital-status': 0.01,
             'relationship': 0.01,
             'occupation': 0.01,
             'income': 0.01
@@ -65,7 +65,7 @@ var CONFIG = {
         'range': {
             'age': 0.01,
             'fnlwgt': 0.01,
-            'education-num': 0.01,
+            // 'education-num': 0.01,
             'capital-gain': 0.01,
             'capital-loss': 0.01,
             'hours-per-week': 0.01
@@ -77,7 +77,7 @@ var CONFIG = {
             'native-country': 0.01,
             'sex': 0.01,
             'race': 0.01,
-            // 'marital-status': 0.01,
+            'marital-status': 0.01,
             'relationship': 0.01,
             'occupation': 0.01,
             'income': 0.01
@@ -85,7 +85,7 @@ var CONFIG = {
         'range': {
             'age': 0.88,
             'fnlwgt': 0.01,
-            'education-num': 0.01,
+            // 'education-num': 0.01,
             'capital-gain': 0.01,
             'capital-loss': 0.01,
             'hours-per-week': 0.01,

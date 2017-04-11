@@ -28,9 +28,6 @@ out.$A = {
 };
 
 
-window.bla = "hoo";
-
-
 /**
  * For NodeJS / CommonJS global object
  */

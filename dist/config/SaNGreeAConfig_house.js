@@ -1,6 +1,8 @@
 "use strict";
 var CONFIG = {
-    'INPUT_FILE': './test/io/test_input/housing_data.csv',
+    'REMOTE_URL': 'http://berndmalle.com/anonymization/adults',
+    'REMOTE_TARGET': 'education',
+    'INPUT_FILE': './test/io/test_input/house_data.csv',
     'TRIM': '',
     'TRIM_MOD': '',
     'SEPARATOR': '\\s+',

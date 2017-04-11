@@ -1,6 +1,10 @@
 var CONFIG = {
+  // remote URL education target
+  'REMOTE_URL': 'http://berndmalle.com/anonymization/adults',
+  // remote target
+  'REMOTE_TARGET': 'education', //'marital', //'income'
   // The path to the input dataset
-  'INPUT_FILE' : './test/io/test_input/housing_data.csv',
+  'INPUT_FILE' : './test/io/test_input/house_data.csv',
   // CSV TRIM RegExp, if necessary
   'TRIM': '',
   'TRIM_MOD': '',
