@@ -579,8 +579,7 @@ class SaNGreeA implements ISaNGreeA {
 				}
         				
 				// add best candidate and update costs
-				Cl.nodes[current_best.getID()] = current_best;
-        
+				Cl.nodes[current_best.getID()] = current_best;        
 				
         // Update Cluster levels and ranges
         this.updateLevels(Cl, current_best);
@@ -591,7 +590,7 @@ class SaNGreeA implements ISaNGreeA {
 				
 				// mark current best added
 				added[current_best.getID()] = true;
-				nr_open--;		
+				nr_open--;
 			}
 			
 			// here we have finished our cluster
