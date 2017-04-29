@@ -357,29 +357,42 @@ class SaNGreeA implements ISaNGreeA {
 		// Write out original target column
 		outstring += this._config.TARGET_COLUMN + "\n";
     
-    
+		skip = skip || {};
+		let prob = parseFloat(skip['prob']),
+				feat = skip['feat'],
+				value = +skip['value'],
+				group = skip['group'],
+				nr_bins = +skip['nr_bins']|0;
+
+		console.log("nr bins: " + nr_bins);
+		let bin_max : number = Number.NEGATIVE_INFINITY;
+	
     for ( var node_key in this._graph.getNodes() ) {
       node = nodes[node_key];
       // console.log(node.getFeatures());
 			
 			/**
 			 * Eliminate rows with specific attribute values
-			 * TODO just for right-to-forget, take out again,
-			 * or generalize out to distinct function
-			 */
-			skip = skip || {};
-			var prob = parseFloat(skip['prob']),
-					feat = skip['feat'],
-					value = skip['value'];
-					
+			 * TODO Factor out to it's own method prior to output...
+			 */					
 			if (prob != null && feat != null && value != null ) {
         
-        if (parseFloat(value) !== parseFloat(value) ) {
+        if (value !== value ) {
           if ( Math.random() < prob && node.getFeature(feat) === value ) {
             rows_eliminated++;
             continue;
           }
-        } 
+        }
+				else if ( group ) {
+					let min = this.getContHierarchy( feat )._min,
+							max = this.getContHierarchy( feat )._max,
+							range = max-min, // e.g. 80
+							bins = range / nr_bins, // 80 / 5 = 16
+							bin = ( ( +node.getFeature( feat ) - min ) / bins )|0;
+					
+					bin_max = bin > bin_max ? bin : bin_max;
+					node.setFeature( feat, bin );
+				}
         else if ( Math.random() < prob && node.getFeature(feat) > value ) {
 					rows_eliminated++;
 					continue;
@@ -396,6 +409,8 @@ class SaNGreeA implements ISaNGreeA {
 			// Write out original target column
 			outstring += node.getFeature(this._config.TARGET_COLUMN) + "\n";
     }
+
+		console.log("Max bin used: " + bin_max);
 
 		console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
 		
@@ -453,7 +468,7 @@ class SaNGreeA implements ISaNGreeA {
 	 * TODO better way to do this than manually 
 	 * constructing the string ?!?!
 	 */
-	outputAnonymizedCSV(outfile: string) : void {		
+	outputAnonymizedCSV(outfile: string) : void {
 		var outstring = "";
     
     Object.keys(this._cont_hierarchies).forEach( (range_hierarchy) => {

@@ -166,7 +166,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 		});
 		
     
-    it('should anonymize a graph with equally distributed weights', () => {
+    it.skip('should anonymize a graph with equally distributed weights', () => {
       san = new $San.SaNGreeA("adults", config);
       
       [workclass_file, nat_country_file, sex_file, race_file, marital_file,
@@ -177,7 +177,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 
 			let csv = csvIN.readCSVFromFile(config.INPUT_FILE);
       
-      san.instantiateGraph(csv, false );
+      san.instantiateGraph(csv, false);
       
       // TODO MAKE IT AN OWN TEST CASE
       // var preprocOutfile = "input_sanitized";
@@ -257,12 +257,12 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 		
 		
 		[20, 40, 60, 80, 100].forEach(function(prob) {
-			it.skip('should write out the cleaned input data source for python', () => {
+			it('should write out the cleaned input data source for python', () => {
 				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
 				config.NR_DRAWS = 30162;
 				san = new $San.SaNGreeA("adults", config);
 				
-        [workclass_file, nat_country_file, sex_file, race_file, marital_file, 
+        [workclass_file, nat_country_file, sex_file, race_file, // marital_file, 
         relationship_file, occupation_file, income_file].forEach((file) => {
           strgh = new $GH.StringGenHierarchy(file);
           san.setCatHierarchy(strgh._name, strgh);
@@ -270,8 +270,10 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 				
 				var skip = {
 					'prob'  : prob / 100,
-					'feat'  : 'income',
-					'value' : '>50K'
+					'feat'  : 'age',
+					'value' : '0', // take out all range entries > this value with prob, ...
+					'group' : true, // except we want to group them...
+					'nr_bins': 500 / prob // into so many bins as given here
 				};
 				
 				san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), true);
@@ -299,7 +301,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
   });
 
 
-	describe('graph anonymization with asynchronous file loading', () => {
+	describe.skip('graph anonymization with asynchronous file loading', () => {
 
 		let config = $C.CONFIG;
 		let file_url = config.REMOTE_URL + "/" + config.REMOTE_TARGET + "/original_data_500_rows.csv";
