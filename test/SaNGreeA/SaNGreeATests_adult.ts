@@ -262,7 +262,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 				config.NR_DRAWS = 30162;
 				san = new $San.SaNGreeA("adults", config);
 				
-        [workclass_file, nat_country_file, sex_file, race_file, // marital_file, 
+        [workclass_file, nat_country_file, sex_file, race_file, marital_file, 
         relationship_file, occupation_file, income_file].forEach((file) => {
           strgh = new $GH.StringGenHierarchy(file);
           san.setCatHierarchy(strgh._name, strgh);
@@ -270,9 +270,9 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 				
 				var skip = {
 					'prob'  : prob / 100,
-					'feat'  : 'age',
-					'value' : '0', // take out all range entries > this value with prob, ...
-					'group' : true, // except we want to group them...
+					'feat'  : 'workclass',
+					'value' : 'Federal-gov', // take out all range entries > this value with prob, ...
+					'group' : false, // except we want to group them...
 					'nr_bins': 500 / prob // into so many bins as given here
 				};
 				

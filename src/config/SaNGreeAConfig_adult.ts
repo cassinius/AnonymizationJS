@@ -12,7 +12,7 @@ var CONFIG = {
   'SEPARATOR' : ',',
   'SEP_MOD': '',
   // columns to preserve for later processing of anonymized dataset
-  'TARGET_COLUMN' : 'marital-status',
+  'TARGET_COLUMN' : 'education-num',
   // Shall we write out a range or an average value?
   'AVERAGE_OUTPUT_RANGES' : false,
   // How many data points to fetch
@@ -37,7 +37,7 @@ var CONFIG = {
             'native-country': 1.0/13.0,
             'sex': 1.0/13.0,
             'race': 1.0/13.0,
-            // 'marital-status': 1.0/13.0,
+            'marital-status': 1.0/13.0,
             'relationship': 1.0/13.0,
             'occupation': 1.0/13.0,
             'income': 1.0/13.0
@@ -45,7 +45,7 @@ var CONFIG = {
         'range': {
             'age': 1.0/13.0,
             'fnlwgt': 1.0/13.0,
-            'education-num': 1.0/13.0,
+            // 'education-num': 1.0/13.0,
             'capital-gain': 1.0/13.0,
             'capital-loss': 1.0/13.0,
             'hours-per-week': 1.0/13.0

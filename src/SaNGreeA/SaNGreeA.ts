@@ -360,7 +360,7 @@ class SaNGreeA implements ISaNGreeA {
 		skip = skip || {};
 		let prob = parseFloat(skip['prob']),
 				feat = skip['feat'],
-				value = +skip['value'],
+				value = skip['value'],
 				group = skip['group'],
 				nr_bins = +skip['nr_bins']|0;
 
@@ -377,7 +377,7 @@ class SaNGreeA implements ISaNGreeA {
 			 */					
 			if (prob != null && feat != null && value != null ) {
         
-        if (value !== value ) {
+        if (parseFloat(value) !== parseFloat(value) ) {
           if ( Math.random() < prob && node.getFeature(feat) === value ) {
             rows_eliminated++;
             continue;
