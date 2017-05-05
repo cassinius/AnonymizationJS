@@ -4,7 +4,7 @@ var CONFIG = {
   // remote target
   'REMOTE_TARGET': 'education', //'marital', //'income'
   // The path to the input dataset
-  'INPUT_FILE' : './test/io/test_input/adult_data.csv',
+  'INPUT_FILE' : './test/io/test_input/adults_outliers_removed_0.3.csv', // adult_data.csv',
   // CSV TRIM RegExp, if necessary
   'TRIM': '\\s+',
   'TRIM_MOD': 'g',
@@ -12,11 +12,11 @@ var CONFIG = {
   'SEPARATOR' : ',',
   'SEP_MOD': '',
   // columns to preserve for later processing of anonymized dataset
-  'TARGET_COLUMN' : 'income',
+  'TARGET_COLUMN' : 'marital-status',
   // Shall we write out a range or an average value?
   'AVERAGE_OUTPUT_RANGES' : false,
   // How many data points to fetch
-  'NR_DRAWS' : 500, // 30162,
+  'NR_DRAWS' : 500, //21114, //30162,
   // Do we wnat to sample the dataset randomly?
   'RANDOM_DRAWS': false,
   // Min # of edges per node for graph generation
@@ -37,10 +37,10 @@ var CONFIG = {
             'native-country': 1.0/13.0,
             'sex': 1.0/13.0,
             'race': 1.0/13.0,
-            'marital-status': 1.0/13.0,
+            // 'marital-status': 1.0/13.0,
             'relationship': 1.0/13.0,
             'occupation': 1.0/13.0,
-            // 'income': 1.0/13.0
+            'income': 1.0/13.0
         },
         'range': {
             'age': 1.0/13.0,
@@ -57,10 +57,10 @@ var CONFIG = {
             'native-country': 0.01,
             'sex': 0.01,
             'race': 0.88,
-            'marital-status': 0.01,
+            // 'marital-status': 0.01,
             'relationship': 0.01,
             'occupation': 0.01,
-            // 'income': 0.01
+            'income': 0.01
         },
         'range': {
             'age': 0.01,
@@ -77,10 +77,10 @@ var CONFIG = {
             'native-country': 0.01,
             'sex': 0.01,
             'race': 0.01,
-            'marital-status': 0.01,
+            // 'marital-status': 0.01,
             'relationship': 0.01,
             'occupation': 0.01,
-            // 'income': 0.01
+            'income': 0.01
         },
         'range': {
             'age': 0.88,
