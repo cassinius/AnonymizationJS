@@ -358,7 +358,8 @@ class SaNGreeA implements ISaNGreeA {
 		outstring += this._config.TARGET_COLUMN + "\n";
     
 		skip = skip || {};
-		let prob = parseFloat(skip['prob']),
+		let random = skip['random'],
+				prob = parseFloat(skip['prob']),
 				feat = skip['feat'],
 				value = skip['value'],
 				group = skip['group'],
@@ -375,14 +376,20 @@ class SaNGreeA implements ISaNGreeA {
 			 * Eliminate rows with specific attribute values
 			 * TODO Factor out to it's own method prior to output...
 			 */					
-			if (prob != null && feat != null && value != null ) {
-        
-        if (parseFloat(value) !== parseFloat(value) ) {
+			if (prob != null && feat != null && value != null ) {        
+				// remove random data points
+				if ( random && Math.random() < prob ) {
+					rows_eliminated++;
+					continue;
+				}
+				// remove by categorical attribute value
+        else if (parseFloat(value) !== parseFloat(value) ) {
           if ( Math.random() < prob && node.getFeature(feat) === value ) {
             rows_eliminated++;
             continue;
           }
         }
+				// we want to group a continuous value into defined bins
 				else if ( group ) {
 					let min = this.getContHierarchy( feat )._min,
 							max = this.getContHierarchy( feat )._max,
@@ -393,6 +400,7 @@ class SaNGreeA implements ISaNGreeA {
 					bin_max = bin > bin_max ? bin : bin_max;
 					node.setFeature( feat, bin );
 				}
+				// remove by continuous attribute value (greater than)
         else if ( Math.random() < prob && node.getFeature(feat) > value ) {
 					rows_eliminated++;
 					continue;

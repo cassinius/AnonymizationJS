@@ -12,7 +12,7 @@ var CONFIG = {
   'SEPARATOR' : ',',
   'SEP_MOD': '',
   // columns to preserve for later processing of anonymized dataset
-  'TARGET_COLUMN' : 'education-num',
+  'TARGET_COLUMN' : 'income',
   // Shall we write out a range or an average value?
   'AVERAGE_OUTPUT_RANGES' : false,
   // How many data points to fetch
@@ -40,12 +40,12 @@ var CONFIG = {
             'marital-status': 1.0/13.0,
             'relationship': 1.0/13.0,
             'occupation': 1.0/13.0,
-            'income': 1.0/13.0
+            // 'income': 1.0/13.0
         },
         'range': {
             'age': 1.0/13.0,
             'fnlwgt': 1.0/13.0,
-            // 'education-num': 1.0/13.0,
+            'education-num': 1.0/13.0,
             'capital-gain': 1.0/13.0,
             'capital-loss': 1.0/13.0,
             'hours-per-week': 1.0/13.0
@@ -60,12 +60,12 @@ var CONFIG = {
             'marital-status': 0.01,
             'relationship': 0.01,
             'occupation': 0.01,
-            'income': 0.01
+            // 'income': 0.01
         },
         'range': {
             'age': 0.01,
             'fnlwgt': 0.01,
-            // 'education-num': 0.01,
+            'education-num': 0.01,
             'capital-gain': 0.01,
             'capital-loss': 0.01,
             'hours-per-week': 0.01
@@ -80,12 +80,12 @@ var CONFIG = {
             'marital-status': 0.01,
             'relationship': 0.01,
             'occupation': 0.01,
-            'income': 0.01
+            // 'income': 0.01
         },
         'range': {
             'age': 0.88,
             'fnlwgt': 0.01,
-            // 'education-num': 0.01,
+            'education-num': 0.01,
             'capital-gain': 0.01,
             'capital-loss': 0.01,
             'hours-per-week': 0.01,
