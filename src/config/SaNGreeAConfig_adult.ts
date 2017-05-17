@@ -4,7 +4,7 @@ var CONFIG = {
   // remote target
   'REMOTE_TARGET': 'education', //'marital', //'income'
   // The path to the input dataset
-  'INPUT_FILE' : './test/io/test_input/adults_outliers_removed_0.3.csv', // adult_data.csv',
+  'INPUT_FILE' : './test/io/test_input/adult_data.csv',
   // CSV TRIM RegExp, if necessary
   'TRIM': '\\s+',
   'TRIM_MOD': 'g',
@@ -16,15 +16,15 @@ var CONFIG = {
   // Shall we write out a range or an average value?
   'AVERAGE_OUTPUT_RANGES' : false,
   // How many data points to fetch
-  'NR_DRAWS' : 500, //21114, //30162,
+  'NR_DRAWS' : 30162,
   // Do we wnat to sample the dataset randomly?
   'RANDOM_DRAWS': false,
   // Min # of edges per node for graph generation
-  'EDGE_MIN' : 3,
+  'EDGE_MIN' : 2,
   // Max # of edges per node for graph generation
   'EDGE_MAX' : 10,
   // The k anonymization factor
-  'K_FACTOR' : 3,
+  'K_FACTOR' : 100,
   // Weight of the Generalization Information Loss
   'ALPHA' : 1,
   // Weight of the Structural Information Loss
