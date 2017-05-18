@@ -164,9 +164,40 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 			expect(san.getCatHierarchy('income')).not.to.be.undefined;
 			expect(san.getCatHierarchy('income')).to.be.an.instanceof($GH.StringGenHierarchy);
 		});
+
+
+		it('should return a pre-processed CSV of correct length', () => {
+      san = new $San.SaNGreeA("adults", config);
+      
+      [workclass_file, nat_country_file, sex_file, race_file, // marital_file,
+      relationship_file, occupation_file, income_file].forEach((file) => {
+        strgh = new $GH.StringGenHierarchy(file);
+        san.setCatHierarchy(strgh._name, strgh);
+      });
+      
+      san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), true);
+      let result_string = san.constructPreprocCSV();
+			expect(result_string.trim().split('\n').length).to.equal(config.NR_DRAWS + 1);
+    });
+
+
+		it('should return an anonymized CSV of correct length', () => {
+			san = new $San.SaNGreeA("adults", config);
+			
+			[workclass_file, nat_country_file, sex_file, race_file, // marital_file,
+			relationship_file, occupation_file, income_file].forEach((file) => {
+				strgh = new $GH.StringGenHierarchy(file);
+				san.setCatHierarchy(strgh._name, strgh);
+			});
+			
+			san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), false );
+			san.anonymizeGraph();
+			let result_string = san.constructAnonymizedCSV();
+			expect(result_string.trim().split('\n').length).to.equal(config.NR_DRAWS + 1);
+		});
 		
     
-    it.skip('should anonymize a graph with equally distributed weights', () => {
+    it('should anonymize a graph with equally distributed weights', () => {
       san = new $San.SaNGreeA("adults", config);
       
       [workclass_file, nat_country_file, sex_file, race_file, // marital_file,
@@ -225,30 +256,12 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
       
       expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
     });
-    
-    
-    it.skip('should write out the cleaned input data source for python', () => {
-      // var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
-      // config.NR_DRAWS = 3000;
-      san = new $San.SaNGreeA("adults", config);
-      
-      [workclass_file, nat_country_file, sex_file, race_file, // marital_file,
-      relationship_file, occupation_file, income_file].forEach((file) => {
-        strgh = new $GH.StringGenHierarchy(file);
-        san.setCatHierarchy(strgh._name, strgh);
-      });
-      
-      san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), true);
-      var preprocOutfile = "./" + config.TARGET_COLUMN + "/input_for_python";
-      san.outputPreprocCSV(preprocOutfile);
-      expect(san._graph.nrNodes()).to.equal(config.NR_DRAWS);
-    });
 		
 		
 		// [20, 40, 60, 80, 100].forEach(function(prob) {
 		// [10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95].forEach(function(prob) {
 		[30].forEach(function(prob) {
-			it('should write out the cleaned input data source for python', () => {
+			it.skip('should write out the cleaned input data source for python', () => {
 				var config : $San.ISaNGreeAConfig = JSON.parse(JSON.stringify($C.CONFIG));
 				config.NR_DRAWS = 30162;
 				san = new $San.SaNGreeA("adults", config);

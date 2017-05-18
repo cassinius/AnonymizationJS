@@ -68,9 +68,10 @@ export interface ISaNGreeA {
 	instantiateGraph(csv_arr: Array<string>, createEdges: boolean ) : void
 	anonymizeGraph() : void;
   
+	constructPreprocCSV(skip?: {}) : string;
   outputPreprocCSV(outfile: string, skip?: {}) : void;
+	constructAnonymizedCSV() : string;
 	outputAnonymizedCSV(outfile: string) : void;
-
 
 	// this will be outsourced into the NodeCluster class
 	calculateGIL(Cl: nodeCluster, candidate) : number;
@@ -332,14 +333,9 @@ class SaNGreeA implements ISaNGreeA {
     }
 	}
   
-  
-	/**
-	 * TODO replace with array-based version that is
-	 * subsequently given to the CSV class which implements
-	 * a generic array-to-csv-output method
-	 */
-  outputPreprocCSV(outfile: string, skip?: {}) : void {
-    var outstring = "",
+
+	constructPreprocCSV(skip?: {}) : string {
+		var outstring = "",
         nodes = this._graph.getNodes(),
         node = null,
         feature = null;
@@ -419,9 +415,19 @@ class SaNGreeA implements ISaNGreeA {
     }
 
 		console.log("Max bin used: " + bin_max);
-
 		console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
-		
+
+		return outstring;
+	}
+  
+
+	/**
+	 * TODO replace with array-based version that is
+	 * subsequently given to the CSV class which implements
+	 * a generic array-to-csv-output method
+	 */
+  outputPreprocCSV(outfile: string, skip?: {}) : void {
+    let outstring = this.constructPreprocCSV(skip);
 		this._csvOUT.outputCSVToFile(outfile, outstring);
   }
   
@@ -456,7 +462,7 @@ class SaNGreeA implements ISaNGreeA {
 	// 			}
 	// 			var cont_hierarchy = this.getContHierarchy(feat_idx_select[idx]);
 	// 			if ( +line[idx] !== +line[idx] ) {
-	// 				// we have a numeric value that's not a numeric value
+	// 				// we have a non-numeric value
 	// 				line_valid = false;
 	// 			}
 	// 		}
@@ -472,11 +478,7 @@ class SaNGreeA implements ISaNGreeA {
   
   
   
-	/**
-	 * TODO better way to do this than manually 
-	 * constructing the string ?!?!
-	 */
-	outputAnonymizedCSV(outfile: string) : void {
+	constructAnonymizedCSV() : string {
 		var outstring = "";
     
     Object.keys(this._cont_hierarchies).forEach( (range_hierarchy) => {
@@ -515,7 +517,18 @@ class SaNGreeA implements ISaNGreeA {
 				outstring += nodes[node_id].getFeature(this._config.TARGET_COLUMN) + "\n";
 			}
 		}
-		
+
+		return outstring;
+	}
+  
+  
+
+	/**
+	 * TODO better way to do this than manually 
+	 * constructing the string ?!?!
+	 */
+	outputAnonymizedCSV(outfile: string) : void {		
+		let outstring = this.constructAnonymizedCSV();		
 		this._csvOUT.outputCSVToFile(outfile, outstring);
 	}
 	

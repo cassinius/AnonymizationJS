@@ -129,8 +129,13 @@ gulp.task('clean', function () {
 });
 
 
-gulp.task('watch', function () {
-	gulp.watch(paths.typescripts, ['tests']);
+gulp.task('watch-adult', function () {
+	gulp.watch(paths.typescripts, ['test-adult']);
+});
+
+
+gulp.task('watch-house', function () {
+	gulp.watch(paths.typescripts, ['test-house']);
 });
 
 

@@ -414,7 +414,7 @@
 	            node.setFeature(this._config.TARGET_COLUMN, line[target_idx]);
 	        }
 	    };
-	    SaNGreeA.prototype.outputPreprocCSV = function (outfile, skip) {
+	    SaNGreeA.prototype.constructPreprocCSV = function (skip) {
 	        var outstring = "", nodes = this._graph.getNodes(), node = null, feature = null;
 	        var rows_eliminated = 0;
 	        Object.keys(this._cont_hierarchies).forEach(function (range_hierarchy) {
@@ -424,16 +424,27 @@
 	            outstring += cat_hierarchy + ", ";
 	        });
 	        outstring += this._config.TARGET_COLUMN + "\n";
+	        skip = skip || {};
+	        var random = skip['random'], prob = parseFloat(skip['prob']), feat = skip['feat'], value = skip['value'], group = skip['group'], nr_bins = +skip['nr_bins'] | 0;
+	        console.log("nr bins: " + nr_bins);
+	        var bin_max = Number.NEGATIVE_INFINITY;
 	        for (var node_key in this._graph.getNodes()) {
 	            node = nodes[node_key];
-	            skip = skip || {};
-	            var prob = parseFloat(skip['prob']), feat = skip['feat'], value = skip['value'];
 	            if (prob != null && feat != null && value != null) {
-	                if (parseFloat(value) !== parseFloat(value)) {
+	                if (random && Math.random() < prob) {
+	                    rows_eliminated++;
+	                    continue;
+	                }
+	                else if (parseFloat(value) !== parseFloat(value)) {
 	                    if (Math.random() < prob && node.getFeature(feat) === value) {
 	                        rows_eliminated++;
 	                        continue;
 	                    }
+	                }
+	                else if (group) {
+	                    var min = this.getContHierarchy(feat)._min, max = this.getContHierarchy(feat)._max, range = max - min, bins = range / nr_bins, bin = ((+node.getFeature(feat) - min) / bins) | 0;
+	                    bin_max = bin > bin_max ? bin : bin_max;
+	                    node.setFeature(feat, bin);
 	                }
 	                else if (Math.random() < prob && node.getFeature(feat) > value) {
 	                    rows_eliminated++;
@@ -448,10 +459,15 @@
 	            });
 	            outstring += node.getFeature(this._config.TARGET_COLUMN) + "\n";
 	        }
+	        console.log("Max bin used: " + bin_max);
 	        console.log("Eliminated " + rows_eliminated + " rows from a DS of " + this._graph.nrNodes() + " rows.");
+	        return outstring;
+	    };
+	    SaNGreeA.prototype.outputPreprocCSV = function (outfile, skip) {
+	        var outstring = this.constructPreprocCSV(skip);
 	        this._csvOUT.outputCSVToFile(outfile, outstring);
 	    };
-	    SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
+	    SaNGreeA.prototype.constructAnonymizedCSV = function () {
 	        var _this = this;
 	        var outstring = "";
 	        Object.keys(this._cont_hierarchies).forEach(function (range_hierarchy) {
@@ -484,6 +500,10 @@
 	                outstring += nodes[node_id].getFeature(this._config.TARGET_COLUMN) + "\n";
 	            }
 	        }
+	        return outstring;
+	    };
+	    SaNGreeA.prototype.outputAnonymizedCSV = function (outfile) {
+	        var outstring = this.constructAnonymizedCSV();
 	        this._csvOUT.outputCSVToFile(outfile, outstring);
 	    };
 	    SaNGreeA.prototype.anonymizeGraph = function () {
@@ -637,13 +657,13 @@
 	    'TRIM_MOD': 'g',
 	    'SEPARATOR': ',',
 	    'SEP_MOD': '',
-	    'TARGET_COLUMN': 'education-num',
-	    'AVERAGE_OUTPUT_RANGES': false,
+	    'TARGET_COLUMN': 'marital-status',
+	    'AVERAGE_OUTPUT_RANGES': true,
 	    'NR_DRAWS': 500,
 	    'RANDOM_DRAWS': false,
-	    'EDGE_MIN': 3,
+	    'EDGE_MIN': 2,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 3,
+	    'K_FACTOR': 7,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
@@ -653,13 +673,16 @@
 	                'native-country': 1.0 / 13.0,
 	                'sex': 1.0 / 13.0,
 	                'race': 1.0 / 13.0,
-	                'marital-status': 1.0 / 13.0,
 	                'relationship': 1.0 / 13.0,
 	                'occupation': 1.0 / 13.0,
 	                'income': 1.0 / 13.0
 	            },
 	            'range': {
 	                'age': 1.0 / 13.0,
+	                'fnlwgt': 1.0 / 13.0,
+	                'education-num': 1.0 / 13.0,
+	                'capital-gain': 1.0 / 13.0,
+	                'capital-loss': 1.0 / 13.0,
 	                'hours-per-week': 1.0 / 13.0
 	            }
 	        },
@@ -669,7 +692,6 @@
 	                'native-country': 0.01,
 	                'sex': 0.01,
 	                'race': 0.88,
-	                'marital-status': 0.01,
 	                'relationship': 0.01,
 	                'occupation': 0.01,
 	                'income': 0.01
@@ -677,6 +699,7 @@
 	            'range': {
 	                'age': 0.01,
 	                'fnlwgt': 0.01,
+	                'education-num': 0.01,
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
 	                'hours-per-week': 0.01
@@ -688,7 +711,6 @@
 	                'native-country': 0.01,
 	                'sex': 0.01,
 	                'race': 0.01,
-	                'marital-status': 0.01,
 	                'relationship': 0.01,
 	                'occupation': 0.01,
 	                'income': 0.01
@@ -696,6 +718,7 @@
 	            'range': {
 	                'age': 0.88,
 	                'fnlwgt': 0.01,
+	                'education-num': 0.01,
 	                'capital-gain': 0.01,
 	                'capital-loss': 0.01,
 	                'hours-per-week': 0.01,
