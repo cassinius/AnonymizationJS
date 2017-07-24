@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {var $GH					= __webpack_require__(1);
 	var $CSVIN 			= __webpack_require__(3);
@@ -81,9 +81,9 @@
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(2);
@@ -148,10 +148,10 @@
 	        this._min = _min;
 	        this._max = _max;
 	        if (_min > _max) {
-	            throw new Error('Range invalid. Min greater than Max.');
+	            throw new Error(this._name + ": Range invalid. Min (" + _min + ") greater than Max (" + _max + ").");
 	        }
 	        if (_min === _max) {
-	            throw new Error('Range invalid. Min equals Max.');
+	            throw new Error(this._name + ": Range invalid. Min (" + _min + ") equals Max (" + _max + ").");
 	        }
 	    }
 	    ContGenHierarchy.prototype.genCostOfRange = function (from, to) {
@@ -171,15 +171,15 @@
 	exports.ContGenHierarchy = ContGenHierarchy;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(2);
@@ -228,9 +228,9 @@
 	exports.CSVInput = CSVInput;
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var fs = __webpack_require__(2);
@@ -247,9 +247,9 @@
 	exports.CSVOutput = CSVOutput;
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	"use strict";
 	var $GH = __webpack_require__(1);
@@ -644,9 +644,9 @@
 	exports.SaNGreeA = SaNGreeA;
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var CONFIG = {
@@ -659,11 +659,11 @@
 	    'SEP_MOD': '',
 	    'TARGET_COLUMN': 'marital-status',
 	    'AVERAGE_OUTPUT_RANGES': true,
-	    'NR_DRAWS': 500,
+	    'NR_DRAWS': 300,
 	    'RANDOM_DRAWS': false,
 	    'EDGE_MIN': 2,
 	    'EDGE_MAX': 10,
-	    'K_FACTOR': 7,
+	    'K_FACTOR': 50,
 	    'ALPHA': 1,
 	    'BETA': 0,
 	    'GEN_WEIGHT_VECTORS': {
@@ -730,15 +730,15 @@
 	exports.CONFIG = CONFIG;
 
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = $G;
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	var CONFIG = {
@@ -782,5 +782,5 @@
 	exports.CONFIG = CONFIG;
 
 
-/***/ }
+/***/ })
 /******/ ]);

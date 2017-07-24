@@ -9,11 +9,11 @@ var CONFIG = {
     'SEP_MOD': '',
     'TARGET_COLUMN': 'marital-status',
     'AVERAGE_OUTPUT_RANGES': true,
-    'NR_DRAWS': 500,
+    'NR_DRAWS': 300,
     'RANDOM_DRAWS': false,
     'EDGE_MIN': 2,
     'EDGE_MAX': 10,
-    'K_FACTOR': 7,
+    'K_FACTOR': 50,
     'ALPHA': 1,
     'BETA': 0,
     'GEN_WEIGHT_VECTORS': {

@@ -401,7 +401,7 @@ class SaNGreeA implements ISaNGreeA {
 					rows_eliminated++;
 					continue;
 				}
-			}      
+			}
       
       Object.keys(this._cont_hierarchies).forEach( (range_hierarchy) => {
         outstring += node.getFeature(range_hierarchy) + ', ';

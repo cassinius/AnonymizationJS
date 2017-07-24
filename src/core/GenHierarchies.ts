@@ -158,10 +158,10 @@ class ContGenHierarchy implements IContGenHierarchy {
 	
 	constructor( public _name: string, public _min: number, public _max: number ) {
 		if ( _min > _max ) {
-			throw new Error('Range invalid. Min greater than Max.');
+			throw new Error(`${this._name}: Range invalid. Min (${_min}) greater than Max (${_max}).`);
 		}
 		if ( _min === _max ) {
-			throw new Error('Range invalid. Min equals Max.');
+			throw new Error(`${this._name}: Range invalid. Min (${_min}) equals Max (${_max}).`);
 		}
 	}
 	

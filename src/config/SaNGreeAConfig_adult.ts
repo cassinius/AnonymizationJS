@@ -16,7 +16,7 @@ var CONFIG = {
   // Shall we write out a range or an average value?
   'AVERAGE_OUTPUT_RANGES' : true,
   // How many data points to fetch
-  'NR_DRAWS' : 500, // 30162,
+  'NR_DRAWS' : 300, // 30162,
   // Do we wnat to sample the dataset randomly?
   'RANDOM_DRAWS': false,
   // Min # of edges per node for graph generation
@@ -24,7 +24,7 @@ var CONFIG = {
   // Max # of edges per node for graph generation
   'EDGE_MAX' : 10,
   // The k anonymization factor
-  'K_FACTOR' : 7,
+  'K_FACTOR' : 50,
   // Weight of the Generalization Information Loss
   'ALPHA' : 1,
   // Weight of the Structural Information Loss

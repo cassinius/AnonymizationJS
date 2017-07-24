@@ -19,7 +19,7 @@ var paths = {
 	typesources: ['src/**/*.ts'],
 	distsources: ['src/**/*.ts'],
 	clean: ['src/**/*.js', 'test/**/*.js', 'test/io/test_output/**/*.csv', 'build', 'dist', 'docs', 'build'],
-	tests: ['test/**/*.js'],
+	tests_core: ['test/core/**/*.js'],
 	tests_adult: ['test/SaNGreeA/SaNGreeATests_adult.js'],
 	tests_house: ['test/SaNGreeA/SaNGreeATests_house.js']
 };
@@ -82,8 +82,8 @@ gulp.task("tdoc", ['clean'], function() {
 });
 
 
-gulp.task('tests', ['build'], function () {
-	return gulp.src(paths.tests, {read: false})
+gulp.task('test-core', ['build'], function () {
+	return gulp.src(paths.tests_core, {read: false})
 						 .pipe(mocha({reporter: 'spec',
 						 							timeout: Number.POSITIVE_INFINITY}));
 });
@@ -126,6 +126,11 @@ gulp.task('coverage', ['pre-cov-test'], function () {
 gulp.task('clean', function () {
 	return gulp.src(paths.clean, {read: false})
 						 .pipe(clean());
+});
+
+
+gulp.task('watch-core', function () {
+	gulp.watch(paths.typescripts, ['test-core']);
 });
 
 

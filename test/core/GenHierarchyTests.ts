@@ -142,15 +142,15 @@ describe('String Generalization Hierarchies Tests: ', () => {
 			
 			it('should throw an error im min is greater than max', () => {
 				assert.throw(function () {
-				new $GH.ContGenHierarchy("invalid", 11, -99)
-			}, 'Range invalid. Min greater than Max.');
+					new $GH.ContGenHierarchy("age", 11, -99)
+				}, 'age: Range invalid. Min (11) greater than Max (-99).');
 			});
 			
 			
 			it('should throw an error im min is equal to max', () => {
 				assert.throw(function () {
-				new $GH.ContGenHierarchy("invalid", 11, 11)
-			}, 'Range invalid. Min equals Max.');
+					new $GH.ContGenHierarchy("age", 11, 11)
+				}, 'age: Range invalid. Min (11) equals Max (11).');
 			});
 			
 			
