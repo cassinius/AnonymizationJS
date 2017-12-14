@@ -41,5 +41,6 @@ test_async_nomock/**/*.js
 # Test Output
 test/io/test_output/**/*
 
-#Yarn
+# Misc
 yarn.lock
+package-lock.json

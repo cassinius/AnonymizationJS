@@ -1,0 +1,11 @@
+build
+docs
+src
+test
+typings
+gulpfile
+jsconfig.json
+loc.sh
+package-lock.json
+tsconfig.json
+webpack.config.json
