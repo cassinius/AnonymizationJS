@@ -6,8 +6,7 @@ import * as $San from '../../src/SaNGreeA/SaNGreeA';
 import * as $C from '../../src/config/SaNGreeAConfig_house';
 import * as $CSVIN from '../../src/io/CSVInput';
 
-import * as $G from 'graphinius';
-// console.dir($G);
+
 
 let expect = chai.expect,
 		assert = chai.assert,

@@ -3,7 +3,6 @@
 import fs 	= require('fs');
 import * as $GH from '../core/GenHierarchies';
 import * as $San from '../SaNGreeA/SaNGreeA';
-import * as $G from 'graphinius';
 
 
 export interface ICSVOutput {

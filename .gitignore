@@ -43,4 +43,3 @@ test/io/test_output/**/*
 
 # Misc
 yarn.lock
-package-lock.json

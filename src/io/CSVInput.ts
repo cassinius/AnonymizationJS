@@ -4,7 +4,6 @@ import fs 	= require('fs');
 import http = require('http');
 import * as $GH from '../core/GenHierarchies';
 import * as $San from '../SaNGreeA/SaNGreeA';
-import * as $G from 'graphinius';
 
 
 export interface ICSVInput {

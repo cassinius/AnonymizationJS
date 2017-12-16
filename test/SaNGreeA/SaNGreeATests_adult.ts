@@ -5,9 +5,8 @@ import * as $GH from '../../src/core/GenHierarchies';
 import * as $San from '../../src/SaNGreeA/SaNGreeA';
 import * as $C from '../../src/config/SaNGreeAConfig_adult';
 import * as $CSVIN from '../../src/io/CSVInput';
+import {CSVOutput} from 'graphinius/io/output/CSVOutput';
 
-import * as $G from 'graphinius';
-// console.dir($G);
 
 let expect = chai.expect,
 		assert = chai.assert,
@@ -297,7 +296,7 @@ describe('SANGREEA TESTS, ADULT DATASET', () => {
 			san.instantiateGraph(csvIN.readCSVFromFile(config.INPUT_FILE), true);
 			
 			var outfile = "./test/io/test_output/adult_graph_adj_list.csv";
-			var csvOut = new $G.output.CSVOutput(",", false, false);
+			var csvOut = new CSVOutput(",", false, false);
 			csvOut.writeToAdjacencyListFile(outfile, san._graph);
       
       expect("this test case").not.to.equal("being without pertinent expectation.");
