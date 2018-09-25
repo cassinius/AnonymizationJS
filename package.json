@@ -43,9 +43,10 @@
     "json-loader": "^0.5.4",
     "mocha": "^2.3.4",
     "typedoc": "^0.3.12",
+    "typescript": "^3.0.3",
     "webpack-stream": "^3.1.0"
   },
   "dependencies": {
-    "graphinius": "^0.7.4"
+    "graphinius": "^0.8.0"
   }
 }

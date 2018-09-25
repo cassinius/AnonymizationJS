@@ -1,8 +1,10 @@
 "use strict";
 var $GH = require('../core/GenHierarchies');
 var $C = require('../config/SaNGreeAConfig_adult');
-var $G = require('graphinius');
 var $CSVOUT = require('../io/CSVOutput');
+var Graph_1 = require('graphinius/core/Graph');
+var SimplePerturbations_1 = require('graphinius/perturbation/SimplePerturbations');
+console.log(Graph_1.BaseGraph);
 (function (HierarchyType) {
     HierarchyType[HierarchyType["CONTINUOUS"] = 0] = "CONTINUOUS";
     HierarchyType[HierarchyType["CATEGORICAL"] = 1] = "CATEGORICAL";
@@ -33,8 +35,8 @@ var SaNGreeA = (function () {
         if (this._config.EDGE_MAX < this._config.EDGE_MIN) {
             throw new Error('Options invalid. Edge_min cannot exceed edge_max.');
         }
-        this._graph = new $G.core.BaseGraph(this._name);
-        this._perturber = new $G.perturbation.SimplePerturber(this._graph);
+        this._graph = new Graph_1.BaseGraph(this._name);
+        this._perturber = new SimplePerturbations_1.SimplePerturber(this._graph);
         this._SEP = new RegExp(this._config.SEPARATOR, this._config.SEP_MOD);
         this._TRIM = new RegExp(this._config.TRIM, this._config.TRIM_MOD);
         this._csvOUT = new $CSVOUT.CSVOutput(this._config);

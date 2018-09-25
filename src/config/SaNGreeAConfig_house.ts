@@ -47,29 +47,9 @@ var CONFIG = {
           'B': 1.0/13.0,
           'LSTAT': 1.0/13.0
       }
-    }//,
-    // 'emph_race': {
-    //     'range': {
-    //         'age': 0.01,
-    //         'fnlwgt': 0.01,
-    //         'education-num': 0.01,
-    //         'capital-gain': 0.01,
-    //         'capital-loss': 0.01,
-    //         'hours-per-week': 0.01
-    //     }
-    // },
-    // 'emph_age': {
-    //     'range': {
-    //         'age': 0.88,
-    //         'fnlwgt': 0.01,
-    //         'education-num': 0.01,
-    //         'capital-gain': 0.01,
-    //         'capital-loss': 0.01,
-    //         'hours-per-week': 0.01,
-    //     }
-    // }
+    }
   },
-  // Chosen weight vector
+  // default weight vector
   'VECTOR' : 'equal'
 }
 
